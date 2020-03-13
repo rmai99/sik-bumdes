@@ -1,0 +1,93 @@
+.padding-select{
+    border-radius: 5px;
+    border-top-width: 1px;
+    padding-right: 4px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border: 1.3px solid #2B82BC!important;
+}
+.border-select{
+    display: block;
+    width: 100%;
+    height: calc(2.25rem + 2px);
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    border-bottom: 0px;
+}
+.card-journal{
+    background: #eeeeee; 
+    width:95%;
+}
+
+div.dataTables_wrapper div.dataTables_filter {
+    text-align: right;
+}
+
+.dataTables_length{
+    display: flex;
+}
+
+div.dataTables_length label {
+    display: flex;
+    align-items: center;
+}
+.dataTable>thead>tr>th, .dataTable>tbody>tr>th, .dataTable>tfoot>tr>th, .dataTable>thead>tr>td, .dataTable>tbody>tr>td, .dataTable>tfoot>tr>td {
+    padding: 10px !important;
+}
+.card .table tr td {
+    border-top: none;
+    border-bottom: 1px solid #cecece;
+}
+
+table.dataTable>tbody>tr.child span.dtr-title {
+    display: inline-block;
+    min-width: 75px;
+    font-weight: 700;
+}
+
+.bootstrap-select:not(.input-group-btn), .bootstrap-select[class*=col-] {
+    float: none;
+    display: inline-block;
+    margin-left: 0;
+}
+
+.bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+    width: 220px;
+}
+
+.card-pricing {
+    text-align: center;
+}
+
+.card-pricing .card-icon.icon-rose i {
+    color: #ff9800;
+}
+
+.card-pricing .card-icon i {
+    font-size: 55px;
+    border: 1px solid #e5e5e5;
+    border-radius: 50%;
+    width: 130px;
+    line-height: 130px;
+    height: 130px;
+    color: #3c4858;
+}
+
+@media screen and (max-width: 767px){
+    div.dataTables_wrapper div.dataTables_filter, div.dataTables_wrapper div.dataTables_info, div.dataTables_wrapper div.dataTables_length, div.dataTables_wrapper div.dataTables_paginate {
+        text-align: center;
+    }
+
+    .btn{
+        text-align: center;
+    }
+    
+
+}
