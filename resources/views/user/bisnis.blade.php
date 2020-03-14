@@ -15,8 +15,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-12 text-right">
-                            <a href="" data-toggle="modal" data-target="#tambahBisnis"
-                                class="btn btn-sm btn-primary">Tambah Bisnis</a>
+                            <a href="" class="btn btn-sm btn-primary addBusiness">Tambah Bisnis</a>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -154,6 +153,27 @@
             var action = "{{route('bisnis.index')}}/"+id;
             $('#formEdit').attr('action', action);
 
+        });
+
+        $(document).on('click', '.addBusiness', function(e) {
+            e.preventDefault();
+            $.ajax({
+                type        : 'GET',
+                url         : '{!!URL::to('cekpro')!!}',
+                dataType    : 'html',
+                success     : function(data){
+                    var servers = $.parseJSON(data);
+                    // console.log(servers);
+                    // console.log(servers.result);
+                    if (servers.result == "REGULER") {
+                        swal.fire("PRO AKUN")
+                    }else {
+                        $('#tambahBisnis').modal('show')
+                    }
+                }, error    : function(){
+
+                },
+            })
         });
     });
 </script>

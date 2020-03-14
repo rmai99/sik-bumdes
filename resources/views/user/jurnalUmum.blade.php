@@ -146,7 +146,7 @@
                                         <tr>
                                             <td>{{ $item->date }}</td>
                                             <td>{{ $item->receipt }}</td>
-                                            <td>{{ $item->id }}</td>
+                                            <td>{{ $item->description }}</td>
                                             @foreach ($item->journal()->get() as $cek)
                                                 @if ($cek->position == "Debit")
                                                     <td>{{ $cek->account->account_name }}</td>
@@ -159,7 +159,7 @@
                                             @endforeach
                                             <td>
                                                 <form action="" method="post">
-                                                    <button class="btnEditAccount" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editJurnal">
+                                                    <button class="btnEditJournal" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editJournal" value="{{ $item->id }}">
                                                         <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
                                                     </button>
                                                         {{ csrf_field() }}
@@ -186,9 +186,11 @@
 </div>
 
 {{-- Modal Edit Jurnal --}}
-<div class="modal fade" id="editJurnal" tabindex="-1" role="">
+<div class="modal fade" id="editJournal" tabindex="-1" role="">
     <div class="modal-dialog modal-login" role="document">
-        <form class="form" method="" action="">
+        <form class="form" method="POST" action="" id="formEditJournal">
+            {{ csrf_field() }}
+            {{ method_field('PUT') }}
             <div class="modal-content">
                 <div class="card card-signup card-plain">
                     <div class="modal-header">
@@ -199,66 +201,68 @@
                         </div>
                     </div>
                     <div class="modal-body">
-                        <div class="card-body">
-
-                            <div class="form-group">
+                        <div class="card-body detail">
+                            <input type="hidden" name="id_detail">
+                            <div class="form-group description">
                                 <h6 class="text-dark font-weight-bold m-0">Keterangan</h6>
-                                <input type="text" class="form-control" id="" name="" aria-describedby="ketJurnal"
+                                <input type="text" class="form-control" name="description" aria-describedby="ketJurnal"
                                     value="Membeli peralatan secara kredit">
                             </div>
 
                             <div class="row">
                                 <div class="col-6">
-                                    <div class="form-group">
+                                    <div class="form-group receipt">
                                         <h6 class="text-dark font-weight-bold m-0">No Kwitansi</h6>
-                                        <input type="text" class="form-control" id="" name=""
-                                            aria-describedby="kwitansiJurnal" value="123A">
+                                        <input type="text" class="form-control" name="receipt"
+                                            aria-describedby="kwitansiJurnal">
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="form-group">
+                                    <div class="form-group date">
                                         <h6 class="text-dark font-weight-bold m-0">Tanggal</h6>
-                                        <input type="date" class="form-control" id="" name=""
-                                            aria-describedby="kwitansiJurnal" value="123A">
+                                        <input type="date" class="form-control" name="date"
+                                            aria-describedby="kwitansiJurnal">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-6">
-                                    <div class="form-group">
+                                    <div class="form-group debit">
                                         <h6 class="text-dark font-weight-bold m-0">Debit Akun</h6>
-                                        <select class="form-control" id="">
-                                            <option disabled="true" selected="true">Parent Akun</option>
-                                            <option>1</option>
-                                            <option>2</option>
-                                            <option>3</option>
-                                            <option>4</option>
-                                            <option>5</option>
+                                        <input type="hidden" name="id_debit">
+                                        <select class="form-control" name="id_debit_account">
+                                            <option value="0" disabled="true" selected="true">Select Akun</option>
+                                            @foreach ($account as $a)
+                                                <option value="{{$a->id}}">
+                                                    {{$a->account_name}}
+                                                </option>
+                                            @endforeach
                                         </select>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group amount_debit">
                                         <h6 class="text-dark font-weight-bold m-0">Jumlah</h6>
-                                        <input type="number" class="form-control" id="" name=""
-                                            aria-describedby="amountDebit" value="123A">
+                                        <input type="number" class="form-control" name="debit"
+                                            aria-describedby="amountDebit">
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="form-group">
+                                    <div class="form-group credit">
                                         <h6 class="text-dark font-weight-bold m-0">Debit Akun</h6>
-                                        <select class="form-control" id="">
-                                            <option disabled="true" selected="true">Parent Akun</option>
-                                            <option>1</option>
-                                            <option>2</option>
-                                            <option>3</option>
-                                            <option>4</option>
-                                            <option>5</option>
+                                        <input type="hidden" name="id_credit">
+                                        <select class="form-control" name="id_credit_account">
+                                            <option value="0" disabled="true" selected="true">Select Akun</option>
+                                            @foreach ($account as $a)
+                                                <option value="{{$a->id}}">
+                                                    {{$a->account_name}}
+                                                </option>
+                                            @endforeach
                                         </select>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group amount_credit">
                                         <h6 class="text-dark font-weight-bold m-0">Jumlah</h6>
-                                        <input type="number" class="form-control" id="" name=""
-                                            aria-describedby="amountDebit" value="123A">
+                                        <input type="number" class="form-control" name="credit"
+                                            aria-describedby="amountDebit">
                                     </div>
                                 </div>
                             </div>
@@ -266,7 +270,7 @@
                     </div>
                 </div>
                 <div class="modal-footer justify-content-center">
-                    <a href="#pablo" class="btn btn-primary btn-round">Simpan</a>
+                    <button type="submit" class="btn btn-primary btn-round">Simpan</button>
                 </div>
             </div>
         </form>
@@ -322,6 +326,51 @@
     $(document).on('change', 'select.month', function(e){
         $('select.day').prop('disabled', false);
     });
+
+    $(document).on('click', '.btnEditJournal', function(){
+        var id = $(this).attr('value');
+        $.ajax({
+            type        : 'GET',
+            url         : '{!!URL::to('detailJournal')!!}',
+            data        : {'id' : id},
+            dataType    : 'html',
+            success     : function(data){
+                var servers = $.parseJSON(data);
+                
+                $.each(servers, function(index, value){
+                    var detail = value.id;
+                    var receipt = value.receipt;
+                    var date = value.date;
+                    var description = value.description;
+                    var id_debit = value.journal[0].id;
+                    var id_account_debit = value.journal[0].id_account;
+                    var amount_debit = value.journal[0].amount;
+                    var id_credit = value.journal[1].id;
+                    var id_account_credit = value.journal[1].id_account;
+                    var amount_credit = value.journal[1].amount;
+
+                    $('div.detail input').val(detail);
+                    $('div.receipt input').val(receipt);
+                    $('div.date input').val(date);
+                    $('div.description input').val(description);
+                    $('div.debit select').val(id_account_debit);
+                    $('div.debit input').val(id_debit);
+                    $('div.amount_debit input').val(amount_debit);
+                    $('div.credit select').val(id_account_credit);
+                    $('div.credit input').val(id_credit);
+                    $('div.amount_credit input').val(amount_credit);
+                    
+                })
+            }, error    : function(){
+                
+            },
+
+        });
+
+        var action = "{{route('jurnal.update')}}";
+            $('#formEditJournal').attr('action',action);
+
+    })
     
 </script>
 @endpush

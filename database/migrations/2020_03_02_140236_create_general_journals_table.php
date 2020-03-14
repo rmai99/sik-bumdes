@@ -15,14 +15,12 @@ class CreateGeneralJournalsTable extends Migration
     {
         Schema::create('general_journals', function (Blueprint $table) {
             $table->increments('id');
-            $table->longText('description');
-            $table->unsignedInteger('id_receipt');
-            $table->foreign('id_receipt')->references('id')->on('receipts')->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedInteger('id_detail');
+            $table->foreign('id_detail')->references('id')->on('journal_detail')->onUpdate('cascade')->onDelete('cascade');
             $table->unsignedInteger('id_account');
             $table->foreign('id_account')->references('id')->on('accounts')->onUpdate('cascade')->onDelete('cascade');
             $table->enum('position',['Debit','Kredit']);
             $table->integer('amount');
-            $table->date('date');
             $table->timestamps();
         });
     }

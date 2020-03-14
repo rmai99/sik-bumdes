@@ -55,8 +55,9 @@ class BusinessController extends Controller
      */
     public function store(Request $request)
     {
-        $user = Auth::user()->id;
-        $company = Companies::where('id_user', $user)->first()->id;
+        $user = Auth::user();
+
+        $company = Companies::where('id_user', $user->id)->first()->id;
         
         $data = new Business;
         $data->business_name = $request->business_name;

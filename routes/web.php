@@ -36,6 +36,7 @@ Route::resource('neraca_saldo', 'TrialBalanceController');
 /* ======== GENERAL JOURNAL ======== */
 Route::resource('jurnal_umum', 'GeneralJournalController')->except('update');
 Route::put('jurnal_umum/update', 'GeneralJournalController@update')->name('jurnal.update');;
+Route::get('detailJournal', 'GeneralJournalController@detailJournal');
 
 /* ======== GENERAL LEDGER ======== */
 Route::resource('buku_besar', 'GeneralLedgerController');
@@ -56,6 +57,7 @@ Route::middleware('auth')->get('set_business/{id}', 'BusinessController@setBusin
 
 /* ======== PROFILE ======== */
 Route::resource('profile', 'ProfileController');
+Route::get('cekpro', 'ProfileController@cekpro');
 
 Route::get('admin/login', function () {
     

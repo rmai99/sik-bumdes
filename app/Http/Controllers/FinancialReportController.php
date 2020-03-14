@@ -70,7 +70,9 @@ class FinancialReportController extends Controller
 
                     if($a->journal()->exists()){
                         $saldo_akhir = $saldo_awal;
-                        $jurnals = $a->journal()->whereYear('date', $year)->get();
+                        $jurnals = $a->journal()->whereHas('detail', function($q) use($year){
+                            $q->whereYear('date', $year);
+                        })->get();
                         foreach($jurnals as $jurnal){
                             if ($jurnal->position == $position) {
                                 $saldo_akhir += $jurnal->amount;
@@ -247,7 +249,9 @@ class FinancialReportController extends Controller
 
                     if($a->journal()->exists()){
                         $saldo_akhir = $saldo_awal;
-                        $jurnals = $a->journal()->whereYear('date', $year)->get();
+                        $jurnals = $a->journal()->whereHas('detail', function($q) use($year){
+                            $q->whereYear('date', $year);
+                        })->get();
                         foreach($jurnals as $jurnal){
                             if ($jurnal->position == $position) {
                                 $saldo_akhir += $jurnal->amount;

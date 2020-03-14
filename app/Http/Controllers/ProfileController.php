@@ -13,11 +13,24 @@ use App\Business;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function cekpro(){
+        $user = Auth::user();
+
+        $data = Companies::with('user')->where('id_user', $user->id)->first()->is_actived;
+
+        if ($data == 1) {
+            return response()->json([
+                'status' => 'success',
+                'result' => 'PRO',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'success',
+                'result' => 'REGULER',
+            ]);
+        }
+    }
+
     public function index()
     {
         $role = Auth::user();

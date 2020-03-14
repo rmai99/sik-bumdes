@@ -14,10 +14,8 @@ class CreateJournalDetailTable extends Migration
     public function up()
     {
         Schema::create('journal_detail', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('receipt');
-            $table->longText('description');
-            $table->date('date');
+            $table->bigIncrements('id');
+            $table->timestamps();
         });
     }
 
@@ -28,6 +26,6 @@ class CreateJournalDetailTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('receipts');
+        Schema::dropIfExists('journal_detail');
     }
 }

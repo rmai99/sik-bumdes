@@ -8,7 +8,7 @@ use App\Business;
 use App\Employee;
 use App\GeneralJournal;
 use App\Account;
-use App\Receipt;
+use App\DetailJournal;
 use Auth;
 
 class GeneralJournalController extends Controller
@@ -37,7 +37,7 @@ class GeneralJournalController extends Controller
             $month = null;
             $day = null;
         }
-
+        
         $role = Auth::user();
         $isOwner = $role->hasRole('owner');
         $user = Auth::user()->id;
@@ -60,36 +60,39 @@ class GeneralJournalController extends Controller
 
             $session = $getBusiness;
         }
-        $array = array();
-        $data = Receipt::with('journal.account')
+        $account = Account::whereHas('classification.parent', function($q) use ($session){
+            $q->where('id_business', $session);
+        })->get();
+
+        $data = DetailJournal::with('journal.account')
         ->whereHas('journal.account.classification.parent', function($q) use($session){
             $q->where('id_business', $session);
         })->whereYear('date', $year)
         ->get();
         
+        
         if ($month) {
-            $data = Receipt::with('journal.account')
+            $data = DetailJournal::with('journal.account')
             ->whereHas('journal.account.classification.parent', function($q) use($session){
                 $q->where('id_business', $session);
             })->whereYear('date', $year)->whereMonth('date', $month)
             ->get();
         }
         if ($day) {
-            $data = Receipt::with('journal.account')
+            $data = DetailJournal::with('journal.account')
             ->whereHas('journal.account.classification.parent', function($q) use($session){
                 $q->where('id_business', $session);
             })->whereYear('date', $year)->whereMonth('date', $month)->whereDay('date', $day)
             ->get();
         }
 
-        $years = GeneralJournal::whereHas('account.classification.parent', function($q) use ($session){
-            $q->where('id_business', $session);
-        })->selectRaw('YEAR(date) as year')
+        $years = DetailJournal::selectRaw('YEAR(date) as year')
         ->orderBy('date', 'desc')
         ->distinct()
         ->get();
+        // 99dd($years);
         
-        return view('user.jurnalUmum', compact('business', 'data','years', 'session'));
+        return view('user.jurnalUmum', compact('business', 'data','years', 'session', 'account'));
     }
 
     public function create()
@@ -126,31 +129,35 @@ class GeneralJournalController extends Controller
     public function store(Request $request)
     {
         foreach($request->receipt as $key => $value){
-            $kwitansi = new Receipt();
-            $kwitansi->receipt = $request->receipt[$key];
-            $kwitansi->date = $request->date[$key];
-            $kwitansi->save();
+            $detail = new DetailJournal();
+            $detail->receipt = $request->receipt[$key];
+            $detail->description = $request->description[$key];
+            $detail->date = $request->date[$key];
+            $detail->save();
 
             $kredit = new GeneralJournal();
-            $kredit->description = $request->description[$key];
-            $kredit->id_receipt = $kwitansi->id;
+            $kredit->id_detail = $detail->id;
             $kredit->id_account = $request->id_credit_account[$key];
             $kredit->position = "Kredit";
             $kredit->amount = $request->credit[$key];
-            $kredit->date = $request->date[$key];
             $kredit->save();
     
             $kredit = new GeneralJournal();
-            $kredit->description = $request->description[$key];
-            $kredit->id_receipt = $kwitansi->id;
+            $kredit->id_detail = $detail->id;
             $kredit->id_account = $request->id_debit_account[$key];
             $kredit->position = "Debit";
             $kredit->amount = $request->debit[$key];
-            $kredit->date = $request->date[$key];
             $kredit->save();
         }
 
         return redirect()->route('jurnal_umum.index')->with('success','Berhasil Menambah Jurnal!');;
+    }
+
+    public function detailJournal(Request $request){
+        $data = DetailJournal::with('journal.account')->where('id', $request->id)
+        ->get();
+
+        return response()->json($data);
     }
 
     public function show($id)
@@ -163,9 +170,29 @@ class GeneralJournalController extends Controller
         //
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+            
+        $detail = DetailJournal::findOrFail($request->id_detail);
+        $detail->receipt = $request->receipt;
+        $detail->description = $request->description;
+        $detail->date = $request->date;
+        $detail->save();
+
+        $kredit = GeneralJournal::findOrFail($request->id_debit);
+        $kredit->id_account = $request->id_credit_account;
+        $kredit->position = "Kredit";
+        $kredit->amount = $request->credit;
+        $kredit->save();
+
+        $kredit = GeneralJournal::findOrFail($request->id_credit);
+        $kredit->id_account = $request->id_debit_account;
+        $kredit->position = "Debit";
+        $kredit->amount = $request->debit;
+        $kredit->save();
+
+        return redirect()->route('jurnal_umum.index')->with('success','Berhasil Mengubah Jurnal!');;
+            
     }
 
     public function destroy($id)

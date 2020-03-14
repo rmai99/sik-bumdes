@@ -250,7 +250,7 @@
             }
         });
     });
-    $(document).on('click', '#search', function(e){
+    $(document).on('change', '#search', function(e){
         e.preventDefault();
         var year = $("select.groupbyYear").val();
 

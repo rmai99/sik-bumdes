@@ -138,8 +138,8 @@
                                     </tr>
                                     @foreach ($data as $d)
                                     <tr>
-                                        <td>{{ $d->date }}</td>
-                                        <td>{{ $d->description }}</td>
+                                        <td>{{ $d->detail->date }}</td>
+                                        <td>{{ $d->detail->description }}</td>
                                         <td>
                                             @if ($d->position=="Debit")
                                                 Rp{{strrev(implode('.',str_split(strrev(strval($d->amount)),3)))}}

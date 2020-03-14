@@ -12,6 +12,7 @@ use App\Account;
 use App\InitialBalance;
 use App\AccountParent;
 use App\Employee;
+use App\DetailJournal;
 
 class TrialBalanceController extends Controller
 {
@@ -83,7 +84,9 @@ class TrialBalanceController extends Controller
 
                     if($a->journal()->exists()){
                         $ending_balance = $beginning_balance;
-                        $journals = $a->journal()->whereYear('date', $year)->get();
+                        $journals = $a->journal()->whereHas('detail', function($q) use($year){
+                            $q->whereYear('date', $year);
+                        })->get();
                         foreach ($journals as $journal) {
                             if ($journal->position == $position) {
                                 $ending_balance += $journal->amount;

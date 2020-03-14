@@ -76,14 +76,17 @@
                     <div class="col-12 pl-0">
                         <p class="mb-0">Jumlah</p>
                         <div class="input-group">
+                            <input name="amount" type="number" class="form-control border-select" id="amount_of_debit" onkeyup="copytextbox();" name="debit[]">
+                        </div>
+                    </div>
+                    <div class="col-12 pl-0">
+                        <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">
                                     Rp
                                 </span>
                             </div>
-                            <input type="number" class="form-control border-select" name="debit[]">
-                            {{-- <input name="amount" type="number" class="form-control border-select" id="amount_of_debit" onkeyup="copytextbox();" name="debit[]">
-                            <input type="text" class="form-control" id="result1" disabled> --}}
+                            <input type="text" class="form-control" id="result1" disabled>
                         </div>
                     </div>
                 </div>
@@ -108,12 +111,17 @@
                     <div class="col-12 pl-0">
                         <p class="mb-0">Nama Akun</p>
                         <div class="input-group">
+                            <input name="amount" type="number" class="form-control border-select testtest" id="amount_of_debit" onkeyup="copytextbox();" name="credit[]">
+                        </div>
+                    </div>
+                    <div class="col-12 pl-0">
+                        <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">
                                     Rp
                                 </span>
                             </div>
-                            <input type="number" class="form-control border-select" name="credit[]">
+                            <input type="text" class="form-control" id="result1" disabled>
                         </div>
                     </div>
                 </div>
@@ -122,10 +130,10 @@
     </div>
     <div class="row m-3 justify-content-between">
         <div class="col-2">
-            <button type="button" class="btn btn-primary m-1 pl-2 pr-2" style="float:right;" id="addRow">Tambah Neraca Awal</button>
+            <button type="button" class="btn btn-primary m-1 pl-2 pr-2" style="float:right;" id="addRow">Tambah Jurnal</button>
         </div>
         <div class="col-2 justify-content-end">
-            <button type="submit" class="btn btn-primary m-1 pl-2 pr-2" style="float:right;">Tambah Neraca Awal</button>
+            <button type="submit" class="btn btn-primary m-1 pl-2 pr-2" style="float:right;">SIMPAN</button>
         </div>
     </div>
 </form>
@@ -201,14 +209,17 @@
                     <div class="col-12 pl-0">
                         <p class="mb-0">Jumlah</p>
                         <div class="input-group">
+                            <input name="amount" type="number" class="form-control border-select" id="amount_of_debit" onkeyup="copytextbox();" name="debit[]">
+                        </div>
+                    </div>
+                    <div class="col-12 pl-0">
+                        <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">
                                     Rp
                                 </span>
                             </div>
-                            <input type="number" class="form-control border-select" name="debit[]">
-                            {{-- <input name="amount" type="number" class="form-control border-select" id="amount_of_debit" onkeyup="copytextbox();" name="debit[]">
-                            <input type="text" class="form-control" id="result1" disabled> --}}
+                            <input type="text" class="form-control" id="result1" disabled>
                         </div>
                     </div>
                 </div>
@@ -233,12 +244,17 @@
                     <div class="col-12 pl-0">
                         <p class="mb-0">Nama Akun</p>
                         <div class="input-group">
+                            <input name="amount" type="number" class="form-control border-select" id="amount_of_debit" onkeyup="copytextbox();" name="credit[]">
+                        </div>
+                    </div>
+                    <div class="col-12 pl-0">
+                        <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">
                                     Rp
                                 </span>
                             </div>
-                            <input type="number" class="form-control border-select" name="credit[]">
+                            <input type="text" class="form-control" id="result1" disabled>
                         </div>
                     </div>
                 </div>
@@ -250,20 +266,22 @@
         });
 
         $(document).on('click', '.remove', function () {
-            $(this).parents('div').remove();
+            $(this).parents('div.puss').remove();
         });
 
     });
     
 </script>
 <script>
-    function copytextbox() {
-        var angka = document.getElementById('amount_of_debit').value;
-        var rupiah = '';		
+    $(document).on('change', '.testtest', function(){
+        var amount = $(this).attr('value');
+        var angka = amount;
+        var rupiah = '';
         var angkarev = angka.toString().split('').reverse().join('');
         for(var i = 0; i < angkarev.length; i++) if(i%3 == 0) rupiah += angkarev.substr(i,3)+'.';
-            // 'Rp. '+rupiah.split('',rupiah.length-1).reverse().join('')
-        document.getElementById('result1').value = "Rp"+rupiah.split('',rupiah.length-1).reverse().join('');
-    }
+
+        document.getElementById('result1').value = rupiah.split('',rupiah.length-1).reverse().join('');
+        
+    })
 </script>
 @endpush

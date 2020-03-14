@@ -10,6 +10,7 @@ use App\Companies;
 use App\Business;
 use App\Account;
 use App\GeneralJournal;
+use App\DetailJournal;
 use App\Employee;
 
 class GeneralLedgerController extends Controller
@@ -91,29 +92,24 @@ class GeneralLedgerController extends Controller
 
         }
 
-        $data = GeneralJournal::with('account.classification.parent')
+        $data = GeneralJournal::with('account.classification.parent', 'detail')
         ->whereHas('account.classification.parent', function($q) use($session){
             $q->where('id_business', $session);
-        })->whereYear('date', $year)
+        })->whereHas('detail', function($q) use($year){
+            $q->whereYear('date', $year);
+        })
         ->where('id_account', $akun)
         ->get();
 
-        $years = GeneralJournal::whereHas('account.classification.parent', function($q) use ($session){
-            $q->where('id_business', $session);
-        })->selectRaw('YEAR(date) as year')
+        $years = DetailJournal::selectRaw('YEAR(date) as year')
         ->orderBy('date', 'desc')
         ->distinct()
         ->get();
-        
+
         $akuns = Account::with('classification.parent')
         ->whereHas('classification.parent', function ($q) use ($session){
             $q->where('id_business', $session);
         })->get();
-
-        // $test = Account::with('classification.parent')
-        // ->whereHas('classification.parent', function ($q) use ($session){
-        //     $q->where('id_business', $session);
-        // })->where('id', $account)->first();
 
         return view('user.bukuBesar', compact('business', 'data', 'years', 'akuns', 'account','log', 'session'));
     }

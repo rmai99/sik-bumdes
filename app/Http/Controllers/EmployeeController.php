@@ -112,7 +112,15 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = Employee::where('id', $id)->first();
+
+        $data->name = $request->name;
+        $data->id_business = $request->name;
+        $data->id_business = $request->id_business;
+        
+        $data->save();
+
+        return redirect()->route('karyawan.index')->with('success','Berhasil Mengubah Karyawan!');
     }
 
     /**

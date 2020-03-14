@@ -101,7 +101,7 @@
                             </div>
                             <div class="form-group business">
                                 <h6 class="text-dark font-weight-bold m-0">Bisnis</h6>
-                                <select class="form-control" name="business">
+                                <select class="form-control" name="id_business">
                                     <option value="0" disabled="true" selected="true">Pilih Bisnis</option>
                                     @foreach ($business as $item)
                                         <option id="business" value="{{$item->id}}">
@@ -146,7 +146,9 @@
                 }, error : function(){
 
                 },
-            })
+            });
+            var action = "{{route('karyawan.index')}}/"+id;
+            $('#formEdit').attr('action',action);
         })
     </script>
     @include('sweetalert::alert')

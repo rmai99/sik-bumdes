@@ -13,8 +13,8 @@ class GeneralJournal extends Model
         return $this->belongsTo('App\Account', 'id_account');
     }
 
-    public function receipt()
+    public function detail()
     {
-        return $this->belongsTo('App\Receipt', 'id_receipt');
+        return $this->belongsTo('App\DetailJournal', 'id_detail');
     }
 }
