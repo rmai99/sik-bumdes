@@ -10,6 +10,6 @@ class Receipt extends Model
 
     public function journal()
     {
-        return $this->belongsTo('App\GeneralJournal', 'id_receipt');
+        return $this->hasMany('App\GeneralJournal', 'id_receipt');
     }
 }

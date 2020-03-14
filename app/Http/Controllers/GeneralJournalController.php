@@ -60,24 +60,26 @@ class GeneralJournalController extends Controller
 
             $session = $getBusiness;
         }
-        
-        $data = GeneralJournal::with('cek','account.classification.parent')
-        ->whereHas('account.classification.parent', function($q) use($session){
+        $array = array();
+        $data = Receipt::with('journal.account')
+        ->whereHas('journal.account.classification.parent', function($q) use($session){
             $q->where('id_business', $session);
         })->whereYear('date', $year)
         ->get();
         
         if ($month) {
-            $data = GeneralJournal::with('cek','account.classification.parent')
-            ->whereHas('account.classification.parent', function($q) use($session){
+            $data = Receipt::with('journal.account')
+            ->whereHas('journal.account.classification.parent', function($q) use($session){
                 $q->where('id_business', $session);
-            })->whereYear('date', $year)->whereMonth('date', $month)->get();
+            })->whereYear('date', $year)->whereMonth('date', $month)
+            ->get();
         }
         if ($day) {
-            $data = GeneralJournal::with('cek','account.classification.parent')
-            ->whereHas('account.classification.parent', function($q) use($session){
+            $data = Receipt::with('journal.account')
+            ->whereHas('journal.account.classification.parent', function($q) use($session){
                 $q->where('id_business', $session);
-            })->whereYear('date', $year)->whereMonth('date', $month)->whereDay('date', $day)->get();
+            })->whereYear('date', $year)->whereMonth('date', $month)->whereDay('date', $day)
+            ->get();
         }
 
         $years = GeneralJournal::whereHas('account.classification.parent', function($q) use ($session){
@@ -147,7 +149,6 @@ class GeneralJournalController extends Controller
             $kredit->date = $request->date[$key];
             $kredit->save();
         }
-        
 
         return redirect()->route('jurnal_umum.index')->with('success','Berhasil Menambah Jurnal!');;
     }

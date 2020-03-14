@@ -13,8 +13,8 @@ class GeneralJournal extends Model
         return $this->belongsTo('App\Account', 'id_account');
     }
 
-    public function cek()
+    public function receipt()
     {
-        return $this->hasOne('App\Receipt', 'id');
+        return $this->belongsTo('App\Receipt', 'id_receipt');
     }
 }

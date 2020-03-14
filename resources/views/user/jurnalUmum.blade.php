@@ -124,53 +124,52 @@
                             </div>
                         </div>
                         <div class="material-datatables">
-                            <table id="datatables" class="table table-striped table-no-bordered table-hover"
-                                cellspacing="0" width="100%" style="width:100%">
+                            <table class="table" id="datatables" cellspacing="0" width="100%" class="table table-striped table-no-bordered table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Tanggal</th>
-                                        <th>No Kwitansi</th>
-                                        <th>Keterangan</th>
-                                        <th class="text-center">Akun</th>
-                                        <th>Position</th>
+                                        <th rowspan="2">Tanggal</th>
+                                        <th rowspan="2">No Kwitansi</th>
+                                        <th rowspan="2">Keterangan</th>
+                                        <th colspan="2">debit</th>
+                                        <th colspan="2">Kredit</th>
+                                        <th rowspan="2">aksi</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Akun</th>
                                         <th>Jumlah</th>
-                                        <th class="text-center" style="width:10%">Aksi</th>
+                                        <th>Akun</th>
+                                        <th>jumlah</th>
                                     </tr>
                                 </thead>
-                                <tfoot>
-                                    <tr>
-                                        <th>Tanggal</th>
-                                        <th>No Kwitansi</th>
-                                        <th>Keterangan</th>
-                                        <th class="text-center">Akun</th>
-                                        <th>Position</th>
-                                        <th>Jumlah</th>
-                                        <th class="text-center" style="width:10%">Aksi</th>
-                                    </tr>
-                                </tfoot>
                                 <tbody>
-                                    @foreach ($data as $journal)
-                                    <tr>
-                                        <td>{{ $journal->date }}</td>
-                                        <td></td>
-                                        <td>{{ $journal->description }}</td>
-                                        <td>{{ $journal->account->account_name }}</td>
-                                        <td>{{ $journal->position }}</td>
-                                        <td>
-                                            Rp{{strrev(implode('.',str_split(strrev(strval($journal->amount)),3)))}}
-                                        </td>
-                                        <td class="text-center">
-                                            <a type="button" rel="tooltip" title="Edit Akun" id="{{ $journal->id }}"
-                                                data-toggle="modal" data-target="#editJurnal">
-                                                <i class="material-icons"
-                                                    style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
-                                            </a>
-                                            <a type="button" rel="tooltip" title="Hapus" id="{{ $journal->id }}">
-                                                <i class="material-icons"
-                                                    style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
-                                            </a>
-                                        </td>
-                                    </tr>
+                                    @foreach ($data as $item)
+                                        <tr>
+                                            <td>{{ $item->date }}</td>
+                                            <td>{{ $item->receipt }}</td>
+                                            <td>{{ $item->id }}</td>
+                                            @foreach ($item->journal()->get() as $cek)
+                                                @if ($cek->position == "Debit")
+                                                    <td>{{ $cek->account->account_name }}</td>
+                                                    <td>{{ $cek->amount }}</td>
+                                                @endif
+                                                @if ($cek->position == "Kredit")
+                                                    <td>{{ $cek->account->account_name }}</td>
+                                                    <td>{{ $cek->amount }}</td>
+                                                @endif
+                                            @endforeach
+                                            <td>
+                                                <form action="" method="post">
+                                                    <button class="btnEditAccount" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editJurnal">
+                                                        <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
+                                                    </button>
+                                                        {{ csrf_field() }}
+                                                        {{ method_field('DELETE') }}
+                                                    <button type="submit" onclick="return confirm('Anda yakin mau menghapus item ini ?')">
+                                                            <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -186,7 +185,7 @@
     </div>
 </div>
 
-{{-- Modal Tambah Jurnal --}}
+{{-- Modal Edit Jurnal --}}
 <div class="modal fade" id="editJurnal" tabindex="-1" role="">
     <div class="modal-dialog modal-login" role="document">
         <form class="form" method="" action="">
