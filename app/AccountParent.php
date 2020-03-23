@@ -15,6 +15,6 @@ class AccountParent extends Model
 
     public function classification()
     {
-        return $this->hasMany('App\AccountClassification', 'id_parent');
+        return $this->hasMany('App\AccountClassification', 'id_parent')->orderby('classification_code');;
     }
 }

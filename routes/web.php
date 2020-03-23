@@ -41,12 +41,12 @@ Route::get('detailJournal', 'GeneralJournalController@detailJournal');
 /* ======== GENERAL LEDGER ======== */
 Route::resource('buku_besar', 'GeneralLedgerController');
 
-/* ======== GENERAL LEDGER ======== */
+/* ======== REPORT ======== */
 Route::get('laporan_laba_rugi', 'FinancialReportController@incomeStatement');
 Route::get('perubahan_ekuitas', 'FinancialReportController@changeInEquity');
 Route::get('neraca', 'FinancialReportController@balanceSheet');
 
-/* ======== GENERAL LEDGER ======== */
+/* ======== EMPLOYEE ======== */
 Route::resource('karyawan','EmployeeController');
 Route::get('detailEmployee', 'EmployeeController@detailEmployee');
 
@@ -56,7 +56,9 @@ Route::get('detail_bisnis', 'BusinessController@detailBusiness');
 Route::middleware('auth')->get('set_business/{id}', 'BusinessController@setBusiness')->name('setBusiness');
 
 /* ======== PROFILE ======== */
-Route::resource('profile', 'ProfileController');
+Route::resource('profile', 'ProfileController')->except('update');
+Route::put('profile/update', 'ProfileController@update')->name('profile.update');
+Route::put('profile/karyawan/update', 'ProfileController@updateEmployee')->name('profile_karyawan.update');
 Route::get('cekpro', 'ProfileController@cekpro');
 
 Route::get('admin/login', function () {

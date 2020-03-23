@@ -2667,6 +2667,21 @@ textarea.form-control.is-invalid {
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
+.btn-register {
+    color: rgb(255, 255, 255);
+    font-style: normal;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 22px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    letter-spacing: 0.1em;
+    background: linear-gradient(90deg, #FD7600 0%, #FDA085 100%);
+    border-radius: 10px;
+    font-variant: small-caps;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .btn {
     transition: none;
@@ -7048,6 +7063,10 @@ button.bg-dark:focus {
   background-color: #fff !important;
 }
 
+.bg-green-smooth {
+  background-color: #E4F7D5 !important;
+}
+
 .bg-transparent {
   background-color: transparent !important;
 }
@@ -8279,9 +8298,9 @@ button.bg-dark:focus {
   white-space: normal;
 }
 
-.shadow-sm {
+/* .shadow-sm {
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
-}
+} */
 
 .shadow {
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;

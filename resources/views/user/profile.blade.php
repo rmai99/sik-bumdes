@@ -14,12 +14,15 @@
                 {{-- <p class="card-category">Complete your profile</p> --}}
             </div>
             <div class="card-body">
-                <form>
+                <form method="POST" action="{{ route('profile.update') }}">
+                    {{ method_field('PUT') }}
+                    @csrf
+                    <input type="hidden" name="id" value="{{ $data->id}}">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="bmd-label-floating">Company</label>
-                                <input type="text" class="form-control" value="{{ $data->name }}">
+                                <input type="text" class="form-control" value="{{ $data->name }}" name="name">
                             </div>
                         </div>
                     </div>
@@ -27,13 +30,13 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="bmd-label-floating">Email</label>
-                                <input type="email" class="form-control" value="{{ $data->user->email }}">
+                                <input type="email" class="form-control" value="{{ $data->user->email }}" disabled>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="bmd-label-floating">No telp</label>
-                                <input type="email" class="form-control" value="{{ $data->phone_number }}">
+                                <input type="number" class="form-control" value="{{ $data->phone_number }}" name="phone_number">
                             </div>
                         </div>
                     </div>
@@ -41,7 +44,23 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="bmd-label-floating">Alamat</label>
-                                <input type="text" class="form-control" value="{{ $data->address }}">
+                                <input type="text" class="form-control" value="{{ $data->address }}" name="address">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="bmd-label-floating">Status</label>
+                                <input type="hidden" name="id_actived" value="{{ $data->is_actived }}">
+                                <input type="hidden" name="id_user" value="{{ $data->id_user }}">
+                                <input type="text" class="form-control" 
+                                @if ($data->is_actived == 0)
+                                    value="Reguler"
+                                @else
+                                    value="PRO"   
+                                @endif 
+                                disabled>
                             </div>
                         </div>
                     </div>
@@ -57,13 +76,14 @@
                 <h4 class="card-title">Edit Profile</h4>
             </div>
             <div class="card-body">
-                <form action="" method="post">
-                    {{ csrf_field() }}
+                <form action="{{route('profile_karyawan.update')}}" method="post">
                     {{ method_field('PUT') }}
+                    @csrf
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="bmd-label-floating">Company (disabled)</label>
+                                <input type="hidden" class="form-control" value="{{ $data->company->id }}" name="id_company">
                                 <input type="text" class="form-control" disabled value="{{ $data->company->name }}">
                             </div>
                         </div>
@@ -72,13 +92,15 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="bmd-label-floating">Nama Lengkap</label>
-                                <input type="text" class="form-control" value="{{ $data->name }}">
+                                <input type="text" class="form-control" value="{{ $data->name }}" name="name">
+                                <input type="hidden" class="form-control" value="{{ $data->id_user }}" name="id_user">
+                                <input type="hidden" class="form-control" value="{{ $data->id }}" name="id">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="bmd-label-floating">Email</label>
-                                <input type="text" class="form-control" value="{{ $data->user->email }}">
+                                <input type="text" class="form-control" value="{{ $data->user->email }}" disabled>
                             </div>
                         </div>
                     </div>
@@ -86,6 +108,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="bmd-label-floating">Bisnis</label>
+                                <input type="hidden" class="form-control" value="{{ $data->business->id }}" name="id_business">
                                 <input type="text" class="form-control" disabled value="{{ $data->business->business_name }}">
                             </div>
                         </div>
@@ -101,3 +124,6 @@
 </div>
 
 @endsection
+@push('js')
+    @include('sweetalert::alert')
+@endpush

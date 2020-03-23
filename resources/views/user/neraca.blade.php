@@ -42,8 +42,7 @@
                             </div>
                         </div>
                         <div class="material-datatables mt-4">
-                            <table id="datatables" class="table table-striped table-no-bordered table-hover"
-                                cellspacing="0" width="100%" style="width:100%">
+                            <table id="datatables" class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
                                 <thead>
                                     <tr>
                                         <td></td>
@@ -54,9 +53,7 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                      <td style="width:60%">
-                                          Asset
-                                      </td>
+                                      <td style="width:60%">Asset</td>
                                       <td style="width:15%"></td>
                                       <td style="width:15%"></td>
                                       <td style="width:10%"></td>
@@ -88,7 +85,11 @@
                                                 <td style="width:15%">
                                                 </td>
                                                 <td class="text-right" style="width:10%">
+                                                  @if ($array_asset[$i]['saldo_akhir'][$y] < 0)
+                                                    - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$array_asset[$i]['saldo_akhir'][$y])),3)))}}  
+                                                  @else
                                                     Rp{{strrev(implode('.',str_split(strrev(strval($array_asset[$i]['saldo_akhir'][$y])),3)))}}
+                                                  @endif
                                                   @php
                                                       $sum += $array_asset[$i]['saldo_akhir'][$y];
                                                   @endphp
@@ -103,9 +104,7 @@
                                           </td>
                                           <td style="width:15%"></td>
                                           <td style="width:15%"></td>
-                                          <td class="text-right" style="width:10%">
-                                            
-                                          </td>
+                                          <td class="text-right" style="width:10%"></td>
                                         </tr>
                                     @endfor
                                     <tr>
@@ -114,7 +113,13 @@
                                       </td>
                                       <td style="width:15%"></td>
                                       <td style="width:15%"></td>
-                                      <td class="text-right" style="width:10%">Rp{{strrev(implode('.',str_split(strrev(strval($sum)),3)))}}</td>
+                                      <td class="text-right" style="width:10%">
+                                        @if ($sum < 0)
+                                          - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$sum)),3)))}}
+                                        @else
+                                          Rp{{strrev(implode('.',str_split(strrev(strval($sum)),3)))}}
+                                        @endif
+                                      </td>
                                     </tr>
                                     <tr>
                                         <td style="width:60%">
@@ -146,7 +151,11 @@
                                             <td style="width:15%">
                                             </td>
                                             <td class="text-right" style="width:10%">
-                                                Rp{{strrev(implode('.',str_split(strrev(strval($array_liability[$i]['saldo_akhir'][$j])),3)))}}
+                                              @if ($array_liability[$i]['saldo_akhir'][$j] < 0)
+                                                - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$array_liability[$i]['saldo_akhir'][$j])),3)))}}
+                                              @else
+                                                Rp{{strrev(implode('.',str_split(strrev(strval($array_liability[$i]['saldo_akhir'][$j])),3)))}}  
+                                              @endif
                                               @php
                                                   $sum_biaya += $array_liability[$i]['saldo_akhir'][$j];
                                               @endphp
@@ -173,7 +182,13 @@
                                       <td style="width:15%"></td>
                                       <td style="width:15%"></td>
                                       <td class="text-right" style="width:10%">
-                                        <strong>Rp{{strrev(implode('.',str_split(strrev(strval($sum_biaya)),3)))}}</strong>
+                                        <strong>
+                                          @if ($sum_biaya < 0)
+                                            - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$sum_biaya)),3)))}}
+                                          @else
+                                            Rp{{strrev(implode('.',str_split(strrev(strval($sum_biaya)),3)))}}
+                                          @endif
+                                        </strong>
                                       </td>
                                     </tr>
                                     <tr>
@@ -206,7 +221,11 @@
                                             <td style="width:15%">
                                             </td>
                                             <td class="text-right" style="width:10%">
+                                              @if ($array_equity[$i]['saldo_akhir'][$j] < 0)
+                                                - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$array_equity[$i]['saldo_akhir'][$j])),3)))}}
+                                              @else
                                                 Rp{{strrev(implode('.',str_split(strrev(strval($array_equity[$i]['saldo_akhir'][$j])),3)))}}
+                                              @endif
                                               @php
                                                   $sum_ekuitas += $array_equity[$i]['saldo_akhir'][$j];
                                               @endphp
@@ -221,9 +240,7 @@
                                         </td>
                                         <td style="width:15%"></td>
                                         <td style="width:15%"></td>
-                                        <td style="width:10%" class="text-right">
-                                            
-                                        </td>
+                                        <td style="width:10%" class="text-right"></td>
                                       </tr>
                                     @endfor
                                     <tr>
@@ -233,7 +250,12 @@
                                       <td style="width:15%"></td>
                                       <td style="width:15%"></td>
                                       <td class="text-right" style="width:10%">
-                                        <strong>Rp{{strrev(implode('.',str_split(strrev(strval($sum_ekuitas)),3)))}}</strong>
+                                        <strong>
+                                          @if ($sum_ekuitas < 0)  
+                                            - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$sum_ekuitas)),3)))}}</strong>
+                                          @else
+                                            Rp{{strrev(implode('.',str_split(strrev(strval($sum_ekuitas)),3)))}}</strong>
+                                          @endif
                                       </td>
                                     </tr>
                                 </tbody>

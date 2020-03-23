@@ -16,7 +16,7 @@
                     <a class="nav-link" href="" id="navbarDropdownBusiness" data-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false">
                         <i class="material-icons">business</i>
-                        <span class="text-white" style="margin-bottom: 0px;">WISATA MANGUNAN (AKTIF)</span>
+                        <span style="margin-bottom: 0px;">WISATA MANGUNAN (AKTIF)</span>
                     </a>
                 </li>
                 @endrole
@@ -47,7 +47,7 @@
                         </p>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownProfile">
-                        <a class="dropdown-item">Profile</a>
+                        <a class="dropdown-item" href="{{ route('profile.index') }}">Profile</a>
                         <a class="dropdown-item" href="#">Settings</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ route('logout') }}"

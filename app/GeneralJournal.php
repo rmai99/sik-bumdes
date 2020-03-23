@@ -15,6 +15,6 @@ class GeneralJournal extends Model
 
     public function detail()
     {
-        return $this->belongsTo('App\DetailJournal', 'id_detail');
+        return $this->belongsTo('App\DetailJournal', 'id_detail')->orderby('date');
     }
 }

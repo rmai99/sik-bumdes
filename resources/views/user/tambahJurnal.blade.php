@@ -76,7 +76,7 @@
                     <div class="col-12 pl-0">
                         <p class="mb-0">Jumlah</p>
                         <div class="input-group">
-                            <input name="amount" type="number" class="form-control border-select" id="amount_of_debit" onkeyup="copytextbox();" name="debit[]">
+                            <input type="number" class="form-control border-select" id="amount_of_debit" onkeyup="copytextbox();" name="debit[]">
                         </div>
                     </div>
                     <div class="col-12 pl-0">
@@ -111,7 +111,7 @@
                     <div class="col-12 pl-0">
                         <p class="mb-0">Nama Akun</p>
                         <div class="input-group">
-                            <input name="amount" type="number" class="form-control border-select testtest" id="amount_of_debit" onkeyup="copytextbox();" name="credit[]">
+                            <input type="number" class="form-control border-select testtest" id="amount_of_debit" onkeyup="copytextbox();" name="credit[]">
                         </div>
                     </div>
                     <div class="col-12 pl-0">

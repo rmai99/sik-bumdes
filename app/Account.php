@@ -23,8 +23,4 @@ class Account extends Model
         return $this->hasMany('App\GeneralJournal', 'id_account');
     }
 
-    public function getbyId()
-    {
-        return $this->db->get($this->_table)->result();
-    }
 }

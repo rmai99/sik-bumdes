@@ -95,12 +95,20 @@
                                                     </td>
                                                     <td>
                                                         @if ($save[$i]['classification'][$j]['account'][$k]['position'] == "Debit")
-                                                        Rp{{strrev(implode('.',str_split(strrev(strval($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
+                                                            @if ($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'] < 0)
+                                                                -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$save[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
+                                                            @else
+                                                                Rp{{strrev(implode('.',str_split(strrev(strval($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
+                                                            @endif
                                                         @endif
                                                     </td>
                                                     <td>
                                                         @if ($save[$i]['classification'][$j]['account'][$k]['position'] == "Kredit")
-                                                        Rp{{strrev(implode('.',str_split(strrev(strval($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
+                                                            @if ($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'] < 0)
+                                                                - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$save[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
+                                                            @else 
+                                                                Rp{{strrev(implode('.',str_split(strrev(strval($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
+                                                            @endif
                                                         @endif
                                                     </td>
                                                 </tr>

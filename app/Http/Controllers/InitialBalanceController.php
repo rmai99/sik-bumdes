@@ -151,9 +151,9 @@ class InitialBalanceController extends Controller
 
     public function detailBalance(Request $request)
     {
-        $classification = InitialBalance::where('id', $request->id)
+        $data = InitialBalance::where('id', $request->id)
         ->get();
 
-        return response()->json($classification);
+        return response()->json($data);
     }
 }

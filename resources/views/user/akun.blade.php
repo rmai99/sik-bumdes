@@ -36,13 +36,13 @@
                             <th></th>
                             <th style="width:10%" class="text-center">
                                 <form action="{{ route('classification.destroy', $c->id) }}" method="post">
-                                    <button class="btnEditClassification" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editKlasifikasiModal"
+                                    <button class="btnEditClassification btn-icon" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editKlasifikasiModal"
                                         value="{{ $c->id }}" data-parent= "{{ $c->id_parent }}">
                                         <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
                                     </button>
                                         {{ csrf_field() }}
                                         {{ method_field('DELETE') }}
-                                    <button type="submit" rel="tooltip" title="Remove" onclick="return confirm('Anda yakin mau menghapus item ini ?')">
+                                    <button type="submit" rel="tooltip" title="Remove" onclick="return confirm('Anda yakin mau menghapus item ini ?')" class="btn-icon">
                                         <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
                                     </button>
                                 </form>
@@ -57,12 +57,12 @@
                                 <td>{{ $account->position }}</td>
                                 <td style="width:10%" class="text-center">
                                     <form action="{{ route('akun.destroy', $account->id) }}" method="post">
-                                        <button class="btnEditAccount" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editAkunModal" value="{{ $account->id }}" parent="{{ $p->id }}" classification="{{ $c->id }}">
+                                        <button class="btnEditAccount btn-icon" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editAkunModal" value="{{ $account->id }}" parent="{{ $p->id }}" classification="{{ $c->id }}">
                                             <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
                                         </button>
                                             {{ csrf_field() }}
                                             {{ method_field('DELETE') }}
-                                        <button type="submit" onclick="return confirm('Anda yakin mau menghapus item ini ?')">
+                                        <button type="submit" onclick="return confirm('Anda yakin mau menghapus item ini ?')" class="btn-icon">
                                                 <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
                                         </button>
                                     </form>

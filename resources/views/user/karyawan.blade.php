@@ -15,8 +15,8 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-12 text-right">
-                            <a href="{{ route('karyawan.create') }}"
-                                class="btn btn-sm btn-primary">Add user</a>
+                            <a href=""
+                                class="btn btn-sm btn-primary addEmployee" id="hmm">Tambah Karyawan</a>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -55,12 +55,12 @@
                                         </td>
                                         <td class="td-actions text-right">
                                             <form action="{{ route('karyawan.destroy', $item->id) }}" method="post">
-                                                <button type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editEmployee" value="{{ $item->id }}" class="btnEditEmployee">
+                                                <button type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editEmployee" value="{{ $item->id }}" class="btnEditEmployee btn-icon">
                                                     <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
                                                 </button>
                                                 {{ csrf_field() }}
                                                 {{ method_field('DELETE') }}
-                                                <button type="submit" onclick="return confirm('Anda yakin mau menghapus item ini ?')">
+                                                <button type="submit" onclick="return confirm('Anda yakin mau menghapus item ini ?')" class="btn-icon">
                                                         <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
                                                 </button>
                                             </form>
@@ -123,32 +123,60 @@
 @endsection
 @push('js')
     <script>
-        $(document).on('click', '.btnEditEmployee', function(){
-            var id = $(this).attr('value');
-            console.log(id);
-            $.ajax({
-                type        : 'GET',
-                url         : '{!!URL::to('detailEmployee')!!}',
-                data        : {'id' : id},
-                dataType    : 'html',
-                success     : function(data){
-                    var servers = $.parseJSON(data);
+        $(document).ready(function(){
+            $(document).on('click', '.addEmployee', function(e){
+                e.preventDefault();
+                $.ajax({
+                    type        :'GET',
+                    url         : '{!!URL::to('cekpro')!!}',
+                    dataType    : 'html',
+                    success     : function(data){
+                        var servers = $.parseJSON(data);
+                        if(servers.result == "REGULER"){
+                            swal.fire({
+                                title: "Ubah Akun Menjadi PRO",
+                                icon: "warning",
+                                closeOnClickOutside: false,
+                                showConfirmButton: false,
+                                // timer       :2000,
+                                footer: '<a href="/home">Upgrade Account?</a>'
+                            })
+                        } else {
+                            var href="{{ route('karyawan.create') }}"
+                            window.location.href = href;
+                        }
+                    }, error    : function(){
+                        
+                    },
+                })
+            })
+            $(document).on('click', '.btnEditEmployee', function(){
+                var id = $(this).attr('value');
+                console.log(id);
+                $.ajax({
+                    type        : 'GET',
+                    url         : '{!!URL::to('detailEmployee')!!}',
+                    data        : {'id' : id},
+                    dataType    : 'html',
+                    success     : function(data){
+                        var servers = $.parseJSON(data);
 
-                    $.each(servers, function(index, value){
-                        var name = value.name;
-                        var email = value.user.email;
-                        var business = value.business.id;
+                        $.each(servers, function(index, value){
+                            var name = value.name;
+                            var email = value.user.email;
+                            var business = value.business.id;
 
-                        $('div.name input').val(name);
-                        $('div.email input').val(email);
-                        $('div.business select').val(business);
-                    });
-                }, error : function(){
+                            $('div.name input').val(name);
+                            $('div.email input').val(email);
+                            $('div.business select').val(business);
+                        });
+                    }, error : function(){
 
-                },
-            });
-            var action = "{{route('karyawan.index')}}/"+id;
-            $('#formEdit').attr('action',action);
+                    },
+                });
+                var action = "{{route('karyawan.index')}}/"+id;
+                $('#formEdit').attr('action',action);
+            })
         })
     </script>
     @include('sweetalert::alert')

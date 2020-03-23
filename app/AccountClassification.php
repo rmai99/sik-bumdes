@@ -10,7 +10,7 @@ class AccountClassification extends Model
 
     public function account()
     {
-        return $this->hasMany('App\Account', 'id_classification');
+        return $this->hasMany('App\Account', 'id_classification')->orderby('account_code');
     }
     
     public function parent()

@@ -14,11 +14,7 @@ use App\Employee;
 
 class EmployeeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+ 
     public function index()
     {
         $user = Auth::user()->id;
@@ -35,11 +31,6 @@ class EmployeeController extends Controller
         return view('user/karyawan', compact('employee', 'business', 'session'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         $session = session('business');
@@ -52,12 +43,6 @@ class EmployeeController extends Controller
         return view('user/tambahKaryawan', compact('business', 'session'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         
@@ -81,35 +66,16 @@ class EmployeeController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         $data = Employee::where('id', $id)->first();
@@ -123,12 +89,6 @@ class EmployeeController extends Controller
         return redirect()->route('karyawan.index')->with('success','Berhasil Mengubah Karyawan!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         $data = Employee::where('id', $id)->first();
@@ -141,7 +101,6 @@ class EmployeeController extends Controller
     {
         $account = Employee::with('user','business')->where('id', $request->id)
         ->get();
-        // dd($account);
 
         return response()->json($account);
     }

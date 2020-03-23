@@ -112,12 +112,29 @@ class ProfileController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $user = Auth::user()->id;
+        $company = Companies::findOrFail($request->id);
+        $company->name = $request->name;
+        $company->address = $request->address;
+        $company->phone_number = $request->phone_number;
+        $company->is_actived = $request->is_actived;
+        $company->id_user = $request->id_user;
+        $company->save();
 
-        $data = Employee::where('id',$id)->first();
-        return redirect()->route('profile.index')->with('alert-success','Update Data Successfully!');
+        return redirect()->route('profile.index')->with('success','Berhasil Mengubah Profile!');;
+    }
+
+    public function updateEmployee(Request $request)
+    {
+        $company = Employee::findOrFail($request->id);
+        $company->name = $request->name;
+        $company->id_company = $request->id_company;
+        $company->id_business = $request->id_business;
+        $company->id_user = $request->id_user;
+        $company->save();
+
+        return redirect()->route('profile.index')->with('success','Berhasil Mengubah Profile!');;
     }
 
     /**

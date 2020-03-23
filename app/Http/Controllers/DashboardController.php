@@ -8,6 +8,8 @@ use Auth;
 use App\Companies;
 use App\Business;
 use App\Employee;
+use App\Account;
+use App\DetailJournal;
 
 class DashboardController extends Controller
 {
@@ -18,6 +20,8 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        $year = date('Y');
+        
         $user = Auth::user()->id;
         $role = Auth::user();
         $isOwner = $role->hasRole('owner');
@@ -39,9 +43,18 @@ class DashboardController extends Controller
 
             $session = $getBusiness;
         }
-        
-        
-        return view('user/dashboard', compact('business', 'session'));
+
+        $account = Account::whereHas('classification.parent', function ($q) use ($session){
+            $q->where('id_business', $session);
+        })
+        ->count();
+
+        $transaction = DetailJournal::whereHas('journal.account.classification.parent', function ($q) use ($session){
+            $q->where('id_business', $session);
+        })->whereYear('date', $year)
+        ->count();
+
+        return view('user/dashboard', compact('business', 'session', 'account', 'transaction'));
     }
 
     /**

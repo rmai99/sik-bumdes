@@ -42,12 +42,12 @@
                                         </td>
                                         <td class="td-actions text-right">
                                             <form action="{{ route('bisnis.destroy', $item->id) }}" method="post">
-                                                <button type="button" class="edit" value="{{$item->id}}" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editBusiness">
+                                                <button type="button" class="edit btn-icon" value="{{$item->id}}" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editBusiness">
                                                     <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
                                                 </button>
                                                 {{ csrf_field() }}
                                                 {{ method_field('DELETE') }}
-                                                <button type="submit" onclick="return confirm('Anda yakin mau menghapus item ini ?')">
+                                                <button type="submit" onclick="return confirm('Anda yakin mau menghapus item ini ?')" class="btn-icon">
                                                         <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
                                                 </button>
                                             </form>
@@ -127,7 +127,7 @@
         </div>
     </div>
 </div>
-@endsection
+@endsection`
 
 @push('js')
 <script>
@@ -166,7 +166,14 @@
                     // console.log(servers);
                     // console.log(servers.result);
                     if (servers.result == "REGULER") {
-                        swal.fire("PRO AKUN")
+                        swal.fire({
+                            title: "Ubah Akun Menjadi PRO",
+                            icon: "warning",
+                            closeOnClickOutside: false,
+                            showConfirmButton: false,
+                            // timer       :2000,
+                            footer: '<a href="/home">Upgrade Account?</a>'
+                        });
                     }else {
                         $('#tambahBisnis').modal('show')
                     }

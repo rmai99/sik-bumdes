@@ -83,8 +83,7 @@
                                         <td style="width:10%"><i class="material-icons float-right" style="opacity: 30%;">keyboard_arrow_down</i></td>
                                     </tr>
                                     @foreach ($p->classification as $c)
-                                    <tr class="accordian-body collapse accordion-toggle show data{{ $p->id }}"
-                                        data-toggle="collapse" data-target=".dataAkun{{ $c->id }}">
+                                    <tr class="accordian-body collapse accordion-toggle data{{ $p->id }}">
                                         <td style="width:60%;padding-left: 1.5rem!important;">
                                             {{ $c->classification_code }} - {{ $c->classification_name }}
                                         </td>
@@ -117,14 +116,14 @@
                                         <td style="width:10%">
                                             <form action="{{ route('neraca_awal.destroy', $item->id) }}" method="post">
                                                 <button type="button" rel="tooltip" title="Edit Akun" data-toggle="modal"
-                                                    data-target="#editNeracaAwalModal" class="editInitialBalance"
+                                                    data-target="#editNeracaAwalModal" class="editInitialBalance btn-icon"
                                                     value="{{ $item->id }}">
                                                     <i class="material-icons"
                                                         style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
                                                 </button>
                                                     {{ csrf_field() }}
                                                     {{ method_field('DELETE') }}
-                                                <button type="submit" rel="tooltip" title="Remove" onclick="return confirm('Yakin ingin menghapus data?')">
+                                                <button type="submit" rel="tooltip" title="Remove" onclick="return confirm('Yakin ingin menghapus data?')" class="btn-icon">
                                                     <i class="material-icons"style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
                                                 </button>
                                             </form>
@@ -252,6 +251,7 @@
         </div>
     </div>
 </div>
+
 @endsection
 @push('js')
 <script>
@@ -305,7 +305,7 @@
         });
         
         var action = "{{route('neraca_awal.index')}}/"+id;
-        $('#editInitial').attr('action',action);
+        $('#editInitial').attr('action', action);
 
     });
 

@@ -49,7 +49,7 @@ class AccountController extends Controller
         }
         $account_parent = AccountParent::with('classification.account')
         ->where('id_business', $session)
-        ->get();
+        ->orderby('parent_code')->get();
         
         return view('user.akun', compact('account_parent','business', 'session'));
     }

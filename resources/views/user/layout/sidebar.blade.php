@@ -83,7 +83,7 @@
                     </a>
                 </li>
                 <li class="nav-item ">
-                    <a class="nav-link" href="/perubahan-ekuitas">
+                    <a class="nav-link" href="/perubahan_ekuitas">
                         <span class="sidebar-mini"> RS </span>
                         <span class="sidebar-normal"> Laporan Perubahan Ekuitas </span>
                     </a>

@@ -158,13 +158,13 @@
                                                 @endif
                                             @endforeach
                                             <td>
-                                                <form action="" method="post">
-                                                    <button class="btnEditJournal" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editJournal" value="{{ $item->id }}">
+                                                <form action="{{route('jurnal_umum.destroy', $item->id)}}" method="post">
+                                                    <button class="btnEditJournal btn-icon" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editJournal" value="{{ $item->id }}">
                                                         <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
                                                     </button>
                                                         {{ csrf_field() }}
                                                         {{ method_field('DELETE') }}
-                                                    <button type="submit" onclick="return confirm('Anda yakin mau menghapus item ini ?')">
+                                                    <button type="submit" onclick="return confirm('Anda yakin mau menghapus item ini ?')" class="btn-icon">
                                                             <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
                                                     </button>
                                                 </form>
@@ -373,4 +373,5 @@
     })
     
 </script>
+@include('sweetalert::alert')
 @endpush

@@ -191,12 +191,15 @@ class GeneralJournalController extends Controller
         $kredit->amount = $request->debit;
         $kredit->save();
 
-        return redirect()->route('jurnal_umum.index')->with('success','Berhasil Mengubah Jurnal!');;
+        return redirect()->route('jurnal_umum.index')->with('success','Berhasil Mengubah Jurnal!');
             
     }
 
     public function destroy($id)
     {
-        //
+        $detail = DetailJournal::findOrFail($id);
+        $detail->delete();
+
+        return redirect()->route('jurnal_umum.index')->with('success','Berhasil Mengahapus data!');;
     }
 }

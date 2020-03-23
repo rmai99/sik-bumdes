@@ -96,7 +96,7 @@
                                             <p class="mb-0">Saldo Akhir</p>
                                         </div>
                                         <div class="col-lg-6">
-                                            <p class="mb-0"><strong> : Rp{{strrev(implode('.',str_split(strrev(strval($saldo_akhir)),3)))}}</strong></p>
+                                            <p class="mb-0"> : <strong id="saldo_akhir"></strong></p>
                                         </div>
                                     </div>
                                 </div>
@@ -142,12 +142,20 @@
                                         <td>{{ $d->detail->description }}</td>
                                         <td>
                                             @if ($d->position=="Debit")
-                                                Rp{{strrev(implode('.',str_split(strrev(strval($d->amount)),3)))}}
+                                                @if ($d->amount < 0)
+                                                    -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$d->amount)),3)))}}
+                                                @else
+                                                    Rp{{strrev(implode('.',str_split(strrev(strval($d->amount)),3)))}}
+                                                @endif
                                             @endif
                                         </td>
                                         <td>
                                             @if ($d->position == "Kredit")
-                                                Rp{{strrev(implode('.',str_split(strrev(strval($d->amount)),3)))}}
+                                                @if ($d->amount < 0)
+                                                    -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$d->amount)),3)))}}
+                                                @else
+                                                    Rp{{strrev(implode('.',str_split(strrev(strval($d->amount)),3)))}}
+                                                @endif
                                             @endif
                                         </td>
                                         <td>
@@ -172,7 +180,11 @@
                                                     @endphp
                                                 @endif
                                             @endif
-                                            Rp{{strrev(implode('.',str_split(strrev(strval($saldo_akhir)),3)))}}
+                                            @if ($saldo_akhir < 0)
+                                                -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$saldo_akhir)),3)))}}
+                                            @else
+                                                Rp{{strrev(implode('.',str_split(strrev(strval($saldo_akhir)),3)))}}
+                                            @endif
                                         </td>
                                     </tr>
                                     @endforeach
@@ -209,6 +221,10 @@
             }
         });
     });
+
+    var test = $('#generalLedger tr:last');
+    var tt = test.find("td:eq(4)").text();
+    $('#saldo_akhir').text(tt);
 
     $(document).on('click', '#search', function(e){
         e.preventDefault();

@@ -36,7 +36,7 @@
                         <i class="material-icons">info_outline</i>
                     </div>
                     <p class="card-category">Transaksi</p>
-                    <h3 class="card-title">75</h3>
+                    <h3 class="card-title">{{ $transaction }}</h3>
                 </div>
             </div>
         </div>
@@ -47,7 +47,7 @@
                             <i class="material-icons">account_balance_wallet</i>
                     </div>
                     <p class="card-category">Akun</p>
-                    <h3 class="card-title">45</h3>
+                    <h3 class="card-title">{{ $account }}</h3>
                 </div>
             </div>
         </div>
