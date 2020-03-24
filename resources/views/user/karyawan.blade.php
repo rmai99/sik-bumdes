@@ -1,8 +1,8 @@
 @extends('user/layout/template')
 
-@section('title', 'Profile')
+@section('title', 'Karyawan')
 
-@section('title-page', 'Profile')
+@section('title-page', 'Karyawan')
 
 @section('content')
 <div class="container-fluid">
