@@ -129,9 +129,6 @@ class ProfileController extends Controller
     {
         $company = Employee::findOrFail($request->id);
         $company->name = $request->name;
-        $company->id_company = $request->id_company;
-        $company->id_business = $request->id_business;
-        $company->id_user = $request->id_user;
         $company->save();
 
         return redirect()->route('profile.index')->with('success','Berhasil Mengubah Profile!');;
