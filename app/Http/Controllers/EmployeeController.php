@@ -81,7 +81,6 @@ class EmployeeController extends Controller
         $data = Employee::where('id', $id)->first();
 
         $data->name = $request->name;
-        $data->id_business = $request->name;
         $data->id_business = $request->id_business;
         
         $data->save();
