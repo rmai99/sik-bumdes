@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class LoginController extends Controller
 {
@@ -26,7 +28,19 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    // protected $redirectTo = RouteServiceProvider::HOME;
+
+    protected function authenticated(Request $request, $user){
+        if($user->hasRole('super-admin'))
+        {
+            return redirect('user/upgrade');
+        } 
+        else if ($user->hasRole('owner') || $user->hasRole('employee'))
+        {
+            return redirect()->route('akun.index');
+        }
+    }
+
 
     /**
      * Create a new controller instance.
