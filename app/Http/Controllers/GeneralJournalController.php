@@ -179,13 +179,13 @@ class GeneralJournalController extends Controller
         $detail->date = $request->date;
         $detail->save();
 
-        $kredit = GeneralJournal::findOrFail($request->id_debit);
+        $kredit = GeneralJournal::findOrFail($request->id_credit);
         $kredit->id_account = $request->id_credit_account;
         $kredit->position = "Kredit";
         $kredit->amount = $request->credit;
         $kredit->save();
 
-        $kredit = GeneralJournal::findOrFail($request->id_credit);
+        $kredit = GeneralJournal::findOrFail($request->id_debit);
         $kredit->id_account = $request->id_debit_account;
         $kredit->position = "Debit";
         $kredit->amount = $request->debit;

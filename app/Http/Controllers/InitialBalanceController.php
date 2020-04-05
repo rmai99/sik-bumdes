@@ -82,6 +82,18 @@ class InitialBalanceController extends Controller
     public function store(Request $request)
     {
         $data = InitialBalance::where('id_account', $request->id_account)->first();
+
+        if($data){
+            $dates = date('Y-m-d', strtotime($data->date . " +1 year") );
+        } else {
+            $dates = 0000-00-00;
+        }
+        
+        $this->validate($request,[
+            'id_account' => 'required',
+            'amount' => 'required',
+            'date' => 'required|after_or_equal:'.$dates,
+        ]);
         
 
         if($data){
@@ -117,20 +129,6 @@ class InitialBalanceController extends Controller
 
     public function update(Request $request, $id)
     {
-        $data = InitialBalance::where('id_account', $request->id_account)->first();
-
-        if($data){
-            $dates = date('Y-m-d', strtotime($data->date . " +1 year") );
-        } else {
-            $dates = 0000-00-00;
-        }
-        
-        $this->validate($request,[
-            'id_account' => 'required',
-            'amount' => 'required',
-            'date' => 'required|after_or_equal:'.$dates,
-        ]);
-
         $data = InitialBalance::where('id', $id)->first();
 
         $data->id_account = $request->id_account;

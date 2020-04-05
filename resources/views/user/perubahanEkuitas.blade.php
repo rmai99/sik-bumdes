@@ -69,7 +69,7 @@
                                                 <td style="width:15%"></td>
                                                 <td style="width:15%"></td>
                                                 <td class="text-right" style="width:10%">
-                                                    {{ $array[$i]['saldo_akhir'] }}
+                                                    Rp{{strrev(implode('.',str_split(strrev(strval($array[$i]['saldo_akhir'])),3)))}}
                                                     @php
                                                         $modal_awal += $array[$i]['saldo_akhir'];
                                                     @endphp
@@ -94,7 +94,7 @@
                                                 <td style="width:15%"></td>
                                                 <td style="width:15%"></td>
                                                 <td class="text-right" style="width:10%">
-                                                    {{ $array[$i]['saldo_akhir'] }}
+                                                    Rp{{strrev(implode('.',str_split(strrev(strval($array[$i]['saldo_akhir'])),3)))}}
                                                     @php
                                                         $modal_awal += $array[$i]['saldo_akhir'];
                                                     @endphp
@@ -108,7 +108,9 @@
                                                 </td>
                                                 <td style="width:15%"></td>
                                                 <td style="width:15%"></td>
-                                                <td class="text-right" style="width:10%">{{ $saldo_berjalan }}</td>
+                                                <td class="text-right" style="width:10%">
+                                                    Rp{{strrev(implode('.',str_split(strrev(strval($saldo_berjalan)),3)))}}
+                                                </td>
                                             </tr>
                                         @endif
                                     @endfor
@@ -119,7 +121,7 @@
                                         <td style="width:15%"></td>
                                         <td style="width:15%"></td>
                                         <td class="text-right" style="width:10%">
-                                            {{ $modal_awal + $saldo_berjalan }}
+                                            Rp{{strrev(implode('.',str_split(strrev(strval($modal_awal + $saldo_berjalan)),3)))}}
                                         </td>
                                     </tr>
                                 </tbody>

@@ -40,7 +40,7 @@
                                         <td>
                                             {{ $item->created_at}}
                                         </td>
-                                        <td class="td-actions text-right">
+                                        <td class="text-right">
                                             <form action="{{ route('bisnis.destroy', $item->id) }}" method="post">
                                                 <button type="button" class="edit btn-icon" value="{{$item->id}}" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editBusiness">
                                                     <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>

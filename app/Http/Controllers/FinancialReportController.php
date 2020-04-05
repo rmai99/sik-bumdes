@@ -176,12 +176,11 @@ class FinancialReportController extends Controller
 
         $sum_pendapatan = 0;
         $biaya = 0;
+
         foreach($parent as $p){
             $i = 0;
-            $classification = $p->classification()->get();
-            foreach($classification as $c){
-                $account = $c->account()->get();
-                foreach($account as $a){
+            foreach($p->classification as $c){
+                foreach($c->account as $a){
                     $position = $a->position;
 
                     if(!$a->initialBalance()->whereYear('date', $year)->first()){
@@ -210,7 +209,6 @@ class FinancialReportController extends Controller
                             $saldo_akhir = 0;
                         }
                     }
-                    
                     if($p->parent_name == "Pendapatan"){
                         $sum_pendapatan += $saldo_akhir;
                     } 

@@ -16,6 +16,8 @@
 
     $saldo_awal = $log['saldo_awal'][0];
     $saldo_akhir = $log['saldo_awal'][0];
+    $debit = 0;
+    $kredit = 0;
 @endphp
 <div class="content">
     <div class="container-fluid">
@@ -105,27 +107,18 @@
                         <div class="material-datatables mt-4">
                             <table id="generalLedger" class="table table-striped table-no-bordered table-hover"
                                 cellspacing="0" width="100%" style="width:100%">
-                                <thead>
+                                <thead class="text-center">
                                     <tr>
-                                        <th rowspan="2">Tanggal</th>
-                                        <th rowspan="2">Keterangan</th>
+                                        <th rowspan="2" style="width:15%">Tanggal</th>
+                                        <th rowspan="2" style="width:40%">Keterangan</th>
                                         <th colspan="2" class="text-center">Nama Akun</th>
-                                        <th>Saldo</th>
+                                        <th rowspan="2">Saldo</th>
                                     </tr>
                                     <tr>
                                         <th class="text-center">Debit</th>
                                         <th class="text-center">Kredit</th>
                                     </tr>
                                 </thead>
-                                <tfoot>
-                                    <tr>
-                                        <th>Tanggal</th>
-                                        <th>Keterangan</th>
-                                        <th>Debit</th>
-                                        <th>Kredit</th>
-                                        <th>Saldo</th>
-                                    </tr>    
-                                </tfoot>
                                 <tbody>
                                     <tr>
                                         <td>{{$log['date'][0]}}</td>
@@ -147,6 +140,9 @@
                                                 @else
                                                     Rp{{strrev(implode('.',str_split(strrev(strval($d->amount)),3)))}}
                                                 @endif
+                                                @php
+                                                    $debit += $d->amount;
+                                                @endphp
                                             @endif
                                         </td>
                                         <td>
@@ -156,6 +152,9 @@
                                                 @else
                                                     Rp{{strrev(implode('.',str_split(strrev(strval($d->amount)),3)))}}
                                                 @endif
+                                                @php
+                                                    $kredit += $d->amount;
+                                                @endphp
                                             @endif
                                         </td>
                                         <td>
@@ -189,6 +188,15 @@
                                     </tr>
                                     @endforeach
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Tanggal</th>
+                                        <th>Keterangan</th>
+                                        <th>{{ $debit }}</th>
+                                        <th>{{ $kredit }}</th>
+                                        <th>Saldo</th>
+                                    </tr>    
+                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -224,6 +232,8 @@
 
     var test = $('#generalLedger tr:last');
     var tt = test.find("td:eq(4)").text();
+    console.log(test);
+    alert(test);
     $('#saldo_akhir').text(tt);
 
     $(document).on('click', '#search', function(e){

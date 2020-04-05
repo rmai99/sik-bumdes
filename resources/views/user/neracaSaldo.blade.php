@@ -100,6 +100,9 @@
                                                             @else
                                                                 Rp{{strrev(implode('.',str_split(strrev(strval($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
                                                             @endif
+                                                            @php
+                                                                $jumlah_debit += $save[$i]['classification'][$j]['account'][$k]['saldo_akhir']
+                                                            @endphp
                                                         @endif
                                                     </td>
                                                     <td>
@@ -109,6 +112,9 @@
                                                             @else 
                                                                 Rp{{strrev(implode('.',str_split(strrev(strval($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
                                                             @endif
+                                                            @php
+                                                                $jumlah_kredit += $save[$i]['classification'][$j]['account'][$k]['saldo_akhir']
+                                                            @endphp
                                                         @endif
                                                     </td>
                                                 </tr>
@@ -117,6 +123,13 @@
                                     @endfor
                                 @endfor
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="2"><strong>Total</strong></td>
+                                        <td><strong>{{ $jumlah_debit }} </strong></td>
+                                        <td><strong> {{ $jumlah_kredit }} </strong></td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>

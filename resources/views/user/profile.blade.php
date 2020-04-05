@@ -83,7 +83,6 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="bmd-label-floating">Company (disabled)</label>
-                                <input type="hidden" class="form-control" value="{{ $data->company->id }}" name="id_company">
                                 <input type="text" class="form-control" disabled value="{{ $data->company->name }}">
                             </div>
                         </div>
@@ -93,7 +92,6 @@
                             <div class="form-group">
                                 <label class="bmd-label-floating">Nama Lengkap</label>
                                 <input type="text" class="form-control" value="{{ $data->name }}" name="name">
-                                <input type="hidden" class="form-control" value="{{ $data->id_user }}" name="id_user">
                                 <input type="hidden" class="form-control" value="{{ $data->id }}" name="id">
                             </div>
                         </div>
@@ -108,7 +106,6 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="bmd-label-floating">Bisnis</label>
-                                <input type="hidden" class="form-control" value="{{ $data->business->id }}" name="id_business">
                                 <input type="text" class="form-control" disabled value="{{ $data->business->business_name }}">
                             </div>
                         </div>

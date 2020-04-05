@@ -167,7 +167,7 @@
 
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Tanggal</h6>
-                                <input type="date" class="form-control" aria-describedby="date" placeholder="" name="date">
+                                <input type="date" class="form-control" aria-describedby="date" placeholder="" name="date" required="true" aria-required="true">
                             </div>
 
                             <div class="form-group">
@@ -186,7 +186,7 @@
 
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Jumlah</h6>
-                                <input name="amount" type="number" class="form-control" id="harga" onkeyup="copytextbox();" value="{{session()->get('properti.harga') }}">
+                                <input name="amount" type="number" class="form-control" id="harga" onkeyup="copytextbox();" value="{{session()->get('properti.harga') }}" required="true" aria-required="true">
                                 <input type="text" class="form-control" id="hasil" disabled>
                             </div>
                         </div>

@@ -384,12 +384,16 @@
                 dataType    : 'html',
                 success     : function(data){
                     var servers = $.parseJSON(data);
+                    console.log(data);
+                    console.log(servers);
 
                     $.each(servers, function(index, value){
                         var classification = value.id_classification;
                         var account_code = value.account_code;
                         var account_name = value.account_name;
                         var position = value.position;
+
+                        console.log(account_name);
 
                         $('div.classification select').val(classification);
                         $('div.acountCode input').val(account_code);

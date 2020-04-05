@@ -45,7 +45,7 @@
                                 <div class="col-md-1 pr-2">
                                     <div class="form-group">
                                         <strong class="mr-3">Tahun</strong>
-                                        <select class="w-100 pl-1 padding-select groupbyYear" id="" style="border-radius: 3px;">
+                                        <select class="w-100 pl-1 padding-select groupbyYear" style="border-radius: 3px;">
                                             <option value="0" disabled="true" selected="true">Year</option>
                                             @foreach ($years as $y)
                                             <option id="year" name="year" value="{{$y->year}}"
@@ -57,7 +57,7 @@
                                 <div class="col-md-1 pl-0 pr-2">
                                     <div class="form-group">
                                         <strong class="mr-3">Bulan</strong>
-                                        <select class="w-100 pl-1 padding-select groupbyMonth" id="" style="border-radius: 3px;">
+                                        <select class="w-100 pl-1 padding-select groupbyMonth" style="border-radius: 3px;">
                                             <option value="0" disabled="true" selected="true">Month</option>
                                             <option value="0">All</option>
                                             <option value="01" {{ $month == '01' ? 'selected' : '' }}>Januari</option>
@@ -78,7 +78,7 @@
                                 <div class="col-md-2 pl-0 pl-0">
                                     <div class="form-group">
                                         <strong class="mr-3">Tanggal</strong>
-                                        <select class="w-100 pl-1 padding-select groupbyDate" id="" style="border-radius: 3px;">
+                                        <select class="w-100 pl-1 padding-select groupbyDate" style="border-radius: 3px;" disabled>
                                             <option selected="true" value="null" selected>All</option>
                                             <option value="01" {{ $day == '01' ? 'selected' : '' }}>1</option>
                                             <option value="02" {{ $day == '02' ? 'selected' : '' }}>2</option>
@@ -125,12 +125,12 @@
                         </div>
                         <div class="material-datatables">
                             <table class="table" id="datatables" cellspacing="0" width="100%" class="table table-striped table-no-bordered table-hover">
-                                <thead>
+                                <thead class="text-center">
                                     <tr>
                                         <th rowspan="2">Tanggal</th>
-                                        <th rowspan="2">No Kwitansi</th>
+                                        <th rowspan="2" style="width:10%">No Kwitansi</th>
                                         <th rowspan="2">Keterangan</th>
-                                        <th colspan="2">debit</th>
+                                        <th colspan="2">Debit</th>
                                         <th colspan="2">Kredit</th>
                                         <th rowspan="2">aksi</th>
                                     </tr>
@@ -138,16 +138,16 @@
                                         <th>Akun</th>
                                         <th>Jumlah</th>
                                         <th>Akun</th>
-                                        <th>jumlah</th>
+                                        <th>Jumlah</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($data as $item)
                                         <tr>
-                                            <td>{{ $item->date }}</td>
+                                            <td style="width:15%">{{ $item->date }}</td>
                                             <td>{{ $item->receipt }}</td>
-                                            <td>{{ $item->description }}</td>
-                                            @foreach ($item->journal()->get() as $cek)
+                                            <td style="width:35%">{{ $item->description }}</td>
+                                            @foreach ($item->journal()->orderBy('id', 'desc')->get() as $cek)
                                                 @if ($cek->position == "Debit")
                                                     <td>{{ $cek->account->account_name }}</td>
                                                     <td>{{ $cek->amount }}</td>
@@ -157,7 +157,7 @@
                                                     <td>{{ $cek->amount }}</td>
                                                 @endif
                                             @endforeach
-                                            <td>
+                                            <td style="width:10%" class="text-center">
                                                 <form action="{{route('jurnal_umum.destroy', $item->id)}}" method="post">
                                                     <button class="btnEditJournal btn-icon" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editJournal" value="{{ $item->id }}">
                                                         <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
@@ -178,6 +178,7 @@
                     <!-- end content-->
                 </div>
                 <!--  end card  -->
+                
             </div>
             <!-- end col-md-12 -->
         </div>
@@ -248,7 +249,7 @@
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group credit">
-                                        <h6 class="text-dark font-weight-bold m-0">Debit Akun</h6>
+                                        <h6 class="text-dark font-weight-bold m-0">Kredit Akun</h6>
                                         <input type="hidden" name="id_credit">
                                         <select class="form-control" name="id_credit_account">
                                             <option value="0" disabled="true" selected="true">Select Akun</option>
@@ -302,7 +303,7 @@
         var year = $("select.groupbyYear").val();
         var month = $("select.groupbyMonth").val();
         var day = $("select.groupbyDate").val();
-        // console.log(day);
+
         var url = "{{route('jurnal_umum.index')}}?year=" + year;
         if (month != null) {
             url = url + "&month=" + month;
@@ -315,16 +316,17 @@
         console.log(url);
         window.location.href = url;
     });
+
     $(document).ready(function() {
         
-        var month = $("select.month").val();
+        var month = $("select.groupbyMonth").val();
         
         if (month != null) {
-            $('select.day').prop('disabled', false);
+            $('select.groupbyDate').prop('disabled', false);
         }
     });
-    $(document).on('change', 'select.month', function(e){
-        $('select.day').prop('disabled', false);
+    $(document).on('change', 'select.groupbyMonth', function(e){
+        $('select.groupbyDate').prop('disabled', false);
     });
 
     $(document).on('click', '.btnEditJournal', function(){
@@ -336,19 +338,21 @@
             dataType    : 'html',
             success     : function(data){
                 var servers = $.parseJSON(data);
+                console.log(servers);
                 
                 $.each(servers, function(index, value){
                     var detail = value.id;
                     var receipt = value.receipt;
                     var date = value.date;
                     var description = value.description;
-                    var id_debit = value.journal[0].id;
-                    var id_account_debit = value.journal[0].id_account;
-                    var amount_debit = value.journal[0].amount;
-                    var id_credit = value.journal[1].id;
-                    var id_account_credit = value.journal[1].id_account;
-                    var amount_credit = value.journal[1].amount;
+                    var id_debit = value.journal[1].id;
+                    var id_account_debit = value.journal[1].id_account;
+                    var amount_debit = value.journal[1].amount;
+                    var id_credit = value.journal[0].id;
+                    var id_account_credit = value.journal[0].id_account;
+                    var amount_credit = value.journal[0].amount;
 
+                    console.log(id_debit);
                     $('div.detail input').val(detail);
                     $('div.receipt input').val(receipt);
                     $('div.date input').val(date);
