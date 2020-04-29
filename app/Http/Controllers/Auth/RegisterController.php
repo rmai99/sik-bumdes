@@ -105,7 +105,7 @@ class RegisterController extends Controller
 			array("Kas" => array("1110"=>"Debit"), "Kas di Bank" => array("1111" => "Debit"), "Piutang Dagang" => array("1120" => "Debit"), "Sewa Dibayar Dimuka" => array("1130" => "Debit")),
 			array("Tanah" => array("1210" => "Debit"), "Gedung" => array("1220" => "Debit"), "Akumulasi Penyusutan Gedung" => array("1220-1" => "Kredit"), "Kendaraan" => array("1230" => "Debit"), "Akumulasi Penyusutan Kendaraan" => array("1230-1" => "Kredit"), "Peralatan Kantor" => array("1240" => "Debit"), "Akumulasi Penyusutan Peralatan Kantor" => array("1240-1" => "Kredit")),
 			array("Aset Lainnya" => array("1310" => "Debit")),
-            array("Utang Dagang" => array("2110" => "Debit"), "Utang Gaji" => array("2120"=>"Kredit"), "Utang Bank" => array("2130" => "Kredit")),
+            array("Utang Dagang" => array("2110" => "Kredit"), "Utang Gaji" => array("2120"=>"Kredit"), "Utang Bank" => array("2130" => "Kredit")),
             array("Obligasi" => array("2210" => "Kredit")),
             array("Modal Disetor" => array("3100" => "Kredit"), "Saldo Laba Ditahan" => array("3110"=>"Kredit"), "Saldo Laba Tahun Berjalan" => array("3120" => "Kredit")),
             array("Pendapatan Wisata" => array("4110" => "Kredit"), "Pendapatan Homestay" => array("4120" => "Kredit"), "Pendapatan Resto" => array("4130" => "Kredit"), "Pendapatan Event" => array("4140" => "Kredit")),

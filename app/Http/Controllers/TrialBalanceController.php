@@ -16,6 +16,14 @@ use App\DetailJournal;
 
 class TrialBalanceController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['role:owner|employee']);
+
+        $this->middleware('auth');
+        
+    }
+    
     public function index()
     {
         if (isset($_GET['year'])) {

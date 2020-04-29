@@ -14,7 +14,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table table-striped table-no-bordered table-hover" id="datatables">
                             <thead class="text-black font-weight-bold">
                                 <th class="font-weight-bold">
                                     Nama
@@ -31,7 +31,7 @@
                                 <th class="font-weight-bold">
                                     Status
                                 </th>
-                                <th class="font-weight-bold">
+                                <th class="disabled-sorting font-weight-bold">
                                     Aksi
                                 </th>
                             </thead>
@@ -148,6 +148,21 @@
 @endsection
 @push('js')
     <script>
+        $(document).ready(function () {
+            $('#datatables').DataTable({
+                "pagingType"        : "full_numbers",
+                "lengthMenu"        : [
+                                    [10, 25, 50, -1],
+                                    [10, 25, 50, "All"]
+                                    ],
+                responsive          : true, 
+                language            : {
+                search              : "_INPUT_",
+                searchPlaceholder   : "Cari",
+                }
+            });
+        });
+        
         $(document).ready(function(){
             $(document).on('click', '.edit', function(){
                 var id = $(this).attr('value');

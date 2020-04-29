@@ -162,6 +162,7 @@
                 var year = $('#yearFilter').val();
                 
                 var path = "{{ route('admin.user_register') }}?year="+year;
+                console.log(path);
                 window.salesChart.destroy();
                 $.ajax({
                     type        : 'GET',

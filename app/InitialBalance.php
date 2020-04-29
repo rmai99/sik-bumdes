@@ -10,6 +10,6 @@ class InitialBalance extends Model
 
     public function account()
     {
-        return $this->belongsTo('App\Account', 'id_account');
+        return $this->belongsTo('App\Account', 'id_account')->orderby('account_code');
     }
 }

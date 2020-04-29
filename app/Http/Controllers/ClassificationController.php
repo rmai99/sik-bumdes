@@ -7,6 +7,14 @@ use App\AccountClassification;
 
 class ClassificationController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['role:owner|employee']);
+
+        $this->middleware('auth');
+        
+    }
+    
     public function detailClassification(Request $request)
     {
         $classification = AccountClassification::where('id', $request->id)

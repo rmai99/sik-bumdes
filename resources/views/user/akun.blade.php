@@ -56,16 +56,12 @@
                                 <td style="width:60%" class="p-2">{{ $account->account_name }}</td>
                                 <td>{{ $account->position }}</td>
                                 <td style="width:10%" class="text-center">
-                                    <form action="{{ route('akun.destroy', $account->id) }}" method="post">
-                                        <button class="btnEditAccount btn-icon" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editAkunModal" value="{{ $account->id }}" parent="{{ $p->id }}" classification="{{ $c->id }}">
-                                            <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
-                                        </button>
-                                            {{ csrf_field() }}
-                                            {{ method_field('DELETE') }}
-                                        <button type="submit" onclick="return confirm('Anda yakin mau menghapus item ini ?')" class="btn-icon">
-                                                <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
-                                        </button>
-                                    </form>
+                                    <button class="btnEditAccount btn-icon" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editAkunModal" value="{{ $account->id }}" parent="{{ $p->id }}" classification="{{ $c->id }}">
+                                        <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
+                                    </button>
+                                    <button type="button" class="btn-icon remove" id="{{ $account->id }}">
+                                            <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
+                                    </button>
                                 </td>
                             </tr>
                         @endforeach
@@ -197,8 +193,8 @@
                             {{ csrf_field() }}
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Parent Akun</h6>
-                                <select class="form-control changeParent_" id="">
-                                    <option disabled="true" selected="true">Parent Akun</option>
+                                <select class="form-control changeParent_" required>
+                                    <option selected="true" value="">Parent Akun</option>
                                     @foreach ($account_parent as $a)
                                         <option value="{{$a->id}}">
                                             {{$a->parent_name}}
@@ -209,8 +205,8 @@
 
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Klasifikasi Akun</h6>
-                                <select class="form-control classification_" name="classificationAkun">
-                                    <option disabled="true" selected="true">Klasifikasi Akun</option>
+                                <select class="form-control classification_" name="classificationAkun" required>
+                                    <option selected="true" value="">Klasifikasi Akun</option>
                                     @foreach ($account_parent as $a)
                                         @foreach ($a->classification as $classification)
                                             <option value="{{$classification->id}}">
@@ -225,13 +221,13 @@
                                 <div class="form-group col-6">
                                     <h6 class="text-dark font-weight-bold m-0">Kode Akun</h6>
                                     <input type="text" class="form-control" name="codeAkun" aria-describedby="kodeAkun"
-                                        placeholder="ex. 1110">
+                                        placeholder="ex. 1110" required>
                                 </div>
 
                                 <div class="form-group col-6">
                                     <h6 class="text-dark font-weight-bold m-0">Posisi Normal</h6>
-                                    <select class="form-control" name="position">
-                                        <option disabled="true" selected="true">Posisi</option>
+                                    <select class="form-control" name="position" required>
+                                        <option selected="true" value="">Posisi</option>
                                         <option value="Debit">Debit</option>
                                         <option value="Kredit">Kredit</option>
                                     </select>
@@ -241,7 +237,7 @@
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Nama Akun</h6>
                                 <input type="text" class="form-control" name="akun" aria-describedby="namaAkun"
-                                    placeholder="ex. kas di bank">
+                                    placeholder="ex. kas di bank" required>
                             </div>
 
 
@@ -445,7 +441,7 @@
                 url         : '{!!URL::to('findClassification')!!}',
                 data        : {'id':parent},
                 success:function(data){
-                    op+='<option value="0" disabled="true" selected="true">Select Classification</option>';
+                    op+='<option value="" selected="true">Select Classification</option>';
                     for(var i=0;i<data.length;i++){
                         op+='<option value="'+data[i].id+'">'+data[i].classification_name+'</option>'
                     }
@@ -460,6 +456,48 @@
             });
 
         });
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        // Delete a record
+        $(document).on('click', '.remove', function(e) {
+            e.preventDefault();
+            var id = $(this).attr('id');
+            
+            // console.log(sid);
+            var url = "{{ route('akun.index') }}/"+id;
+            Swal.fire({
+                title: 'Anda yakin ingin menghapus bisnis?',
+                text: "Data akan dihapus secara permanen",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: "delete",
+                        url: url,
+                        dataType: "json",
+                        success: (response) => {
+                            Swal.fire(
+                            'Dihapus!',
+                            'Bisnis telah dihapus.',
+                            'success'
+                            )
+                            console.log(url);
+                            $(this).closest('tr').remove();
+                        }
+                    });
+                }
+            })
+        });
+
             
     });
 </script>

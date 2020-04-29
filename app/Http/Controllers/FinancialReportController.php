@@ -14,6 +14,14 @@ use App\Employee;
 
 class FinancialReportController extends Controller
 {
+    
+    public function __construct()
+    {
+        $this->middleware(['role:owner|employee']);
+
+        $this->middleware('auth');
+        
+    }
     public function incomeStatement()
     {
         if (isset($_GET['year'])) {
@@ -55,7 +63,8 @@ class FinancialReportController extends Controller
         $arraybeban = array();
         $array_pendapatan_lainnya = array();
         $array_biaya_lainnya = array();
-        $biaya = 0;
+        $biaya_lain = 0;
+        $pendapatan_lain = 0;
         $pendapatan = 0;
 
         foreach($parent as $p){
@@ -98,6 +107,12 @@ class FinancialReportController extends Controller
                         $array[$i]['nama'][] = $a->account_name;
                         $array[$i]['kode'][] = $a->account_code;
                         $array[$i]['saldo_akhir'][] = $saldo_akhir;
+                        if($position == "Kredit"){
+                            $pendapatan += $saldo_akhir;
+                        } else {
+                            $pendapatan -= $saldo_akhir;
+                        }
+                        
                     } 
                     else if($p->parent_name == "Beban"){
                         $bebanArray[$i]['class'] = $c->classification_name;
@@ -111,21 +126,21 @@ class FinancialReportController extends Controller
                         $array_pendapatan_lainnya[$i]['nama'][] = $a->account_name;
                         $array_pendapatan_lainnya[$i]['kode'][] = $a->account_code;
                         $array_pendapatan_lainnya[$i]['saldo_akhir'][] = $saldo_akhir;
-                        $array_pendapatan_lainnya[$i]['sum'] = $pendapatan + $saldo_akhir;
+                        $array_pendapatan_lainnya[$i]['sum'] = $pendapatan_lain + $saldo_akhir;
                     }
                     else if($p->parent_name == "Biaya Lainnya"){
                         $array_biaya_lainnya[$i]['class'] = $c->classification_name;
                         $array_biaya_lainnya[$i]['nama'][] = $a->account_name;
                         $array_biaya_lainnya[$i]['kode'][] = $a->account_code;
                         $array_biaya_lainnya[$i]['saldo_akhir'][] = $saldo_akhir;
-                        $array_biaya_lainnya[$i]['sum'] = $biaya + $saldo_akhir;
+                        $array_biaya_lainnya[$i]['sum'] = $biaya_lain + $saldo_akhir;
                     }
 
                 }
                 $i++;
             }
         }
-        // dd($array, $bebanArray, $array_pendapatan_lainnya, $array_biaya_lainnya);
+        // dd($array, $bebanArray, $array_pendapatan_lainnya, $array_biaya_lainnya, $pendapatan);
         
         $years = InitialBalance::whereHas('account.classification.parent', function($q) use ($session){
             $q->where('id_business', $session);
@@ -134,7 +149,7 @@ class FinancialReportController extends Controller
         ->distinct()
         ->get();
         
-        return view('user.laporanLabaRugi', compact('array', 'business', 'bebanArray', 'years', 'year', 'session', 'array_pendapatan_lainnya', 'array_biaya_lainnya'));
+        return view('user.laporanLabaRugi', compact('array', 'business', 'bebanArray', 'years', 'year', 'session', 'array_pendapatan_lainnya', 'array_biaya_lainnya', 'pendapatan'));
     }
 
     public function changeInEquity()
@@ -210,7 +225,11 @@ class FinancialReportController extends Controller
                         }
                     }
                     if($p->parent_name == "Pendapatan"){
-                        $sum_pendapatan += $saldo_akhir;
+                        if($position == "Kredit"){
+                            $sum_pendapatan += $saldo_akhir;
+                        } else {
+                            $sum_pendapatan -= $saldo_akhir;
+                        }
                     } 
                     else if($p->parent_name == "Beban"){
                         $biaya += $saldo_akhir;
@@ -229,6 +248,7 @@ class FinancialReportController extends Controller
         }
         
         $saldo_berjalan = $sum_pendapatan - $biaya;
+        // dd($saldo_berjalan);
 
         $ekuitas = AccountParent::with('classification.account')
         ->where('parent_name', 'Ekuitas')

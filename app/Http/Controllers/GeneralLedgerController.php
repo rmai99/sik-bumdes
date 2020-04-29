@@ -15,6 +15,15 @@ use App\Employee;
 
 class GeneralLedgerController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware(['role:owner|employee']);
+
+        $this->middleware('auth');
+        
+    }
+    
     public function index()
     {
         $user = Auth::user()->id;

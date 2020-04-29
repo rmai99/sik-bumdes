@@ -52,8 +52,6 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="bmd-label-floating">Status</label>
-                                <input type="hidden" name="id_actived" value="{{ $data->is_actived }}">
-                                <input type="hidden" name="id_user" value="{{ $data->id_user }}">
                                 <input type="text" class="form-control" 
                                 @if ($data->is_actived == 0)
                                     value="Reguler"

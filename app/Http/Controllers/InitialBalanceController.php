@@ -14,6 +14,14 @@ use App\Employee;
 
 class InitialBalanceController extends Controller
 {
+    
+    public function __construct()
+    {
+        $this->middleware(['role:owner|employee']);
+
+        $this->middleware('auth');
+        
+    }
     /**
      * Display a listing of the resource.
      *
@@ -95,19 +103,6 @@ class InitialBalanceController extends Controller
             'date' => 'required|after_or_equal:'.$dates,
         ]);
         
-
-        if($data){
-            $dates = date('Y-m-d', strtotime($data->date . " +1 year") );
-        } else {
-            $dates = 0000-00-00;
-        }
-        
-        $this->validate($request,[
-            'id_account' => 'required',
-            'amount' => 'required',
-            'date' => 'required|after_or_equal:'.$dates,
-        ]);
-
         $data = new InitialBalance();
         $data->date = $request->date;
         $data->id_account = $request->id_account;
@@ -141,10 +136,11 @@ class InitialBalanceController extends Controller
 
     public function destroy($id)
     {
-        $data = InitialBalance::where('id', $id)->first();
-        $data->delete();
+        InitialBalance::find($id)->delete($id);
 
-        return redirect()->route('neraca_awal.index')->with('success','Berhasil Menghapus Data!');;
+        return response()->json([
+            'success' => 'Record deleted successfully!'
+        ]);
     }
 
     public function detailBalance(Request $request)

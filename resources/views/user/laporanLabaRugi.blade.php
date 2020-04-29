@@ -60,7 +60,6 @@
                                         <td style="width:10%"></td>
                                     </tr>
                                         @php
-                                            $sum = 0;
                                             $sum_biaya = 0;
                                             $another_sum = 0;
                                             $another_biaya = 0;
@@ -83,7 +82,7 @@
                                                         </td>
                                                         <td style="width:15%">
                                                         </td>
-                                                        <td style="width:15%">
+                                                        <td style="width:10%">
                                                         </td>
                                                         <td class="text-right" style="width:10%">
                                                             @if ($array[$i]['saldo_akhir'][$y] < 0)
@@ -91,9 +90,6 @@
                                                             @else
                                                                 Rp{{strrev(implode('.',str_split(strrev(strval($array[$i]['saldo_akhir'][$y])),3)))}}
                                                             @endif
-                                                            @php
-                                                                $sum += $array[$i]['saldo_akhir'][$y];
-                                                            @endphp
                                                         </td>
                                                     </tr>
                                                 @endif
@@ -115,7 +111,7 @@
                                         <td style="width:15%"></td>
                                         <td style="width:15%"></td>
                                         <td class="text-right" style="width:10%">
-                                            Rp{{strrev(implode('.',str_split(strrev(strval($sum)),3)))}}
+                                            Rp{{strrev(implode('.',str_split(strrev(strval($pendapatan)),3)))}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -186,10 +182,10 @@
                                         <td style="width:15%"></td>
                                         <td class="text-right" style="width:10%">
                                             <strong class="text-danger">
-                                                @if (($sum - $sum_biaya) < 0)
-                                                    -Rp{{strrev(implode('.',str_split(strrev(strval(-1*($sum - $sum_biaya))),3)))}}
+                                                @if (($pendapatan - $sum_biaya) < 0)
+                                                    -Rp{{strrev(implode('.',str_split(strrev(strval(-1*($pendapatan - $sum_biaya))),3)))}}
                                                 @else
-                                                    Rp{{strrev(implode('.',str_split(strrev(strval($sum - $sum_biaya)),3)))}}
+                                                    Rp{{strrev(implode('.',str_split(strrev(strval($pendapatan - $sum_biaya)),3)))}}
                                                 @endif
                                             </strong>
                                         </td>
@@ -212,7 +208,7 @@
                                             <td class="text-right" style="width:10%">
                                                 {{$array_pendapatan_lainnya[$i]['sum']}}
                                                 @php
-                                                    $sum += $array_pendapatan_lainnya[$i]['sum'];
+                                                    $pendapatan += $array_pendapatan_lainnya[$i]['sum'];
                                                     $another_sum += $array_pendapatan_lainnya[$i]['sum'];
                                                 @endphp
                                             </td>
@@ -249,10 +245,10 @@
                                         <td style="width:15%"></td>
                                         <td style="width:15%"></td>
                                         <td class="text-right" style="width:10%">
-                                            @if (($sum - $sum_biaya) < 0)
-                                                -Rp{{strrev(implode('.',str_split(strrev(strval(-1*($sum - $sum_biaya))),3)))}}
+                                            @if (($pendapatan - $sum_biaya) < 0)
+                                                -Rp{{strrev(implode('.',str_split(strrev(strval(-1*($pendapatan - $sum_biaya))),3)))}}
                                             @else
-                                                Rp{{strrev(implode('.',str_split(strrev(strval($sum - $sum_biaya)),3)))}}
+                                                Rp{{strrev(implode('.',str_split(strrev(strval($pendapatan - $sum_biaya)),3)))}}
                                             @endif 
                                         </td>
                                     </tr>

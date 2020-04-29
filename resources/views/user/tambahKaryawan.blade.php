@@ -38,34 +38,33 @@
                                     <input class="form-control" name="email" id="input-email" type="email"
                                         placeholder="Email" value="" required />
                                 </div>
+                                @if ($errors->has('email'))
+                                    <span class="invalid">
+                                        {{ $errors->first('email') }}
+                                    </span>
+                                @endif 
                             </div>
                         </div>
                         <div class="row">
                             <label class="col-sm-2 col-form-label" for="input-password">Password</label>
                             <div class="col-sm-7">
                                 <div class="form-group">
-                                    <input class="form-control" input type="password" name="password"
-                                        id="input-password" placeholder="Password" value="" required />
+                                    <input class="form-control" name="password" id="input-password" type="password"
+                                        placeholder="password" value="" required />
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <label class="col-sm-2 col-form-label" for="input-password-confirmation">Confirm
-                                Password</label>
-                            <div class="col-sm-7">
-                                <div class="form-group">
-                                    <input class="form-control" name="password_confirmation"
-                                        id="input-password-confirmation" type="password" placeholder="Confirm Password"
-                                        value="" required />
-                                </div>
+                                @if ($errors->has('password'))
+                                    <span class="invalid">
+                                        {{ $errors->first('password') }}
+                                    </span>
+                                @endif 
                             </div>
                         </div>
                         <div class="row">
                             <label class="col-sm-2 col-form-label" for="input-password-confirmation">Akses Bisnis</label>
                             <div class="col-sm-7">
                                 <div class="form-group">
-                                    <select class="form-control" name="id_business">
-                                        <option value="0" selected disabled>Bisnis</option>
+                                    <select class="form-control" name="id_business" required>
+                                        <option value="" selected>Bisnis</option>
                                         @foreach ($business as $item)
                                             <option value="{{ $item->id }}">{{ $item->business_name }}</option>
                                         @endforeach

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Models\Role;
 use RealRashid\SweetAlert\Facades\Alert;
-use Illuminate\Support\Facades\Hash;
+use App\Mail\AccountRegisteredMail;
 use Auth;
 use App\Companies;
 use App\Business;
@@ -14,6 +16,14 @@ use App\Employee;
 
 class EmployeeController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware(['role:owner|employee']);
+
+        $this->middleware('auth');
+        
+    }
  
     public function index()
     {
@@ -45,6 +55,11 @@ class EmployeeController extends Controller
 
     public function store(Request $request)
     {
+
+        $this->validate($request,[
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8'],
+        ]);
         
         $user = Auth::user()->id;
         $company = Companies::where('id_user', $user)->first()->id;
@@ -61,6 +76,14 @@ class EmployeeController extends Controller
         $data->id_company = $company;
         $data->id_business = $request->id_business;
         $data->save();
+
+        $user = ([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password
+            ]);
+
+        Mail::to($request->email)->send(new AccountRegisteredMail($user));
 
         return redirect()->route('karyawan.index')->with('success','Berhasil Menambahkan Karyawan!');
 
@@ -90,10 +113,11 @@ class EmployeeController extends Controller
 
     public function destroy($id)
     {
-        $data = Employee::where('id', $id)->first();
-        $data->delete();
+        Employee::findOrFail($id)->delete($id);
 
-        return redirect()->back()->with('success','Berhasil menghapus Karyawan!');
+        return response()->json([
+            'success'  => 'Record deleted successfully!'
+        ]);
     }
 
     public function detailEmployee(Request $request)

@@ -126,8 +126,8 @@
                                 <tfoot>
                                     <tr>
                                         <td colspan="2"><strong>Total</strong></td>
-                                        <td><strong>{{ $jumlah_debit }} </strong></td>
-                                        <td><strong> {{ $jumlah_kredit }} </strong></td>
+                                        <td><strong>Rp{{strrev(implode('.',str_split(strrev(strval($jumlah_debit)),3)))}} </strong></td>
+                                        <td><strong>Rp{{strrev(implode('.',str_split(strrev(strval($jumlah_kredit)),3)))}} </strong></td>
                                     </tr>
                                 </tfoot>
                             </table>

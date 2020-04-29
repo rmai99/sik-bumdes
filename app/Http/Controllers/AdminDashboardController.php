@@ -9,6 +9,13 @@ use App\Companies;
 
 class AdminDashboardController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['role:super admin|admin']);
+
+        $this->middleware('auth');
+        
+    }
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +26,7 @@ class AdminDashboardController extends Controller
         $companies = Companies::count();
         $pro = Companies::where('is_actived', 1)->count();
         $reguler = Companies::where('is_actived', 0)->count();
-        $admin = User::count();
+        $admin = User::role('admin')->count();
 
         $years = Companies::selectRaw('YEAR(created_at) as year')->orderBy('created_at', 'desc')
         ->distinct()
@@ -29,6 +36,7 @@ class AdminDashboardController extends Controller
     }
 
     public function user_register(){
+        
         if(isset($_GET['year'])){
             $year = $_GET['year'];
              

@@ -1,8 +1,8 @@
 @extends('user/layout/template')
 
-@section('title', 'Profile')
+@section('title', 'Bisnis')
 
-@section('title-page', 'Profile')
+@section('title-page', 'Bisnis')
 
 @section('content')
 <div class="container-fluid">
@@ -19,7 +19,7 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table table-striped table-no-bordered table-hover" id="datatables">
                             <thead class=" text-primary">
                                 <th>
                                     Nama
@@ -27,7 +27,7 @@
                                 <th>
                                     Tanggal Dibentuk
                                 </th>
-                                <th class="text-right">
+                                <th class="disabled-sorting text-right">
                                     Actions
                                 </th>
                             </thead>
@@ -41,16 +41,12 @@
                                             {{ $item->created_at}}
                                         </td>
                                         <td class="text-right">
-                                            <form action="{{ route('bisnis.destroy', $item->id) }}" method="post">
-                                                <button type="button" class="edit btn-icon" value="{{$item->id}}" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editBusiness">
-                                                    <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
-                                                </button>
-                                                {{ csrf_field() }}
-                                                {{ method_field('DELETE') }}
-                                                <button type="submit" onclick="return confirm('Anda yakin mau menghapus item ini ?')" class="btn-icon">
-                                                        <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
-                                                </button>
-                                            </form>
+                                            <button type="button" class="edit btn-icon" id="{{$item->id}}" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editBusiness">
+                                                <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
+                                            </button>
+                                            <button type="button" class="btn-icon remove" id="{{$item->id}}" >
+                                                    <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -132,8 +128,66 @@
 @push('js')
 <script>
     $(document).ready(function () {
+        $('#datatables').DataTable({
+            "pagingType"        : "full_numbers",
+            "lengthMenu"        : [
+                                [10, 25, 50, -1],
+                                [10, 25, 50, "All"]
+                                ],
+            responsive          : true, 
+            language            : {
+            search              : "_INPUT_",
+            searchPlaceholder   : "Cari",
+            }
+        });
+
+        var table = $('#datatables').DataTable();
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        
+        // Delete a record
+        table.on('click', '.remove', function(e) {
+            e.preventDefault();
+            var id = $(this).attr('id');
+            
+            // console.log(sid);
+            var url = "{{ route('bisnis.index') }}/"+id;
+            Swal.fire({
+                title: 'Anda yakin ingin menghapus bisnis?',
+                text: "Data akan dihapus secara permanen",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: "delete",
+                        url: url,
+                        dataType: "json",
+                        success: (response) => {
+                            Swal.fire(
+                            'Dihapus!',
+                            'Bisnis telah dihapus.',
+                            'success'
+                            )
+                            console.log(url);
+                            $(this).closest('tr').remove();
+                        }
+                    });
+                }
+            })
+        });
+    });
+    
+    $(document).ready(function () {
         $(document).on('click', '.edit', function() {
-            var id = $(this).attr('value');
+            var id = $(this).attr('id');
             $.ajax({
                 type        : 'GET',
                 url         : '{!!URL::to('detail_bisnis')!!}',

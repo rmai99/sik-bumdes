@@ -18,7 +18,10 @@ class AccountController extends Controller
 {
     public function __construct()
     {
+        $this->middleware(['role:owner|employee']);
+
         $this->middleware('auth');
+        
     }
 
     public function index()
@@ -105,9 +108,10 @@ class AccountController extends Controller
 
     public function destroy($id)
     {
-        $data = Account::where('id',$id)->first();
-        $data->delete();
+        Account::findOrFail($id)->delete($id);
 
-        return redirect()->route('akun.index')->with('success','Akun berhasil di hapus');
+        return response()->json([
+            'success' => 'Record deleted sucessfully'
+        ]);
     }
 }

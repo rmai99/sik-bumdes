@@ -147,27 +147,27 @@
                                             <td style="width:15%">{{ $item->date }}</td>
                                             <td>{{ $item->receipt }}</td>
                                             <td style="width:35%">{{ $item->description }}</td>
-                                            @foreach ($item->journal()->orderBy('id', 'desc')->get() as $cek)
+                                            @foreach ($item->journal()->orderBy('id', 'ASC')->get() as $cek)
                                                 @if ($cek->position == "Debit")
                                                     <td>{{ $cek->account->account_name }}</td>
-                                                    <td>{{ $cek->amount }}</td>
+                                                    <td>
+                                                        Rp{{strrev(implode('.',str_split(strrev(strval($cek->amount)),3)))}}
+                                                    </td>
                                                 @endif
                                                 @if ($cek->position == "Kredit")
                                                     <td>{{ $cek->account->account_name }}</td>
-                                                    <td>{{ $cek->amount }}</td>
+                                                    <td>
+                                                        Rp{{strrev(implode('.',str_split(strrev(strval($cek->amount)),3)))}}
+                                                    </td>
                                                 @endif
                                             @endforeach
                                             <td style="width:10%" class="text-center">
-                                                <form action="{{route('jurnal_umum.destroy', $item->id)}}" method="post">
-                                                    <button class="btnEditJournal btn-icon" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editJournal" value="{{ $item->id }}">
-                                                        <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
-                                                    </button>
-                                                        {{ csrf_field() }}
-                                                        {{ method_field('DELETE') }}
-                                                    <button type="submit" onclick="return confirm('Anda yakin mau menghapus item ini ?')" class="btn-icon">
-                                                            <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
-                                                    </button>
-                                                </form>
+                                                <button class="btnEditJournal btn-icon" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editJournal" id="{{ $item->id }}">
+                                                    <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
+                                                </button>
+                                                <button type="button" class="btn-icon remove" id="{{ $item->id }}">
+                                                        <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
+                                                </button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -296,7 +296,48 @@
             searchPlaceholder   : "Cari",
             }
         });
+        var table = $('#datatables').DataTable();
+
+        $.ajaxSetup({
+            headers : {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+
+        //Delete Record
+        table.on('click', '.remove', function(e){
+            e.preventDefault();
+            var id = $(this).attr('id');
+
+            var url = "{{route('jurnal_umum.index')}}/"+id;
+            Swal.fire({
+                title : 'Anda yakin menghapus data ini?',
+                text : 'Anda tidak dapat mengembalikan data yang telah dihapus!',
+                icon : 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!'
+            }).then((result) => {
+                if(result.value){
+                    $.ajax({
+                        type        : 'delete',
+                        url         : url,
+                        dataType    : 'JSON',
+                        success     : (response) => {
+                            Swal.fire(
+                                'Dihapus!',
+                                'Data anda telah dihapus.',
+                                'success'
+                            )
+                            $(this).closest('tr').remove();
+                        }
+                    })
+                }
+            })
+        })
     });
+
 
     $(document).on('click', '#search', function(e){
         e.preventDefault();
@@ -330,7 +371,7 @@
     });
 
     $(document).on('click', '.btnEditJournal', function(){
-        var id = $(this).attr('value');
+        var id = $(this).attr('id');
         $.ajax({
             type        : 'GET',
             url         : '{!!URL::to('detailJournal')!!}',
@@ -345,12 +386,12 @@
                     var receipt = value.receipt;
                     var date = value.date;
                     var description = value.description;
-                    var id_debit = value.journal[1].id;
-                    var id_account_debit = value.journal[1].id_account;
-                    var amount_debit = value.journal[1].amount;
-                    var id_credit = value.journal[0].id;
-                    var id_account_credit = value.journal[0].id_account;
-                    var amount_credit = value.journal[0].amount;
+                    var id_debit = value.journal[0].id;
+                    var id_account_debit = value.journal[0].id_account;
+                    var amount_debit = value.journal[0].amount;
+                    var id_credit = value.journal[1].id;
+                    var id_account_credit = value.journal[1].id_account;
+                    var amount_credit = value.journal[1].amount;
 
                     console.log(id_debit);
                     $('div.detail input').val(detail);

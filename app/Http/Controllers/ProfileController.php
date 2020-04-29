@@ -13,6 +13,14 @@ use App\Business;
 
 class ProfileController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['role:owner|employee']);
+
+        $this->middleware('auth');
+        
+    }
+
     public function cekpro(){
         $user = Auth::user();
 
@@ -118,8 +126,6 @@ class ProfileController extends Controller
         $company->name = $request->name;
         $company->address = $request->address;
         $company->phone_number = $request->phone_number;
-        $company->is_actived = $request->is_actived;
-        $company->id_user = $request->id_user;
         $company->save();
 
         return redirect()->route('profile.index')->with('success','Berhasil Mengubah Profile!');;

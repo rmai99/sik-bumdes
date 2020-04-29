@@ -15,6 +15,13 @@ use App\DetailJournal;
 
 class DashboardController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+
+        $this->middleware(['role:owner|employee']);
+
+    }
     /**
      * Display a listing of the resource.
      *
@@ -78,6 +85,7 @@ class DashboardController extends Controller
             $q->where('id_business', $session);
         })->where('account_name', 'kas')
         ->first();
+        
         if($cash != null){
             $sum = 0;
             if(!$cash->initialBalance()->whereYear('date', $year)->first()){
@@ -85,6 +93,7 @@ class DashboardController extends Controller
             } else {
                 $sum = $cash->initialBalance()->whereYear('date', $year)->first()->amount;
             }
+
             if($cash->journal()->exists()){
                 $jurnals = $cash->journal()->whereHas('detail', function($q) use($year){
                     $q->whereYear('date', $year);
@@ -94,7 +103,7 @@ class DashboardController extends Controller
                     if($jurnal->position == "Debit"){
                         $sum += $jurnal->amount;
                     } else if($jurnal->position == "Kredit"){
-                        $sum += $jurnal->amount;
+                        $sum -= $jurnal->amount;
                     }
                 }
             } else {

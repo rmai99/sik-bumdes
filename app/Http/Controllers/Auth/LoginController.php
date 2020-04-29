@@ -31,9 +31,9 @@ class LoginController extends Controller
     // protected $redirectTo = RouteServiceProvider::HOME;
 
     protected function authenticated(Request $request, $user){
-        if($user->hasRole('super admin'))
+        if($user->hasRole('super admin') || $user->hasRole('admin'))
         {
-            return redirect('user/upgrade');
+            return redirect()->route('admin.index');
         } 
         else if ($user->hasRole('owner') || $user->hasRole('employee'))
         {

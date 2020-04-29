@@ -13,6 +13,15 @@ use Auth;
 
 class GeneralJournalController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware(['role:owner|employee']);
+
+        $this->middleware('auth');
+        
+    }
+    
     public function index()
     {
         if(isset($_GET['year']) || isset($_GET['month']) || isset($_GET['day'])){
@@ -56,8 +65,8 @@ class GeneralJournalController extends Controller
                 $session = $getBusiness;
             }
         } else{
-            $getBusiness = Employee::where('id_user', $user)->first()->id;
-
+            $getBusiness = Employee::where('id_user', $user)->first()->id_business;
+            
             $session = $getBusiness;
         }
         $account = Account::whereHas('classification.parent', function($q) use ($session){
@@ -134,19 +143,19 @@ class GeneralJournalController extends Controller
             $detail->description = $request->description[$key];
             $detail->date = $request->date[$key];
             $detail->save();
-
-            $kredit = new GeneralJournal();
-            $kredit->id_detail = $detail->id;
-            $kredit->id_account = $request->id_credit_account[$key];
-            $kredit->position = "Kredit";
-            $kredit->amount = $request->credit[$key];
-            $kredit->save();
     
             $kredit = new GeneralJournal();
             $kredit->id_detail = $detail->id;
             $kredit->id_account = $request->id_debit_account[$key];
             $kredit->position = "Debit";
             $kredit->amount = $request->debit[$key];
+            $kredit->save();
+
+            $kredit = new GeneralJournal();
+            $kredit->id_detail = $detail->id;
+            $kredit->id_account = $request->id_credit_account[$key];
+            $kredit->position = "Kredit";
+            $kredit->amount = $request->credit[$key];
             $kredit->save();
         }
 
@@ -197,9 +206,11 @@ class GeneralJournalController extends Controller
 
     public function destroy($id)
     {
-        $detail = DetailJournal::findOrFail($id);
-        $detail->delete();
+        DetailJournal::find($id)->delete($id);
 
-        return redirect()->route('jurnal_umum.index')->with('success','Berhasil Mengahapus data!');;
+        return response()->json([
+            'success' => 'Record deleted successfully!'
+        ]);
+        
     }
 }

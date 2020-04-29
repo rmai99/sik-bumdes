@@ -114,19 +114,15 @@
                                             @endif
                                         </td>
                                         <td style="width:10%">
-                                            <form action="{{ route('neraca_awal.destroy', $item->id) }}" method="post">
                                                 <button type="button" rel="tooltip" title="Edit Akun" data-toggle="modal"
                                                     data-target="#editNeracaAwalModal" class="editInitialBalance btn-icon"
-                                                    value="{{ $item->id }}">
+                                                    id="{{ $item->id }}">
                                                     <i class="material-icons"
                                                         style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
                                                 </button>
-                                                    {{ csrf_field() }}
-                                                    {{ method_field('DELETE') }}
-                                                <button type="submit" rel="tooltip" title="Remove" onclick="return confirm('Yakin ingin menghapus data?')" class="btn-icon">
+                                                <button type="button" rel="tooltip" class="btn-icon remove" id="{{ $item->id }}">
                                                     <i class="material-icons"style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
                                                 </button>
-                                            </form>
                                             
                                         </td>
                                     </tr>
@@ -267,8 +263,50 @@
             }
         });
         
-        $("div.dataTables_length").html('<div class="col-md-4 pl-0"><div class="form-group"><strong class="mr-3">Tahun : </strong><select class="pl-1 padding-select groupbyYear" id="test" style="border-radius: 3px;"><option value="0" disabled="true" selected="true">Year</option>@foreach ($years as $y)<option value="{{$y->year}}" {{ $year == $y->year ? 'selected' : '' }}>{{$y->year}}</option>@endforeach</select></div>');
+        var table = $('#datatables').DataTable();
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        // Delete a record
+        table.on('click', '.remove', function(e) {   
+            e.preventDefault();
+            var id = $(this).attr('id');
+            
+            // console.log(sid);
+            var url = "{{ route('neraca_awal.index') }}/"+id;
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: "delete",
+                        url: url,
+                        dataType: "json",
+                        success: (response) => {
+                            Swal.fire(
+                                'Deleted!',
+                                'Your file has been deleted.',
+                                'success'
+                            )
+                            console.log(url);
+                            $(this).closest('tr').remove();
+                        }
+                    });
+                }
+            })
+        });
     });
+
 
     $(document).on('change', '#test', function(e){
         e.preventDefault();
@@ -280,7 +318,7 @@
     });
 
     $(document).on('click', '.editInitialBalance', function () {
-        var id = $(this).attr('value');
+        var id = $(this).attr('id');
         $.ajax({
             type        : 'GET',
             url         : '{!!URL::to('detail_balance')!!}',

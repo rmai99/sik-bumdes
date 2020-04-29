@@ -3,17 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Companies;
+use Spatie\Permission\Models\Role;
+use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Hash;
+use App\User;
 
-class UserMgtController extends Controller
+class AdminMgtController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['role:super admin|admin']);
-
-        $this->middleware('auth');
-        
-    }
     /**
      * Display a listing of the resource.
      *
@@ -21,9 +17,9 @@ class UserMgtController extends Controller
      */
     public function index()
     {
-        $companies = Companies::with('user')->get();
-
-        return view('admin.user', compact('companies'));
+        $admin = User::role('admin')->get(); 
+        
+        return view('admin.admin', compact('admin'));
     }
 
     /**
@@ -33,7 +29,7 @@ class UserMgtController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.tambahAdmin');
     }
 
     /**
@@ -44,7 +40,19 @@ class UserMgtController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request,[
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8'],
+        ]);
+
+        $user = new User();
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->save();
+        
+        $user->assignRole('admin');
+
+        return redirect()->route('admin.manajemen_admin.index')->with('success','Berhasil Menambahkan Admin!');
     }
 
     /**
@@ -55,9 +63,7 @@ class UserMgtController extends Controller
      */
     public function show($id)
     {
-        $datas = Companies::with('user')->where('id',$id)->get();
-
-        return response()->json($datas);
+        //
     }
 
     /**
@@ -80,12 +86,7 @@ class UserMgtController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = Companies::where('id',$id)->first();
-
-        $data->is_actived = $request->status;
-        $data->save();
-
-        return redirect()->route('admin.user.index')->with('success','Berhasil Mengubah Data!');
+        //
     }
 
     /**
@@ -96,6 +97,10 @@ class UserMgtController extends Controller
      */
     public function destroy($id)
     {
-        //
+        InitialBalance::find($id)->delete($id);
+        
+        return response()->json([
+            'success' => 'Record deleted successfully!'
+        ]);
     }
 }

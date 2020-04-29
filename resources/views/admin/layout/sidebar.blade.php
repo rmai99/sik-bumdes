@@ -11,6 +11,7 @@
             <p>Pengguna</p>
         </a>
     </li>
+    @role('super admin')
     <li class="nav-item">
         <a class="nav-link" data-toggle="collapse" href="#profile" aria-expanded="true">
             <i class="material-icons">person</i>
@@ -26,13 +27,8 @@
                         <span class="sidebar-normal"> Daftar Admin </span>
                     </a>
                 </li>
-                <li class="nav-item {{ Request::segment(2) === 'tambah_admin' ? 'active' : null }}">
-                    <a class="nav-link" href="/admin/tambah_admin">
-                        <span class="sidebar-mini"> UM </span>
-                        <span class="sidebar-normal"> Tambah Admin </span>
-                    </a>
-                </li>
             </ul>
         </div>
     </li>
+    @endrole
 </ul>

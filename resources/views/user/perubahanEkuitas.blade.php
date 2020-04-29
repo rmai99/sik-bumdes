@@ -54,14 +54,14 @@
                                 <tbody>
                                     <tr>
                                         <td style="width:60%">
-                                            <strong>Modal Awal</strong>
+                                            <strong>LABA DITAHAN PERIODE SEBELUMNYA</strong>
                                         </td>
                                         <td style="width:15%"></td>
                                         <td style="width:15%"></td>
                                         <td style="width:10%"></td>
                                     </tr>
                                     @for ($i = 1; $i <= sizeof($array); $i++)
-                                        @if ($array[$i]['nama'] == "Modal Disetor")
+                                        @if ($array[$i]['nama'] != "Modal Disetor" && $array[$i]['nama'] != "Modal Usaha")
                                             <tr>
                                                 <td style="width:60%;">
                                                     {{ $array[$i]['kode'] }} - {{ $array[$i]['nama'] }}
@@ -79,29 +79,14 @@
                                     @endfor
                                     <tr>
                                         <td style="width:60%">
-                                            <strong>Saldo Laba</strong>
+                                            <strong>PENAMBAHAN/PENGURANGAN LABA DITAHAN</strong>
                                         </td>
                                         <td style="width:15%"></td>
                                         <td style="width:15%"></td>
                                         <td style="width:10%"></td>
                                     </tr>
                                     @for ($i = 1; $i <= sizeof($array); $i++)
-                                        @if ($array[$i]['nama'] != "Saldo Laba Tahun Berjalan" && $array[$i]['nama'] != "Modal Disetor")
-                                            <tr>
-                                                <td style="width:60%;">
-                                                    {{ $array[$i]['kode'] }} - {{ $array[$i]['nama'] }}
-                                                </td>
-                                                <td style="width:15%"></td>
-                                                <td style="width:15%"></td>
-                                                <td class="text-right" style="width:10%">
-                                                    Rp{{strrev(implode('.',str_split(strrev(strval($array[$i]['saldo_akhir'])),3)))}}
-                                                    @php
-                                                        $modal_awal += $array[$i]['saldo_akhir'];
-                                                    @endphp
-                                                </td>
-                                            </tr>
-                                        @endif
-                                        @if ($array[$i]['nama'] == "Saldo Laba Tahun Berjalan")
+                                        @if ($array[$i]['nama'] == "Saldo Laba Tahun Berjalan" || $array[$i]['nama'] == "Laba Ditahan")
                                             <tr>
                                                 <td style="width:60%;">
                                                     {{ $array[$i]['kode'] }} - {{ $array[$i]['nama'] }}
