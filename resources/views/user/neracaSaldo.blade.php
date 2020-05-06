@@ -73,54 +73,56 @@
                                         <td></td>
                                         <td></td>
                                     </tr>
-                                    @for ($j = 0; $j < sizeof($save[$i]['classification']); $j++)
-                                        <tr class="accordian-body collapse accordion-toggle show data{{$save[$i]['parent_id']}}"
-                                            data-toggle="collapse" data-target=".dataAkun">
-                                            <td style="padding-left: 1.5rem!important;">
-                                                {{$save[$i]['classification'][$j]['classification_name']}}
-                                            </td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        @for ($k = 0; $k < sizeof($save[$i]['classification'][$j]['account']); $k++)
-                                            @if ($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'] != "0")
-                                                <tr class="accordian-body collapse show accordion-toggle pl-3 dataAkun">
-                                                    <td style="padding-left: 3rem!important;">
-                                                        
-                                                        {{ $save[$i]['classification'][$j]['account'][$k]['account_code'] }} - {{ $save[$i]['classification'][$j]['account'][$k]['account_name'] }}
-                                                    </td>
-                                                    <td>
-                                                        {{ $save[$i]['classification'][$j]['account'][$k]['position'] }}
-                                                    </td>
-                                                    <td>
-                                                        @if ($save[$i]['classification'][$j]['account'][$k]['position'] == "Debit")
-                                                            @if ($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'] < 0)
-                                                                -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$save[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
-                                                            @else
-                                                                Rp{{strrev(implode('.',str_split(strrev(strval($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
+                                    @if (isset($save[$i]['classification']))
+                                        @for ($j = 0; $j < sizeof($save[$i]['classification']); $j++)
+                                            <tr class="accordian-body collapse accordion-toggle show data{{$save[$i]['parent_id']}}"
+                                                data-toggle="collapse" data-target=".dataAkun">
+                                                <td style="padding-left: 1.5rem!important;">
+                                                    {{$save[$i]['classification'][$j]['classification_name']}}
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            @for ($k = 0; $k < sizeof($save[$i]['classification'][$j]['account']); $k++)
+                                                @if ($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'] != "0")
+                                                    <tr class="accordian-body collapse show accordion-toggle pl-3 dataAkun">
+                                                        <td style="padding-left: 3rem!important;">
+                                                            
+                                                            {{ $save[$i]['classification'][$j]['account'][$k]['account_code'] }} - {{ $save[$i]['classification'][$j]['account'][$k]['account_name'] }}
+                                                        </td>
+                                                        <td>
+                                                            {{ $save[$i]['classification'][$j]['account'][$k]['position'] }}
+                                                        </td>
+                                                        <td>
+                                                            @if ($save[$i]['classification'][$j]['account'][$k]['position'] == "Debit")
+                                                                @if ($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'] < 0)
+                                                                    -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$save[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
+                                                                @else
+                                                                    Rp{{strrev(implode('.',str_split(strrev(strval($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
+                                                                @endif
+                                                                @php
+                                                                    $jumlah_debit += $save[$i]['classification'][$j]['account'][$k]['saldo_akhir']
+                                                                @endphp
                                                             @endif
-                                                            @php
-                                                                $jumlah_debit += $save[$i]['classification'][$j]['account'][$k]['saldo_akhir']
-                                                            @endphp
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if ($save[$i]['classification'][$j]['account'][$k]['position'] == "Kredit")
-                                                            @if ($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'] < 0)
-                                                                - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$save[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
-                                                            @else 
-                                                                Rp{{strrev(implode('.',str_split(strrev(strval($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
+                                                        </td>
+                                                        <td>
+                                                            @if ($save[$i]['classification'][$j]['account'][$k]['position'] == "Kredit")
+                                                                @if ($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'] < 0)
+                                                                    - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$save[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
+                                                                @else 
+                                                                    Rp{{strrev(implode('.',str_split(strrev(strval($save[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
+                                                                @endif
+                                                                @php
+                                                                    $jumlah_kredit += $save[$i]['classification'][$j]['account'][$k]['saldo_akhir']
+                                                                @endphp
                                                             @endif
-                                                            @php
-                                                                $jumlah_kredit += $save[$i]['classification'][$j]['account'][$k]['saldo_akhir']
-                                                            @endphp
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endif
+                                            @endfor
                                         @endfor
-                                    @endfor
+                                    @endif
                                 @endfor
                                 </tbody>
                                 <tfoot>

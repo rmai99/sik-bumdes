@@ -45,7 +45,7 @@
                             </div>
                         </div>
                         <div class="material-datatables mt-4">
-                            @if ($errors->any())
+                            {{-- @if ($errors->any())
                                 <div class="alert alert-danger">
                                     <ul class="list-group">
                                         @foreach ($errors->all() as $error)
@@ -53,7 +53,7 @@
                                         @endforeach
                                     </ul>
                                 </div>
-                            @endif
+                            @endif --}}
                             <table id="datatables" class="table table-striped table-no-bordered table-hover" cellspacing="0"
                                 width="100%" style="width:100%">
                                 <thead>
@@ -165,6 +165,11 @@
                                 <h6 class="text-dark font-weight-bold m-0">Tanggal</h6>
                                 <input type="date" class="form-control" aria-describedby="date" placeholder="" name="date" required="true" aria-required="true">
                             </div>
+                            @if ($errors->has('date'))
+                                <span class="invalid">
+                                    {{ $errors->first('date') }}
+                                </span>
+                            @endif 
 
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Nama Akun</h6>
@@ -182,7 +187,7 @@
 
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Jumlah</h6>
-                                <input name="amount" type="number" class="form-control" id="harga" onkeyup="copytextbox();" value="{{session()->get('properti.harga') }}" required="true" aria-required="true">
+                                <input name="amount" type="number" class="form-control" id="harga" onkeyup="copytextbox();" required="true" aria-required="true">
                                 <input type="text" class="form-control" id="hasil" disabled>
                             </div>
                         </div>
@@ -251,6 +256,11 @@
 @endsection
 @push('js')
 <script>
+    
+    @if (count($errors) > 0)
+        $('#neracaAwalModal').modal('show');
+    @endif
+
     $(document).ready(function () {
         $('#datatables').DataTable({
             "info":     false,
@@ -306,7 +316,6 @@
             })
         });
     });
-
 
     $(document).on('change', '#test', function(e){
         e.preventDefault();

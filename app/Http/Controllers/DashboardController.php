@@ -42,7 +42,6 @@ class DashboardController extends Controller
             $company = Companies::where('id_user', $user)->first()->id;
             $business = Business::where('id_company', $company)->get();
 
-            $business = Business::where('id_company', $company)->get();
             $getBusiness = Business::where('id_company', $company)->first();
 
             if($session == 0){

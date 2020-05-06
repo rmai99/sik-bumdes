@@ -73,6 +73,9 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function(){
     Route::resource('/manajemen_admin', 'AdminMgtController');
 });
 
+/* ======== GANTI PASSWORD ======== */
+Route::resource('ganti_password', 'Auth\ChangePasswordController');
+
 Route::get('/', function () {
 
     return view('welcome');
