@@ -61,7 +61,7 @@ Route::get('set_business/{id}', 'BusinessController@setBusiness')->name('setBusi
 Route::resource('profile', 'ProfileController')->except('update');
 Route::put('profile/update', 'ProfileController@update')->name('profile.update');
 Route::put('profile/karyawan/update', 'ProfileController@updateEmployee')->name('profile_karyawan.update');
-Route::get('cekpro', 'ProfileController@cekpro');
+Route::get('isPro', 'ProfileController@isPro');
 
 Route::get('/home', 'HomeController@index')->name('home');
 

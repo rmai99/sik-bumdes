@@ -43,13 +43,22 @@ class EmployeeController extends Controller
 
     public function create()
     {
-        $session = session('business');
         $user = Auth::user()->id;
-        $company = Companies::where('id_user', $user)->first()->id;
-        $business = Business::where('id_company', $company)->get();
-        $getBusiness = Business::where('id_company', $company)->first();
-        
-        return view('user/tambahKaryawan', compact('business', 'session', 'getBusiness'));
+        $session = session('business');
+        $company = Companies::where('id_user', $user)->first();
+        $business = Business::where('id_company', $company->id)->get();
+        if($session == null){
+            $session = Business::where('id_company', $company->id)->first()->id;
+        }
+        $getBusiness = Business::with('company')
+        ->where('id_company', $company->id)
+        ->where('id', $session)->first();
+        $pro = $company->is_actived;
+        if($pro != 1){
+            return redirect()->route('karyawan.index')->withErrors('error!');
+        } else {
+            return view('user/tambahKaryawan', compact('business', 'session', 'getBusiness'));
+        }
     }
 
     public function store(Request $request)

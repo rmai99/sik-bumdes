@@ -29,14 +29,11 @@ class InitialBalanceController extends Controller
      */
     public function index()
     {
-        $role = Auth::user();
-        $isCompany = $role->hasRole('company');
-        
-        $user = Auth::user()->id;
-
+        $user = Auth::user();
+        $isCompany = $user->hasRole('company');
         if($isCompany){
             $session = session('business');
-            $company = Companies::where('id_user', $user)->first()->id;
+            $company = Companies::where('id_user', $user>id)->first()->id;
             $business = Business::where('id_company', $company)->get();
             if($session == null){
                 $session = Business::where('id_company', $company)->first()->id;
@@ -45,7 +42,7 @@ class InitialBalanceController extends Controller
             ->where('id_company', $company)
             ->where('id', $session)->first();
         } else {
-            $getBusiness = Employee::with('business')->where('id_user', $user)->first();
+            $getBusiness = Employee::with('business')->where('id_user', $user->id)->first();
             $session = $getBusiness->id_business;
         }
 

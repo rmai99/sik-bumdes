@@ -16,7 +16,7 @@
                     <div class="row">
                         <div class="col-12 text-right">
                             <a href=""
-                                class="btn btn-sm btn-primary addEmployee" id="hmm">Tambah Karyawan</a>
+                                class="btn btn-sm btn-primary addEmployee">Tambah Karyawan</a>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -119,6 +119,17 @@
 @endsection
 @push('js')
     <script>
+        @if (count($errors) > 0)
+            swal.fire({
+                title: "Ubah Akun Menjadi PRO",
+                icon: "warning",
+                closeOnClickOutside: false,
+                showConfirmButton: false,
+                // timer       :2000,
+                footer: '<a href="/home">Upgrade Account?</a>'
+            })
+        @endif
+        
         $(document).ready(function () {
             $('#datatables').DataTable({
                 "pagingType"        : "full_numbers",

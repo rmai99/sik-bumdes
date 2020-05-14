@@ -39,23 +39,7 @@ class BusinessController extends Controller
         $getBusiness = Business::with('company')
         ->where('id_company', $company->id)
         ->where('id', $session)->first();
-        
-        $sum = Business::where('id_company', $company->id)->count();
-        
-        if($company->is_actived){
-            if($sum == 0){
-                return view('auth.tambahBisnis');
-            } else {
-                return view('user.bisnis', compact('business', 'session', 'getBusiness'));
-            }
-        } else {
-            if($sum == 0){
-                return view('auth.tambahBisnis');
-            }else {
-            }
-            return view('user.bisnis', compact('business', 'session', 'getBusiness'));
-        } 
-        
+        return view('user.bisnis', compact('business', 'session', 'getBusiness'));
     }
 
     public function setBusiness($id){
@@ -76,14 +60,16 @@ class BusinessController extends Controller
         $business = Business::where('id_company', $company->id)->count();
         $pro = $company->is_actived;
 
+        if($business == 0){
+            return view('auth.tambahBisnis');
+        }
+
         if($pro != 1){
-            if($business == 0){
-                return view('auth.tambahBisnis');
-            }else {
-                return redirect()->route('bisnis.index')->withErrors('error!');
-            }
-        }      
-        
+            return redirect()->route('bisnis.index')->withErrors('error!');
+        }
+        else{
+            return view('auth.tambahBisnis');
+        }
     }
 
     /**
@@ -110,8 +96,8 @@ class BusinessController extends Controller
             '4' => 'Pendapatan', '5' => 'Beban', '6' => 'Pendapatan Lainnya', '7' => 'Biaya Lainnya');
             
         $class_array = array(
-            array('11'=>'Aset Lancar', '12' => 'Aset Tetap', '13' => 'Aset Lainnya'), //ini buat anak anaknya aset
-            array('21'=>'Utang Lancar', '22' => 'Utang Jangka Panjang'), //ini buat anak anaknya aset            
+            array('11'=>'Aset Lancar', '12' => 'Aset Tetap', '13' => 'Aset Lainnya'), 
+            array('21'=>'Utang Lancar', '22' => 'Utang Jangka Panjang'), 
             array('31'=>'Ekuitas'),
             array('41'=>'Pendapatan'),
             array('51'=>'Beban'),
@@ -120,7 +106,8 @@ class BusinessController extends Controller
         );
         $akun_array = array(
             array("kas"=>array("1110"=>"Debit"), "kas di bank"=> array("1111"=>"Debit"), "Piutang Dagang" => array("1120" => "Debit"), "Sewa Dibayar Dimuka"=>array("1130"=>"Debit")),
-            array("Tanah"=>array("1210"=>"Debit"), "Gedung"=> array("1220"=>"Debit"), "Akumulasi Penyusutan Gedung" => array("1220-1"=>"Kredit"), "Kendaraan" => array("1230"=>"Debit"), "Akumulasi Penyusutan Kendaraan"=>array("1230-1"=>"Kredit"), "Peralatan Kantor"=>array("1240"=> "Debit"), "Akumulasi Penyusutan Peralatan Kantor"=>array("1240-1"=>"Kredit")),
+            array("Tanah"=>array("1210"=>"Debit"), "Gedung"=> array("1220"=>"Debit"), "Akumulasi Penyusutan Gedung" => array("1220-1"=>"Kredit"), "Kendaraan" => array("1230"=>"Debit"), 
+                "Akumulasi Penyusutan Kendaraan"=>array("1230-1"=>"Kredit"), "Peralatan Kantor"=>array("1240"=> "Debit"), "Akumulasi Penyusutan Peralatan Kantor"=>array("1240-1"=>"Kredit")),
             array("Aset Lainnya"=>array("1310"=>"Debit")),
             array("Utang Dagang"=>array("2110"=>"Kredit"), "Utang Gaji"=>array("2120"=>"Kredit"), "Utang Bank"=>array("2130"=>"Kredit")),
             array("Obligasi"=>array("2210"=>"Kredit")),
@@ -221,11 +208,15 @@ class BusinessController extends Controller
      */
     public function destroy($id)
     {
-        Business::findOrFail($id)->delete($id);
-        
-        return response()->json([
-            'success' => 'Record deleted successfully!'
-        ]);
+        $user = Auth::user()->id;
+        $company = Companies::where('id_user', $user)->first()->id;
+        $business = Business::where('id_company', $company)->count();
+        if($business != 1){
+            Business::findOrFail($id)->delete($id);
+            return response()->json([
+                'success' => 'Record deleted successfully!'
+            ]);
+        }
 
     }
 }

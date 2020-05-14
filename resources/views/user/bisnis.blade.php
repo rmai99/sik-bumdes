@@ -134,6 +134,16 @@
 <script>
     $(document).ready(function () {
         @if (count($errors) > 0)
+            swal.fire({
+                title: "Ubah Akun Menjadi PRO",
+                icon: "warning",
+                closeOnClickOutside: false,
+                showConfirmButton: false,
+                // timer       :2000,
+                footer: '<a href="/home">Upgrade Account?</a>'
+            })
+        @endif
+        @if ($errors->has('name'))
             $('#editBusiness').modal('show');
             var name = "{{old('name')}}";
             $('#name').val(name);
@@ -192,9 +202,17 @@
                             'success'
                             )
                             $(this).closest('tr').remove();
-                            var url = "{{route('bisnis.index')}}";
+                            var url = "{{route('bisnis.create')}}";
                             window.location.href = url;
-                        }
+                        }, error    : function(){
+                            swal.fire({
+                                title: "Tidak dapat menghapus bisnis",
+                                icon: "warning",
+                                closeOnClickOutside: false,
+                                showConfirmButton: false,
+                                timer       :2000,
+                            })
+                        },
                     });
                 }
             })

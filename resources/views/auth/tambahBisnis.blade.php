@@ -11,7 +11,7 @@
 
                 <div class="card-body">
                     <form method="POST" action="{{route('bisnis.store')}}">
-                        <h4 class="font-weight-bold">Informasi Bisnis</h2>
+                        <h5 class="font-weight-bold">Informasi Bisnis</h5>
                         @csrf
                         <p class="mb-0">Nama Bisnis</p>
                         <div class="input-group">
