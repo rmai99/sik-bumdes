@@ -10,12 +10,12 @@ class Account extends Model
 
     public function classification()
     {
-        return $this->belongsTo('App\AccountClassification', 'id_classification');
+        return $this->belongsTo('App\AccountClassification', 'id_classification')->orderby('classification_code');
     }
 
     public function initialBalance()
     {
-        return $this->hasMany('App\InitialBalance', 'id_account');
+        return $this->hasMany('App\InitialBalance', 'id_account')->orderby('date');;
     }
 
     public function journal()

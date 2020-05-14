@@ -63,21 +63,21 @@
                                       $sum_biaya = 0;
                                       $sum_ekuitas = 0;
                                     @endphp
-                                    @for ($i = 0; $i < sizeof($array_asset); $i++)
+                                    @for ($i = 0; $i < sizeof($assetArray); $i++)
                                       <tr>
                                           <td style="width:60%;padding-left: 1.5rem!important;">
-                                            <strong>{{$array_asset[$i]['class']}}</strong>
+                                            <strong>{{$assetArray[$i]['classification']}}</strong>
                                           </td>
                                           <td style="width:15%"></td>
                                           <td style="width:15%"></td>
                                           <td style="width:10%"></td>
                                       </tr>
-                                        @if (isset($array_asset[$i]['nama']))
-                                          @for ($y = 0; $y < sizeof($array_asset[$i]['nama']); $y++)
-                                            @if ($array_asset[$i]['saldo_akhir'][$y] != "0")
+                                        @if (isset($assetArray[$i]['name']))
+                                          @for ($y = 0; $y < sizeof($assetArray[$i]['name']); $y++)
+                                            @if ($assetArray[$i]['ending balance'][$y] != "0")
                                             <tr>
                                                 <td style="width:60%;padding-left: 3rem!important;">
-                                                  {{$array_asset[$i]['kode'][$y]}}- {{$array_asset[$i]['nama'][$y]}}
+                                                  {{$assetArray[$i]['code'][$y]}}- {{$assetArray[$i]['name'][$y]}}
                                                 </td>
                                                 <td style="width:15%">
                                                     
@@ -85,13 +85,13 @@
                                                 <td style="width:15%">
                                                 </td>
                                                 <td class="text-right" style="width:10%">
-                                                  @if ($array_asset[$i]['saldo_akhir'][$y] < 0)
-                                                    - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$array_asset[$i]['saldo_akhir'][$y])),3)))}}  
+                                                  @if ($assetArray[$i]['ending balance'][$y] < 0)
+                                                    - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$assetArray[$i]['ending balance'][$y])),3)))}}  
                                                   @else
-                                                    Rp{{strrev(implode('.',str_split(strrev(strval($array_asset[$i]['saldo_akhir'][$y])),3)))}}
+                                                    Rp{{strrev(implode('.',str_split(strrev(strval($assetArray[$i]['ending balance'][$y])),3)))}}
                                                   @endif
                                                   @php
-                                                      $sum += $array_asset[$i]['saldo_akhir'][$y];
+                                                      $sum += $assetArray[$i]['ending balance'][$y];
                                                   @endphp
                                                 </td>
                                             </tr>
@@ -100,11 +100,20 @@
                                         @endif
                                         <tr>
                                           <td style="width:60%;padding-left: 1.5rem!important;">
-                                              Total {{$array_asset[$i]['class']}}
+                                              <b>Total {{$assetArray[$i]['classification']}}</b>
                                           </td>
                                           <td style="width:15%"></td>
                                           <td style="width:15%"></td>
-                                          <td class="text-right" style="width:10%"></td>
+                                          <td class="text-right" style="width:10%">
+                                            <b>
+                                              {{--  {{$assetArray[$i]['sum']}}  --}}
+                                              @if ($assetArray[$i]['sum'] < 0)
+                                                - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$assetArray[$i]['sum'])),3)))}}  
+                                              @else
+                                                Rp{{strrev(implode('.',str_split(strrev(strval($assetArray[$i]['sum'])),3)))}}
+                                              @endif
+                                            </b>
+                                          </td>
                                         </tr>
                                     @endfor
                                     <tr>
@@ -129,21 +138,21 @@
                                         <td style="width:15%"></td>
                                         <td style="width:10%"></td>
                                     </tr>
-                                    @for ($i = 0; $i < sizeof($array_liability); $i++)
+                                    @for ($i = 0; $i < sizeof($liabilityArray); $i++)
                                       <tr>
                                         <td style="width:60%;padding-left: 1.5rem!important;">
-                                          <strong>{{$array_liability[$i]['class']}}</strong>
+                                          <strong>{{$liabilityArray[$i]['classification']}}</strong>
                                         </td>
                                         <td style="width:15%"></td>
                                         <td style="width:15%"></td>
                                         <td style="width:10%"></td>
                                       </tr>
-                                      @if (isset($array_asset[$i]['nama']))
-                                        @for ($j = 0; $j < sizeof($array_liability[$i]['saldo_akhir']); $j++)
-                                        @if ($array_liability[$i]['saldo_akhir'][$j] != 0)
+                                      @if (isset($assetArray[$i]['name']))
+                                        @for ($j = 0; $j < sizeof($liabilityArray[$i]['ending balance']); $j++)
+                                        @if ($liabilityArray[$i]['ending balance'][$j] != 0)
                                           <tr>
                                             <td style="width:60%;padding-left: 3rem!important;">
-                                              {{$array_liability[$i]['kode'][$j]}} - {{$array_liability[$i]['nama'][$j]}}
+                                              {{$liabilityArray[$i]['code'][$j]}} - {{$liabilityArray[$i]['name'][$j]}}
                                             </td>
                                             <td style="width:15%">
                                                 
@@ -151,13 +160,13 @@
                                             <td style="width:15%">
                                             </td>
                                             <td class="text-right" style="width:10%">
-                                              @if ($array_liability[$i]['saldo_akhir'][$j] < 0)
-                                                - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$array_liability[$i]['saldo_akhir'][$j])),3)))}}
+                                              @if ($liabilityArray[$i]['ending balance'][$j] < 0)
+                                                - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$liabilityArray[$i]['ending balance'][$j])),3)))}}
                                               @else
-                                                Rp{{strrev(implode('.',str_split(strrev(strval($array_liability[$i]['saldo_akhir'][$j])),3)))}}  
+                                                Rp{{strrev(implode('.',str_split(strrev(strval($liabilityArray[$i]['ending balance'][$j])),3)))}}  
                                               @endif
                                               @php
-                                                  $sum_biaya += $array_liability[$i]['saldo_akhir'][$j];
+                                                  $sum_biaya += $liabilityArray[$i]['ending balance'][$j];
                                               @endphp
                                             </td>
                                           </tr>
@@ -166,12 +175,12 @@
                                       @endif
                                       <tr>
                                         <td style="width:60%;padding-left: 1.5rem!important;">
-                                          Total {{$array_liability[$i]['class']}}
+                                          <b>Total {{$liabilityArray[$i]['classification']}}</b>
                                         </td>
                                         <td style="width:15%"></td>
                                         <td style="width:15%"></td>
                                         <td style="width:10%" class="text-right">
-                                            
+                                          </b>{{$liabilityArray[$i]['sum']}}</b>
                                         </td>
                                       </tr>
                                     @endfor
@@ -199,21 +208,21 @@
                                         <td style="width:15%"></td>
                                         <td style="width:10%"></td>
                                     </tr>
-                                    @for ($i = 0; $i < sizeof($array_equity); $i++)
+                                    @for ($i = 0; $i < sizeof($equityArray); $i++)
                                       <tr>
                                         <td style="width:60%;padding-left: 1.5rem!important;">
-                                          <strong>{{$array_equity[$i]['class']}}</strong>
+                                          <strong>{{$equityArray[$i]['classification']}}</strong>
                                         </td>
                                         <td style="width:15%"></td>
                                         <td style="width:15%"></td>
                                         <td style="width:10%"></td>
                                       </tr>
-                                      @if (isset($array_asset[$i]['nama']))
-                                        @for ($j = 0; $j < sizeof($array_equity[$i]['saldo_akhir']); $j++)
-                                        @if ($array_equity[$i]['saldo_akhir'][$j] != 0)
+                                      @if (isset($assetArray[$i]['name']))
+                                        @for ($j = 0; $j < sizeof($equityArray[$i]['ending balance']); $j++)
+                                        @if ($equityArray[$i]['name'][$j] != "Laba Ditahan")
                                           <tr>
                                             <td style="width:60%;padding-left: 3rem!important;">
-                                              {{$array_equity[$i]['kode'][$j]}} - {{$array_equity[$i]['nama'][$j]}}
+                                              {{$equityArray[$i]['code'][$j]}} - {{$equityArray[$i]['name'][$j]}}
                                             </td>
                                             <td style="width:15%">
                                                 
@@ -221,13 +230,35 @@
                                             <td style="width:15%">
                                             </td>
                                             <td class="text-right" style="width:10%">
-                                              @if ($array_equity[$i]['saldo_akhir'][$j] < 0)
-                                                - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$array_equity[$i]['saldo_akhir'][$j])),3)))}}
+                                              @if ($equityArray[$i]['ending balance'][$j] < 0)
+                                                - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$equityArray[$i]['ending balance'][$j])),3)))}}
                                               @else
-                                                Rp{{strrev(implode('.',str_split(strrev(strval($array_equity[$i]['saldo_akhir'][$j])),3)))}}
+                                                Rp{{strrev(implode('.',str_split(strrev(strval($equityArray[$i]['ending balance'][$j])),3)))}}
                                               @endif
                                               @php
-                                                  $sum_ekuitas += $array_equity[$i]['saldo_akhir'][$j];
+                                                  $sum_ekuitas += $equityArray[$i]['ending balance'][$j];
+                                              @endphp
+                                            </td>
+                                          </tr>
+                                        @endif
+                                        @if ($equityArray[$i]['name'][$j] == "Laba Ditahan")
+                                          <tr>
+                                            <td style="width:60%;padding-left: 3rem!important;">
+                                              {{$equityArray[$i]['code'][$j]}} - {{$equityArray[$i]['name'][$j]}}
+                                            </td>
+                                            <td style="width:15%">
+                                                
+                                            </td>
+                                            <td style="width:15%">
+                                            </td>
+                                            <td class="text-right" style="width:10%">
+                                              @if ($equitas < 0)
+                                                - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$equitas)),3)))}}
+                                              @else
+                                                Rp{{strrev(implode('.',str_split(strrev(strval($equitas)),3)))}}
+                                              @endif
+                                              @php
+                                                  $sum_ekuitas += $equitas;
                                               @endphp
                                             </td>
                                           </tr>
@@ -236,7 +267,7 @@
                                       @endif
                                       <tr>
                                         <td style="width:60%;padding-left: 1.5rem!important;">
-                                          Total {{$array_equity[$i]['class']}}
+                                          Total {{$equityArray[$i]['classification']}}
                                         </td>
                                         <td style="width:15%"></td>
                                         <td style="width:15%"></td>

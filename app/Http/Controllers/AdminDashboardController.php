@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Auth;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\User;
@@ -23,6 +23,7 @@ class AdminDashboardController extends Controller
      */
     public function index()
     {
+        $role = Auth::user();
         $companies = Companies::count();
         $pro = Companies::where('is_actived', 1)->count();
         $reguler = Companies::where('is_actived', 0)->count();

@@ -37,7 +37,7 @@
                 <div class="card">
                     <div class="header text-center mt-2">
                         <h3 class="title" style="font-weight: 400;">Jurnal Umum</h3>
-                        <p class=""><strong>Periode</strong> 2019 </p>
+                        <p class=""><strong>Periode</strong> {{$year}} </p>
                     </div>
                     <div class="card-body">
                         <div class="toolbar">
@@ -207,7 +207,7 @@
                             <div class="form-group description">
                                 <h6 class="text-dark font-weight-bold m-0">Keterangan</h6>
                                 <input type="text" class="form-control" name="description" aria-describedby="ketJurnal"
-                                    value="Membeli peralatan secara kredit">
+                                    value="Membeli peralatan secara kredit" required>
                             </div>
 
                             <div class="row">
@@ -215,14 +215,14 @@
                                     <div class="form-group receipt">
                                         <h6 class="text-dark font-weight-bold m-0">No Kwitansi</h6>
                                         <input type="text" class="form-control" name="receipt"
-                                            aria-describedby="kwitansiJurnal">
+                                            aria-describedby="kwitansiJurnal" required>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group date">
                                         <h6 class="text-dark font-weight-bold m-0">Tanggal</h6>
                                         <input type="date" class="form-control" name="date"
-                                            aria-describedby="kwitansiJurnal">
+                                            aria-describedby="kwitansiJurnal" required>
                                     </div>
                                 </div>
                             </div>
@@ -232,8 +232,8 @@
                                     <div class="form-group debit">
                                         <h6 class="text-dark font-weight-bold m-0">Debit Akun</h6>
                                         <input type="hidden" name="id_debit">
-                                        <select class="form-control" name="id_debit_account">
-                                            <option value="0" disabled="true" selected="true">Select Akun</option>
+                                        <select class="form-control" name="id_debit_account" required>
+                                            <option value="" selected="true">Select Akun</option>
                                             @foreach ($account as $a)
                                                 <option value="{{$a->id}}">
                                                     {{$a->account_name}}
@@ -243,16 +243,16 @@
                                     </div>
                                     <div class="form-group amount_debit">
                                         <h6 class="text-dark font-weight-bold m-0">Jumlah</h6>
-                                        <input type="number" class="form-control" name="debit"
-                                            aria-describedby="amountDebit">
+                                        <input type="text" class="form-control" name="debit"
+                                            aria-describedby="amountDebit" data-type="currency" required>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group credit">
                                         <h6 class="text-dark font-weight-bold m-0">Kredit Akun</h6>
                                         <input type="hidden" name="id_credit">
-                                        <select class="form-control" name="id_credit_account">
-                                            <option value="0" disabled="true" selected="true">Select Akun</option>
+                                        <select class="form-control" name="id_credit_account" required>
+                                            <option value="" selected="true">Select Akun</option>
                                             @foreach ($account as $a)
                                                 <option value="{{$a->id}}">
                                                     {{$a->account_name}}
@@ -262,8 +262,8 @@
                                     </div>
                                     <div class="form-group amount_credit">
                                         <h6 class="text-dark font-weight-bold m-0">Jumlah</h6>
-                                        <input type="number" class="form-control" name="credit"
-                                            aria-describedby="amountDebit">
+                                        <input type="text" class="form-control" name="credit"
+                                            aria-describedby="amountDebit" data-type="currency" required>
                                     </div>
                                 </div>
                             </div>
@@ -379,8 +379,6 @@
             dataType    : 'html',
             success     : function(data){
                 var servers = $.parseJSON(data);
-                console.log(servers);
-                
                 $.each(servers, function(index, value){
                     var detail = value.id;
                     var receipt = value.receipt;
@@ -388,10 +386,21 @@
                     var description = value.description;
                     var id_debit = value.journal[0].id;
                     var id_account_debit = value.journal[0].id_account;
-                    var amount_debit = value.journal[0].amount;
+                    var rupiah = '';
+
+                    var convert = value.journal[0].amount.toString().split('').reverse().join('');
+                    for(var i = 0; i < convert.length; i++) if(i%3 == 0) rupiah += convert.substr(i,3)+',';
+                    var amount_debit = 'Rp'+ rupiah.split('',rupiah.length-1).reverse().join('');
+
                     var id_credit = value.journal[1].id;
                     var id_account_credit = value.journal[1].id_account;
-                    var amount_credit = value.journal[1].amount;
+
+                    var convert_journal = value.journal[1].amount.toString().split('').reverse().join('');
+                    console.log(convert);
+                    for(var i = 0; i < convert.length_; i++) if(i%3 == 0) rupiah += convert_journal.substr(i,3)+',';
+                    var amount_credit = 'Rp'+ rupiah.split('',rupiah.length-1).reverse().join('');
+
+                    console.log(amount_credit);
 
                     console.log(id_debit);
                     $('div.detail input').val(detail);
@@ -404,19 +413,89 @@
                     $('div.credit select').val(id_account_credit);
                     $('div.credit input').val(id_credit);
                     $('div.amount_credit input').val(amount_credit);
-                    
                 })
             }, error    : function(){
                 
             },
-
         });
-
         var action = "{{route('jurnal.update')}}";
             $('#formEditJournal').attr('action',action);
-
     })
+</script>
+<script>
+    // Jquery Dependency
+    $("input[data-type='currency']").on({
+        keyup: function() {
+            formatCurrency($(this));
+        },
+        click : function(){
+            formatCurrency($(this));
+        }
+    });
+
+    function formatNumber(n) {
+    // format number 1000000 to 1,234,567
+    return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    }
+
+    function formatCurrency(input, blur) {
+    // appends $ to value, validates decimal side
+    // and puts cursor back in right position.
     
+    // get input value
+    var input_val = input.val();
+    
+    // don't validate empty input
+    if (input_val === "") { return; }
+    
+    // original length
+    var original_len = input_val.length;
+
+    // initial caret position 
+    var caret_pos = input.prop("selectionStart");
+        
+    // check for decimal
+    if (input_val.indexOf(".") >= 0) {
+
+        // get position of first decimal
+        // this prevents multiple decimals from
+        // being entered
+        var decimal_pos = input_val.indexOf(".");
+
+        // split number by decimal point
+        var left_side = input_val.substring(0, decimal_pos);
+        var right_side = input_val.substring(decimal_pos);
+
+        // add commas to left side of number
+        left_side = formatNumber(left_side);
+
+        // validate right side
+        right_side = formatNumber(right_side);
+        
+        // Limit decimal to only 2 digits
+        right_side = right_side.substring(0, 2);
+
+        // join number by .
+        input_val = "Rp" + left_side + "." + right_side;
+
+    } else {
+        // no decimal entered
+        // add commas to number
+        // remove all non-digits
+        // console.log('input_val', input_val)
+        input_val = formatNumber(input_val);
+        input_val = "Rp" + input_val;
+        
+    }
+    
+    // send updated string to input
+    input.val(input_val);
+
+    // put caret back in the right position
+    var updated_len = input_val.length;
+    caret_pos = updated_len - original_len + caret_pos;
+    input[0].setSelectionRange(caret_pos, caret_pos);
+    }
 </script>
 @include('sweetalert::alert')
 @endpush

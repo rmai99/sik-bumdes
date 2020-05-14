@@ -37,10 +37,10 @@
                             </span>
                             @enderror
                         </div>
-                        <div class="form-group row mb-0">
-                            <div class="col-md-6 offset-md-4">
+                        <div class="form-group row mb-0 justify-content-center">
+                            <div class="col-md-6">
                                 <button type="submit" class="btn btn-register">
-                                    {{ __('Kirim Tautan Reset Kata Sandi') }}
+                                    Kirim Tautan Reset Kata Sandi
                                 </button>
                             </div>
                         </div>

@@ -8,7 +8,7 @@
     <li class="nav-item {{ Request::segment(1) === 'profile' ? 'active' : null }}">
         <a class="nav-link" data-toggle="collapse" href="#profile" aria-expanded="true">
             <i class="material-icons">person</i>
-            <p> Profile
+            <p> Kelola Perusahaan
                 <b class="caret"></b>
             </p>
         </a>
@@ -17,20 +17,20 @@
                 <li class="nav-item {{ Request::segment(1) === 'profile' ? 'active' : null }}">
                     <a class="nav-link" href="/profile">
                         <span class="sidebar-mini"> UP </span>
-                        <span class="sidebar-normal"> User Profile </span>
+                        <span class="sidebar-normal"> Profil </span>
                     </a>
                 </li>
-                @role('owner')
+                @role('company')
                 <li class="nav-item {{ Request::segment(1) === 'karyawan' ? 'active' : null }}">
                     <a class="nav-link" href="/karyawan">
                         <span class="sidebar-mini"> UM </span>
-                        <span class="sidebar-normal"> User Manajemen </span>
+                        <span class="sidebar-normal">Manajemen Karyawan </span>
                     </a>
                 </li>
                 <li class="nav-item {{ Request::segment(1) === 'bisnis' ? 'active' : null }}">
                     <a class="nav-link" href="/bisnis">
                         <span class="sidebar-mini"> UM </span>
-                        <span class="sidebar-normal"> Bisnis Manajemen</span>
+                        <span class="sidebar-normal"> Manajemen Bisnis </span>
                     </a>
                 </li>
                 @endrole
@@ -76,13 +76,13 @@
         </a>
         <div class="collapse" id="laporanKeuangan">
             <ul class="nav m-0">
-                <li class="nav-item {{ Request::segment(1) === 'laporan' ? 'active' : null }}">
+                <li class="nav-item {{ Request::segment(1) === 'laporan_laba_rugi' ? 'active' : null }}">
                     <a class="nav-link" href="/laporan_laba_rugi">
                         <span class="sidebar-mini"> P </span>
                         <span class="sidebar-normal"> Laporan Laba Rugi </span>
                     </a>
                 </li>
-                <li class="nav-item ">
+                <li class="nav-item {{ Request::segment(1) === 'perubahan_ekuitas' ? 'active' : null }}">
                     <a class="nav-link" href="/perubahan_ekuitas">
                         <span class="sidebar-mini"> RS </span>
                         <span class="sidebar-normal"> Laporan Perubahan Ekuitas </span>
@@ -97,12 +97,14 @@
             </ul>
         </div>
     </li>
-    @role('owner')
+    @role('company')
+    @if (DB::table('companies')->where('id_user','=',Auth::user()->id)->first()->is_actived == 0)
     <li class="nav-item ">
         <a class="nav-link" href="/home">
             <i class="material-icons">unarchive</i>
             <p>Upgrade to PRO</p>
         </a>
     </li>
+    @endif
     @endrole
 </ul>

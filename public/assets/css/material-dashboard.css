@@ -2650,7 +2650,6 @@ select.form-control-lg:not([size]):not([multiple]),
 }
 
 .invalid-feedback {
-  display: none;
   width: 100%;
   margin-top: 0.25rem;
   font-size: 80%;
@@ -9496,22 +9495,22 @@ a.text-dark:focus {
   background-color: #2B82BC;
   /* background-color: #9c27b0; */
   border-color: #9c27b0;
-  box-shadow: 0 2px 2px 0 rgba(156, 39, 176, 0.14), 0 3px 1px -2px rgba(156, 39, 176, 0.2), 0 1px 5px 0 rgba(156, 39, 176, 0.12);
+  box-shadow: 0 2px 2px 0 rgba(57, 97, 190, 0.14), 0 3px 1px -2px rgba(50, 66, 211, 0.2), 0 1px 5px 0 rgba(119, 152, 230, 0.12);
 }
 
 .btn.btn-primary:hover {
   color: #fff;
-  background-color: #9124a3;
-  border-color: #701c7e;
+  background-color: #2455a3;
+  border-color: #3f86f0;
 }
 
 .btn.btn-primary:focus,
 .btn.btn-primary.focus,
 .btn.btn-primary:hover {
   color: #fff;
-  /* background: #2B82BC; */
-  background-color: #9124a3;
-  border-color: #701c7e;
+  background: #2B82BC;
+  /* background-color: #9124a3; */
+  border-color: #5452b9;
 }
 
 .btn.btn-primary:active,
@@ -9519,9 +9518,9 @@ a.text-dark:focus {
 .open>.btn.btn-primary.dropdown-toggle,
 .show>.btn.btn-primary.dropdown-toggle {
   color: #fff;
-  background-color: #9124a3;
-  border-color: #701c7e;
-  box-shadow: 0 2px 2px 0 rgba(156, 39, 176, 0.14), 0 3px 1px -2px rgba(156, 39, 176, 0.2), 0 1px 5px 0 rgba(156, 39, 176, 0.12);
+  background-color: #2B82BC;
+  border-color: #5452b9;
+  box-shadow: 0 2px 2px 0 rgba(57, 97, 190, 0.14), 0 3px 1px -2px rgba(50, 66, 211, 0.2), 0 1px 5px 0 rgba(119, 152, 230, 0.12);
 }
 
 .btn.btn-primary:active:hover,
@@ -9537,8 +9536,8 @@ a.text-dark:focus {
 .show>.btn.btn-primary.dropdown-toggle:focus,
 .show>.btn.btn-primary.dropdown-toggle.focus {
   color: #fff;
-  background-color: #9124a3;
-  border-color: #3f1048;
+  background-color: #2B82BC;
+  border-color: #5452b9;
 }
 
 .open>.btn.btn-primary.dropdown-toggle.bmd-btn-icon {
@@ -16899,6 +16898,9 @@ fieldset[disabled] .form-group.is-focused .togglebutton label {
 .table thead tr th {
   font-size: 1.063rem;
   font-weight: 400;
+  background: #4BB1D0;
+  color: white;
+  border: 1px solid white;
 }
 
 .table .th-description {
@@ -17401,7 +17403,7 @@ html[dir="rtl"] .form-check .form-check-sign .check:before {
 .card {
   border: 0;
   margin-bottom: 30px;
-  margin-top: 30px;
+  /* margin-top: 30px; */
   border-radius: 6px;
   color: #333333;
   background: #fff;

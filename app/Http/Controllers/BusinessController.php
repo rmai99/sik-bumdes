@@ -15,7 +15,7 @@ class BusinessController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['role:owner|employee']);
+        $this->middleware(['role:company']);
 
         $this->middleware('auth');
         
@@ -31,12 +31,31 @@ class BusinessController extends Controller
         $user = Auth::user()->id;
 
         $session = session('business');
+        $company = Companies::where('id_user', $user)->first();
+        $business = Business::where('id_company', $company->id)->get();
+        if($session == null){
+            $session = Business::where('id_company', $company->id)->first()->id;
+        }
+        $getBusiness = Business::with('company')
+        ->where('id_company', $company->id)
+        ->where('id', $session)->first();
         
-        $company = Companies::where('id_user', $user)->first()->id;
+        $sum = Business::where('id_company', $company->id)->count();
         
-        $business = Business::where('id_company', $company)->get();
+        if($company->is_actived){
+            if($sum == 0){
+                return view('auth.tambahBisnis');
+            } else {
+                return view('user.bisnis', compact('business', 'session', 'getBusiness'));
+            }
+        } else {
+            if($sum == 0){
+                return view('auth.tambahBisnis');
+            }else {
+            }
+            return view('user.bisnis', compact('business', 'session', 'getBusiness'));
+        } 
         
-        return view('user.bisnis', compact('business', 'session'));
     }
 
     public function setBusiness($id){
@@ -52,7 +71,19 @@ class BusinessController extends Controller
      */
     public function create()
     {
-        //
+        $user = Auth::user()->id;
+        $company = Companies::where('id_user', $user)->first();
+        $business = Business::where('id_company', $company->id)->count();
+        $pro = $company->is_actived;
+
+        if($pro != 1){
+            if($business == 0){
+                return view('auth.tambahBisnis');
+            }else {
+                return redirect()->route('bisnis.index')->withErrors('error!');
+            }
+        }      
+        
     }
 
     /**
@@ -64,17 +95,21 @@ class BusinessController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-
         $company = Companies::where('id_user', $user->id)->first()->id;
-        
+
+        $this->validate($request,[
+            'business_name' => ['required', 'string', 'max:30'],
+        ]);
+
         $data = new Business;
         $data->business_name = $request->business_name;
         $data->id_company = $company;
         $data->save();
 
-        $parent_array = array('1' => 'Asset', '2' => 'Liabilitas', '3' => 'Ekuitas', '4' => 'Pendapatan', '5' => 'Beban', '6' => 'Pendapatan Lainnya', '7' => 'Biaya Lainnya');
+        $parent_array = array('1' => 'Asset', '2' => 'Liabilitas', '3' => 'Ekuitas', 
+            '4' => 'Pendapatan', '5' => 'Beban', '6' => 'Pendapatan Lainnya', '7' => 'Biaya Lainnya');
             
-            $class_array = array(
+        $class_array = array(
             array('11'=>'Aset Lancar', '12' => 'Aset Tetap', '13' => 'Aset Lainnya'), //ini buat anak anaknya aset
             array('21'=>'Utang Lancar', '22' => 'Utang Jangka Panjang'), //ini buat anak anaknya aset            
             array('31'=>'Ekuitas'),
@@ -82,8 +117,8 @@ class BusinessController extends Controller
             array('51'=>'Beban'),
             array('61'=>'Pendapatan Lainnya'),
             array('71'=>'Biaya Lainnya')
-            );
-            $akun_array = array(
+        );
+        $akun_array = array(
             array("kas"=>array("1110"=>"Debit"), "kas di bank"=> array("1111"=>"Debit"), "Piutang Dagang" => array("1120" => "Debit"), "Sewa Dibayar Dimuka"=>array("1130"=>"Debit")),
             array("Tanah"=>array("1210"=>"Debit"), "Gedung"=> array("1220"=>"Debit"), "Akumulasi Penyusutan Gedung" => array("1220-1"=>"Kredit"), "Kendaraan" => array("1230"=>"Debit"), "Akumulasi Penyusutan Kendaraan"=>array("1230-1"=>"Kredit"), "Peralatan Kantor"=>array("1240"=> "Debit"), "Akumulasi Penyusutan Peralatan Kantor"=>array("1240-1"=>"Kredit")),
             array("Aset Lainnya"=>array("1310"=>"Debit")),
@@ -94,9 +129,9 @@ class BusinessController extends Controller
             array("Biaya Gaji"=>array("5110"=>"Debit"), "Biaya Listrik, Air dan Telepon"=>array("5120"=>"Debit"), "Biaya Administrasi dan Umum" =>array("5130"=>"Debit"), "Biaya Pemasaran"=>array("5140"=>"Debit"), "Biaya Perlengkapan Kantor"=>array("5150"=>"Debit"), "Biaya Sewa"=>array("5160"=>"Debit"), "Biaya Asuransi"=>array("5170"=>"Debit"), "Biaya Penyusutan Gedung"=>array("5180"=>"Debit"), "Biaya Penyusutan Kendaraan"=>array("5190"=>"Debit"), "Biaya Penyusutan Peralatan Kantor"=>array("5200"=>"Debit")),
             array("Pendapatan Lain-Lain"=>array("6110"=>"Kredit")),
             array("Biaya Lain-Lain"=>array("7110"=>"Debit"))
-            );
+        );
         
-        $j=-1;	
+        $j=-1;
         foreach ($parent_array as $code => $name) {
             $parent=DB::table('account_parent')->insertGetId([
                 'id_business' => $data->id,
@@ -167,11 +202,12 @@ class BusinessController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request,[
+            'name' => ['required', 'string', 'max:30'],
+        ]);
         
         $data = Business::where('id', $id)->first();
-
         $data->business_name = $request->name;
-        
         $data->save();
 
         return redirect()->route('bisnis.index')->with('success','Berhasil Mengubah Data!');

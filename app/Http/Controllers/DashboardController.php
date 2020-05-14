@@ -19,7 +19,7 @@ class DashboardController extends Controller
     {
         $this->middleware('auth');
 
-        $this->middleware(['role:owner|employee']);
+        $this->middleware(['role:company|employee']);
 
     }
     /**
@@ -29,28 +29,23 @@ class DashboardController extends Controller
      */
     public function index()
     {
-
-        $year = date('Y');
-        
+        $year = date('Y');   
         $user = Auth::user()->id;
         $role = Auth::user();
-        $isOwner = $role->hasRole('owner');
-
-        if($isOwner){
+        $isCompany = $role->hasRole('company');
+        if($isCompany){
             $session = session('business');
-            
             $company = Companies::where('id_user', $user)->first()->id;
             $business = Business::where('id_company', $company)->get();
-
-            $getBusiness = Business::where('id_company', $company)->first();
-
-            if($session == 0){
-                $session = $getBusiness->id;
+            if($session == null){
+                $session = Business::where('id_company', $company)->first()->id;
             }
+            $getBusiness = Business::with('company')
+            ->where('id_company', $company)
+            ->where('id', $session)->first();
         } else {
-            $getBusiness = Employee::where('id_user', $user)->first()->id_business;
-
-            $session = $getBusiness;
+            $getBusiness = Employee::with('business')->where('id_user', $user)->first();
+            $session = $getBusiness->id_business;
         }
 
         $account = Account::whereHas('classification.parent', function ($q) use ($session){
@@ -75,14 +70,9 @@ class DashboardController extends Controller
         ->distinct()
         ->get();
 
-        // $parent = AccountParent::with('classification.account')
-        // ->where('id_business', $session)
-        // ->where('parent_account', "Asset")->first();
-        // dd($cash);
-
         $cash = Account::whereHas('classification.parent', function ($q) use ($session){
             $q->where('id_business', $session);
-        })->where('account_name', 'kas')
+        })->where('account_name', 'Kas')
         ->first();
         
         if($cash != null){
@@ -118,7 +108,75 @@ class DashboardController extends Controller
         if($sum >=1000000){
             $sum = round(($sum/1000000),1).' jt';
         }
-        return view('user/dashboard', compact('business', 'session', 'account', 'transaction', 'data', 'year', 'years', 'sum'));
+
+        $parent = AccountParent::with('classification.account')
+        ->where('id_business', $session)->get();
+        $saldo_berjalan = 0;
+        foreach($parent as $p){
+            foreach($p->classification as $c){
+                foreach($c->account as $a){
+                    $position = $a->position;
+                    if(!$a->initialBalance()->whereYear('date', $year)->first()){
+                        $beginningBalance = 0;
+                    } else {
+                        $beginningBalance = $a->initialBalance()->whereYear('date', $year)->first()->amount;
+                    }
+                    if($a->journal()->exists()){
+                        $endingBalance = $beginningBalance;
+                        $jurnals = $a->journal()->whereHas('detail', function($q) use($year){
+                            $q->whereYear('date', $year);
+                        })->get();
+                        foreach($jurnals as $jurnal){
+                            if ($jurnal->position == $position) {
+                                $endingBalance += $jurnal->amount;
+                            }else {
+                                $endingBalance -= $jurnal->amount;
+                            }
+                        }
+                    } else {
+                        if($a->initialBalance()->whereYear('date', $year)->first()){
+                            $endingBalance = $beginningBalance;
+                        } else {
+                            $endingBalance = 0;
+                        }
+                    }
+                    
+                    if($p->parent_name == "Pendapatan"){
+                        if($position == "Kredit"){
+                            $saldo_berjalan += $endingBalance;
+                        } else {
+                            $saldo_berjalan -= $endingBalance;
+                        }
+                    } 
+                    else if($p->parent_name == "Beban"){
+                        if($position == "Debit"){
+                            $saldo_berjalan -= $endingBalance;
+                        } else {
+                            $saldo_berjalan += $endingBalance;
+                        }
+                    }
+                    else if($p->parent_name == "Pendapatan Lainnya"){
+                        if($position == "Kredit"){
+                            $saldo_berjalan += $endingBalance;
+                        } else {
+                            $saldo_berjalan -= $endingBalance;
+                        }
+                    }
+                    else if($p->parent_name == "Biaya Lainnya"){
+                        if($position == "Debit"){
+                            $saldo_berjalan -= $endingBalance;
+                        } else {
+                            $saldo_berjalan += $endingBalance;
+                        }
+                    }
+                }
+            }
+        }
+        if($saldo_berjalan >=1000000){
+            $saldo_berjalan = round(($saldo_berjalan/1000000),1).' jt';
+        }
+
+        return view('user/dashboard', compact('business', 'session', 'account', 'transaction', 'data', 'year', 'years', 'sum', 'getBusiness', 'saldo_berjalan'));
     }
 
     public function getMonthly($year = null){
@@ -126,16 +184,13 @@ class DashboardController extends Controller
             $year = date('Y');
         }
         $month = date("m", strtotime("-1 month"));
-        // dd($month); tahu itu bulat bulat itu 1
-        
-        
     
         $role = Auth::user();
-        $isOwner = $role->hasRole('owner');
+        $isCompany = $role->hasRole('company');
         
         $user = Auth::user()->id;
 
-        if($isOwner){
+        if($isCompany){
             $session = session('business');
 
             $companies = Companies::where('id_user', $user)->first();
@@ -212,12 +267,10 @@ class DashboardController extends Controller
                     else if($p->parent_name == "Biaya Lainnya"){
                         $biayalain += $saldo_akhir;
                     }
-
                 }
                 $i++;
             }
         }
-
         $income = $pendapatan - $biaya + $pendapatanlain - $biayalain;
         dd($income);
 
@@ -226,11 +279,9 @@ class DashboardController extends Controller
             'year'=>$year,
             'income'=>$income
           ]);
-        
     }
 
     public function get_monthly_cash_flow($year = null){
-        
         if(isset($_GET['year'])){
             $year = $_GET['year'];
              
@@ -240,23 +291,17 @@ class DashboardController extends Controller
 
         $user = Auth::user()->id;
         $role = Auth::user();
-        $isOwner = $role->hasRole('owner');
+        $isCompany = $role->hasRole('company');
 
-        if($isOwner){
+        if($isCompany){
             $session = session('business');
-            
             $company = Companies::where('id_user', $user)->first()->id;
-            $business = Business::where('id_company', $company)->get();
-
-            $business = Business::where('id_company', $company)->get();
             $getBusiness = Business::where('id_company', $company)->first();
-
             if($session == 0){
                 $session = $getBusiness->id;
             }
         } else {
             $getBusiness = Employee::where('id_user', $user)->first()->id_business;
-
             $session = $getBusiness;
         }
         
@@ -345,23 +390,17 @@ class DashboardController extends Controller
 
         $user = Auth::user()->id;
         $role = Auth::user();
-        $isOwner = $role->hasRole('owner');
+        $isCompany = $role->hasRole('company');
 
-        if($isOwner){
+        if($isCompany){
             $session = session('business');
-            
             $company = Companies::where('id_user', $user)->first()->id;
-            $business = Business::where('id_company', $company)->get();
-
-            $business = Business::where('id_company', $company)->get();
             $getBusiness = Business::where('id_company', $company)->first();
-
             if($session == 0){
                 $session = $getBusiness->id;
             }
         } else {
             $getBusiness = Employee::where('id_user', $user)->first()->id_business;
-
             $session = $getBusiness;
         }
         
@@ -399,12 +438,9 @@ class DashboardController extends Controller
                     $cash_in = 0;
                 }
             }
-
-            
             $day[] = $date->format("j");
             $cash1[] = $cash_in;
             $cash2[] = $cash_out;
-
         }
         return response()->json([
             'status'=>'success',
@@ -421,29 +457,7 @@ class DashboardController extends Controller
      */
     public function create()
     {
-        $year = date('Y');
         
-        $user = Auth::user()->id;
-        $role = Auth::user();
-        $isOwner = $role->hasRole('owner');
-
-        if($isOwner){
-            $session = session('business');
-            
-            $company = Companies::where('id_user', $user)->first()->id;
-            $business = Business::where('id_company', $company)->get();
-
-            $business = Business::where('id_company', $company)->get();
-            $getBusiness = Business::where('id_company', $company)->first();
-
-            if($session == 0){
-                $session = $getBusiness->id;
-            }
-        } else {
-            $getBusiness = Employee::where('id_user', $user)->first()->id_business;
-
-            $session = $getBusiness;
-        }
     }
 
     /**

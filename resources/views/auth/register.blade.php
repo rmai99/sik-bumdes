@@ -26,7 +26,6 @@
                                 <input id="name" type="text" class="form-control @error('name') is-invalid @enderror"
                                     name="name" value="{{ old('name') }}" required autocomplete="name"
                                     placeholder="Nama Perusahaan" autofocus>
-
                                 @error('name')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -46,7 +45,6 @@
                                     class="form-control @error('address') is-invalid @enderror" name="address"
                                     value="{{ old('address') }}" required autocomplete="address"
                                     placeholder="Alamat Perusahaan">
-
                                 @error('address')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -66,13 +64,11 @@
                                     class="form-control @error('phoneNumber') is-invalid @enderror" name="phoneNumber"
                                     value="{{ old('phoneNumber') }}" required autocomplete="phoneNumber"
                                     placeholder="Nomor Telepon">
-
-                                @error('phoneNumber')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
-                                
+                                    @if ($errors->has('phone_number'))
+                                        <span class="invalid">
+                                            <strong>{{ $errors->first('phone_number') }}</strong>
+                                        </span>
+                                    @endif
                             </div>
                             <p class="mb-0 font-14">Email</p>
                             <div class="input-group mb-2">
@@ -86,7 +82,6 @@
                                 <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
                                     name="email" value="{{ old('email') }}" required autocomplete="email"
                                     placeholder="Email">
-
                                 @error('email')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -109,8 +104,12 @@
                                 <input id="password" type="password"
                                     class="form-control @error('password') is-invalid @enderror" name="password"
                                     required autocomplete="new-password" placeholder="Password">
-                            </div>
-
+                                </div>
+                                @if ($errors->has('password'))
+                                    <span class="invalid">
+                                        <strong>{{ $errors->first('password') }}<strong>
+                                    </span>
+                                @endif 
                             <p class="mb-0 font-14">Confirm Password</p>
                             <div class="input-group mb-2">
                                 <div class="input-group-append">

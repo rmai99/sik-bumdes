@@ -21,7 +21,7 @@
                 <div class="card">
                     <div class="header text-center mt-2 mb-2">
                         <h3 class="title" style="font-weight: 400;">Perubahan Ekuitas</h3>
-                        <p class=""><strong>Periode</strong> {{ $dt }} </p>
+                        <p class=""><strong>Periode</strong> {{ $year }} </p>
                     </div>
                     <div class="card-body">
                         <div class="toolbar">
@@ -60,18 +60,18 @@
                                         <td style="width:15%"></td>
                                         <td style="width:10%"></td>
                                     </tr>
-                                    @for ($i = 1; $i <= sizeof($array); $i++)
-                                        @if ($array[$i]['nama'] != "Modal Disetor" && $array[$i]['nama'] != "Modal Usaha")
+                                    @for ($i = 1; $i <= sizeof($equityArray); $i++)
+                                        @if ($equityArray[$i]['name'] != "Modal Disetor" && $equityArray[$i]['name'] != "Modal Usaha")
                                             <tr>
                                                 <td style="width:60%;">
-                                                    {{ $array[$i]['kode'] }} - {{ $array[$i]['nama'] }}
+                                                    {{ $equityArray[$i]['code'] }} - {{ $equityArray[$i]['name'] }}
                                                 </td>
                                                 <td style="width:15%"></td>
                                                 <td style="width:15%"></td>
                                                 <td class="text-right" style="width:10%">
-                                                    Rp{{strrev(implode('.',str_split(strrev(strval($array[$i]['saldo_akhir'])),3)))}}
+                                                    Rp{{strrev(implode('.',str_split(strrev(strval($equityArray[$i]['ending balance'])),3)))}}
                                                     @php
-                                                        $modal_awal += $array[$i]['saldo_akhir'];
+                                                        $modal_awal += $equityArray[$i]['ending balance'];
                                                     @endphp
                                                 </td>
                                             </tr>
@@ -85,11 +85,11 @@
                                         <td style="width:15%"></td>
                                         <td style="width:10%"></td>
                                     </tr>
-                                    @for ($i = 1; $i <= sizeof($array); $i++)
-                                        @if ($array[$i]['nama'] == "Saldo Laba Tahun Berjalan" || $array[$i]['nama'] == "Laba Ditahan")
+                                    @for ($i = 1; $i <= sizeof($equityArray); $i++)
+                                        @if ($equityArray[$i]['name'] == "Saldo Laba Tahun Berjalan" || $equityArray[$i]['name'] == "Laba Ditahan")
                                             <tr>
                                                 <td style="width:60%;">
-                                                    {{ $array[$i]['kode'] }} - {{ $array[$i]['nama'] }}
+                                                    {{ $equityArray[$i]['code'] }} - {{ $equityArray[$i]['name'] }}
                                                 </td>
                                                 <td style="width:15%"></td>
                                                 <td style="width:15%"></td>

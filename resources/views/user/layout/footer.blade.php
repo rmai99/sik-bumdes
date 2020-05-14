@@ -3,6 +3,6 @@
     </nav>
     <div class="copyright float-right">
         &copy;
-        2020, made with <i class="material-icons">favorite</i> by
+        <strong>SIK BUMDES</strong>, All rights reserved
     </div>
 </div>

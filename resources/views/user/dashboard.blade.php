@@ -12,9 +12,9 @@
     <div class="row">
         <div class="col-lg-3 col-md-6 col-sm-6">
             <div class="card card-stats mt-0">
-                <div class="card-header card-header-warning card-header-icon pb-4 pt-4">
-                    <div class="card-icon">
-                        <i class="material-icons">content_copy</i>
+                <div class="card-header card-header-icon pb-4 pt-4">
+                    <div class="card-icon" style="background: linear-gradient(60deg, #ffa726, #fb8c00);">
+                        <i class="material-icons">account_balance_wallet</i>
                     </div>
                     <p class="card-category">Saldo Kas</p>
                     <h3 class="card-title">
@@ -27,10 +27,10 @@
             <div class="card card-stats mt-0">
                 <div class="card-header card-header-success card-header-icon pb-4 pt-4">
                     <div class="card-icon">
-                        <i class="material-icons">store</i>
+                        <i class="material-icons">money</i>
                     </div>
-                    <p class="card-category">Modal</p>
-                    <h3 class="card-title">8.3jt</h3>
+                    <p class="card-category">Laba Rugi</p>
+                    <h3 class="card-title">{{$saldo_berjalan}}</h3>
                 </div>
             </div>
         </div>
@@ -38,7 +38,7 @@
             <div class="card card-stats mt-0">
                 <div class="card-header card-header-danger card-header-icon pb-4 pt-4">
                     <div class="card-icon">
-                        <i class="material-icons">info_outline</i>
+                        <i class="material-icons">receipt</i>
                     </div>
                     <p class="card-category">Transaksi</p>
                     <h3 class="card-title">{{ $transaction }}</h3>
@@ -49,7 +49,7 @@
             <div class="card card-stats mt-0">
                 <div class="card-header card-header-info card-header-icon pb-4 pt-4">
                     <div class="card-icon">
-                            <i class="material-icons">account_balance_wallet</i>
+                        <i class="material-icons">account_balance_wallet</i>
                     </div>
                     <p class="card-category">Akun</p>
                     <h3 class="card-title">{{ $account }}</h3>
@@ -58,29 +58,29 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-lg-6 col-md-12">
             <div class="card">
+                <div class="card-header card-header-warning m-0">
+                    <h4 class="card-title">Transaksi</h4>
+                     <p class="card-category">Transaksi Terbaru</p> 
+                </div>
                 <div class="card-body">
-                        <h3 class="card-title">Laporan Laba Rugi</h3>
-                        {{--  <p class="card-category">Last Campaign Performance</p>  --}}
-                    <div class="position-relative mb-4">
-                        <div class="chartjs-size-monitor">
-                            <div class="chartjs-size-monitor-expand">
-                                <div class=""></div>
+                    @foreach ($data as $item)
+                        <div class="row">
+                            <div class="col-8">
+                                <p class="font-weight-bold mb-0">{{ $item->description}}</p>
                             </div>
-                            <div class="chartjs-size-monitor-shrink">
-                                <div class=""></div>
+                            <div class="col-4">
+                                <p class="d-flex justify-content-end mb-0 font-20">
+                                    Rp{{strrev(implode('.',str_split(strrev(strval($item->journal[0]->amount)),3)))}}
+                                </p>
+                            </div>
+                            <div class="col">
+                                <p class="font-14">{{ strftime("%d %B %G", strtotime($item->date)) }}</p>
                             </div>
                         </div>
-                        <canvas id="laba-rugi" height="300px" class="chartjs-render-monitor mt-3"
-                            style="display: block"></canvas>
-                    </div>
+                    @endforeach
                 </div>
-                {{--  <div class="card-footer">
-                    <div class="stats">
-                        <i class="material-icons">access_time</i> campaign sent 2 days ago
-                    </div>
-                </div>  --}}
             </div>
         </div>
         <div class="col-lg-6 col-md-12 card card-primary card-outline">
@@ -89,7 +89,7 @@
                     Arus Akun Kas
                 </h3>
                 <div class="btn-group" data-toggle="btn-toggle">
-                    <button onclick="myFunction()" class="btn btn-default btn-sm" data-toggle="off">Filter</button>
+                    <button onclick="myFunction()" class="btn btn-default btn-sm" style="background: #66bb6a">Filter</button>
                 </div>
             </div>
             <div class="card-body">
@@ -128,7 +128,7 @@
                             </select>
                         </div>
                         <div class="col-12 text-center pt-2">
-                            <button type="button" class="btn btn-default btn-sm btnFIlter">Filter</button>
+                            <button type="button" class="btn btn-primary btn-sm btnFIlter">Filter</button>
                         </div>
                     </div>
                 </div>
@@ -140,29 +140,24 @@
             <!-- /.card-body-->
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-6 col-md-12">
+    {{--  <div class="row">
+        <div class="col-md-6">
             <div class="card">
-                <div class="card-header card-header-warning m-0">
-                    <h4 class="card-title">Transaksi</h4>
-                     <p class="card-category">Transaksi Terbaru</p> 
-                </div>
                 <div class="card-body">
-                    @foreach ($data as $item)
-                        <div class="row">
-                            <div class="col-8">
-                                <p class="font-weight-bold mb-0">{{ $item->description}}</p>
+                        <h3 class="card-title">Laporan Laba Rugi</h3>
+                        <p class="card-category">Last Campaign Performance</p>
+                    <div class="position-relative mb-4">
+                        <div class="chartjs-size-monitor">
+                            <div class="chartjs-size-monitor-expand">
+                                <div class=""></div>
                             </div>
-                            <div class="col-4">
-                                <p class="d-flex justify-content-end mb-0 font-20">
-                                    Rp{{strrev(implode('.',str_split(strrev(strval($item->journal[0]->amount)),3)))}}
-                                </p>
-                            </div>
-                            <div class="col">
-                                <p class="font-14">{{ strftime("%d %B %G", strtotime($item->date)) }}</p>
+                            <div class="chartjs-size-monitor-shrink">
+                                <div class=""></div>
                             </div>
                         </div>
-                    @endforeach
+                        <canvas id="laba-rugi" height="300px" class="chartjs-render-monitor mt-3"
+                            style="display: block"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -190,7 +185,7 @@
                 </div> 
             </div>
         </div>
-    </div>
+    </div>  --}}
     @include('sweetalert::alert')
 </div>
 @endsection

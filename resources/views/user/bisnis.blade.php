@@ -108,11 +108,16 @@
                     </div>
                     <div class="modal-body">
                         <div class="card-body">
-
                             <div class="form-group name">
                                 <h6 class="text-dark font-weight-bold m-0">Nama</h6>
-                                <input type="text" class="form-control" aria-describedby="name" name="name">
+                                <input type="text" class="form-control" aria-describedby="name" name="name" id="name">
+                                <input type="hidden" class="form-control" name="id" id="formEditId">
                             </div>
+                            @if ($errors->has('name'))
+                                <span class="invalid">
+                                    <strong>{{ $errors->first('name') }}</strong>
+                                </span>
+                            @endif
                         </div>
                     </div>
                     <div class="text-center">
@@ -128,6 +133,16 @@
 @push('js')
 <script>
     $(document).ready(function () {
+        @if (count($errors) > 0)
+            $('#editBusiness').modal('show');
+            var name = "{{old('name')}}";
+            $('#name').val(name);
+            
+            var id = "{{old('id')}}";
+            var action = "{{route('bisnis.index')}}/"+id;
+            $('#formEdit').attr('action', action);
+        @endif
+        
         $('#datatables').DataTable({
             "pagingType"        : "full_numbers",
             "lengthMenu"        : [
@@ -176,8 +191,9 @@
                             'Bisnis telah dihapus.',
                             'success'
                             )
-                            console.log(url);
                             $(this).closest('tr').remove();
+                            var url = "{{route('bisnis.index')}}";
+                            window.location.href = url;
                         }
                     });
                 }
@@ -186,34 +202,35 @@
     });
     
     $(document).ready(function () {
-        $(document).on('click', '.edit', function() {
-            var id = $(this).attr('id');
-            $.ajax({
-                type        : 'GET',
-                url         : '{!!URL::to('detail_bisnis')!!}',
-                data        : {'id' : id},
-                dataType    : 'html',
-                success     : function(data){
-                    var servers = $.parseJSON(data);
-                    $.each(servers, function(index, value){
-                        var name = value.business_name;
-                        
-                        $('div.name input').val(name);
-                    });
-                }, error    : function(){
+    $(document).on('click', '.edit', function() {
+        var id = $(this).attr('id');
+        $('#formEditId').val(id);
+        $.ajax({
+            type        : 'GET',
+            url         : '{!!URL::to('detail_bisnis')!!}',
+            data        : {'id' : id},
+            dataType    : 'html',
+            success     : function(data){
+                var servers = $.parseJSON(data);
+                $.each(servers, function(index, value){
+                    var name = value.business_name;
+                    
+                    $('#name').val(name);
+                });
+            }, error    : function(){
 
-                },
-            })
-            var action = "{{route('bisnis.index')}}/"+id;
-            $('#formEdit').attr('action', action);
+            },
+        })
+        var action = "{{route('bisnis.index')}}/"+id;
+        $('#formEdit').attr('action', action);
 
-        });
+    });
 
         $(document).on('click', '.addBusiness', function(e) {
             e.preventDefault();
             $.ajax({
                 type        : 'GET',
-                url         : '{!!URL::to('cekpro')!!}',
+                url         : '{!!URL::to('isPro')!!}',
                 dataType    : 'html',
                 success     : function(data){
                     var servers = $.parseJSON(data);

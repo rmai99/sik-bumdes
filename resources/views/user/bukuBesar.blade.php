@@ -14,8 +14,8 @@
         $akun = $account;
     }
 
-    $saldo_awal = $log['saldo_awal'][0];
-    $saldo_akhir = $log['saldo_awal'][0];
+    $saldo_awal = $log['saldo_awal'];
+    $saldo_akhir = $log['saldo_awal'];
     $debit = 0;
     $kredit = 0;
 @endphp
@@ -64,7 +64,7 @@
                                             <p class="mb-0">Nama Akun</p>
                                         </div>
                                         <div class="col-lg-6">
-                                            <p class="mb-0"><strong> : {{$log['nama_akun'][0]}}</strong></p>
+                                            <p class="mb-0"><strong> : {{$log['nama_akun']}}</strong></p>
                                         </div>
                                     </div>
                                     <div class="row d-flex">
@@ -72,7 +72,7 @@
                                             <p class="mb-0">Kode Akun</p>
                                         </div>
                                         <div class="col-lg-6">
-                                            <p class="mb-0"><strong> : {{$log['kode_akun'][0]}}</strong></p>
+                                            <p class="mb-0"><strong> : {{$log['kode_akun']}}</strong></p>
                                         </div>
                                     </div>
                                     <div class="row d-flex">
@@ -80,7 +80,7 @@
                                             <p class="mb-0">Posisi Normal</p>
                                         </div>
                                         <div class="col-lg-6">
-                                            <p class="mb-0"><strong> : {{$log['position'][0]}}</strong></p>
+                                            <p class="mb-0"><strong> : {{$log['position']}}</strong></p>
                                         </div>
                                     </div>
                                 </div>
@@ -121,17 +121,17 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>{{$log['date'][0]}}</td>
+                                        <td>{{ strftime("%d %B %G", strtotime($log['date'])) }} </td>
                                         <td>Saldo Awal</td>
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            Rp{{strrev(implode('.',str_split(strrev(strval($log['saldo_awal'][0])),3)))}}
+                                            Rp{{strrev(implode('.',str_split(strrev(strval($log['saldo_awal'])),3)))}}
                                         </td>
                                     </tr>
                                     @foreach ($data as $d)
                                     <tr>
-                                        <td>{{ $d->detail->date }}</td>
+                                        <td>{{ strftime("%d %B %G", strtotime($d->detail->date)) }}</td>
                                         <td>{{ $d->detail->description }}</td>
                                         <td>
                                             @if ($d->position=="Debit")
@@ -158,7 +158,7 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if ($log['position'][0] == "Debit")
+                                            @if ($log['position'] == "Debit")
                                                 @if ($d->position == "Kredit")
                                                     @php
                                                         $saldo_akhir -= $d->amount;        
@@ -168,7 +168,7 @@
                                                         $saldo_akhir += $d->amount;        
                                                     @endphp
                                                 @endif
-                                            @elseif ($log['position'][0] == "Kredit")
+                                            @elseif ($log['position'] == "Kredit")
                                                 @if ($d->position == "Kredit")
                                                     @php
                                                         $saldo_akhir += $d->amount;        

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\AccountClassification;
+use App\AccountParent;
 
 class ClassificationController extends Controller
 {
@@ -33,7 +35,7 @@ class ClassificationController extends Controller
 
     public function index()
     {
-        //
+        
     }
 
     public function create()
@@ -43,18 +45,24 @@ class ClassificationController extends Controller
 
     public function store(Request $request)
     {
-        // $data = AccountClassification::where('account_code', $request->name)->get();
+        $business = AccountParent::where('id',$request->input_parent)->first()->id_business;
+        
+        $data = AccountClassification::whereHas('parent', function ($q) use($business){
+            $q->where('id_business', $business);
+        })->select('classification_code')->get();
 
-        // $this->validate($request,[
-        //     'id_parent' => 'required',
-        //     'classification_code' => 'required',
-        //     'classification_name' => 'required|after_or_equal:'.$dates,
-        // ]);
+        foreach($data as $d){
+            $array[] = $d->classification_code;
+        }
+        
+        $this->validate($request,[
+            'input_code' => Rule::notIn($array),
+        ]);
 
         $data = new AccountClassification;
-        $data->id_parent = $request->parent;
-        $data->classification_code = $request->code;
-        $data->classification_name = $request->name;
+        $data->id_parent = $request->input_parent;
+        $data->classification_code = $request->input_code;
+        $data->classification_name = $request->input_name;
         $data->save();
 
         return redirect()->action('AccountController@index')->with('success','Berhasil Menambahkan Data!');
@@ -72,11 +80,25 @@ class ClassificationController extends Controller
 
     public function update(Request $request, $id)
     {
+        $business = AccountParent::where('id',$request->edit_parent)->first()->id_business;
+
         $data = AccountClassification::where('id', $id)->first();
 
-        $data->id_parent = $request->parent;
-        $data->classification_code = $request->code;
-        $data->classification_name = $request->name;
+        $code = AccountClassification::whereHas('parent', function ($q) use($business){
+            $q->where('id_business', $business);
+        })->where('classification_code', '!=', $data->classification_code)->get();
+        
+        foreach($code as $c){
+            $array[] = $c->classification_code;
+        }
+        
+        $this->validate($request,[
+            'edit_code' => Rule::notIn($array),
+        ]);
+        
+        $data->id_parent = $request->edit_parent;
+        $data->classification_code = $request->edit_code;
+        $data->classification_name = $request->edit_name;
         $data->save();
 
         return redirect()->route('akun.index')->with('success','Berhasil Mengubah Data!');;

@@ -29,26 +29,24 @@
         <div class="card-body collapse pt-0 pb-0 mb-0" id="collapse{{ $p->id }}">
             @foreach ($p->classification as $c)
                 <table class="table table-striped table-no-bordered table-hover mb-0" cellspacing="0" width="100%">
-                    <thead>
-                        <tr>
-                            <th class="p-2 text-center" style="width:8%"><strong>{{ $c->classification_code }}</strong></th>
-                            <th class="p-2"><strong>{{ $c->classification_name }}</strong></th>
-                            <th></th>
-                            <th style="width:10%" class="text-center">
-                                <form action="{{ route('classification.destroy', $c->id) }}" method="post">
-                                    <button class="btnEditClassification btn-icon" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editKlasifikasiModal"
-                                        value="{{ $c->id }}" data-parent= "{{ $c->id_parent }}">
-                                        <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
-                                    </button>
-                                        {{ csrf_field() }}
-                                        {{ method_field('DELETE') }}
-                                    <button type="submit" rel="tooltip" title="Remove" onclick="return confirm('Anda yakin mau menghapus item ini ?')" class="btn-icon">
-                                        <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
-                                    </button>
-                                </form>
-                            </th>
-                        </tr>
-                    </thead>
+                    <tr>
+                        <th class="p-2 text-center" style="width:8%"><strong>{{ $c->classification_code }}</strong></th>
+                        <th class="p-2"><strong>{{ $c->classification_name }}</strong></th>
+                        <th></th>
+                        <th style="width:10%" class="text-center">
+                            <form action="{{ route('classification.destroy', $c->id) }}" method="post">
+                                <button class="btnEditClassification btn-icon" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editKlasifikasiModal"
+                                    value="{{ $c->id }}" data-parent= "{{ $c->id_parent }}">
+                                    <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
+                                </button>
+                                    {{ csrf_field() }}
+                                    {{ method_field('DELETE') }}
+                                <button type="submit" rel="tooltip" title="Remove" onclick="return confirm('Anda yakin mau menghapus item ini ?')" class="btn-icon">
+                                    <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
+                                </button>
+                            </form>
+                        </th>
+                    </tr>    
                     <tbody>
                         @foreach ($c->account as $account)
                             <tr>
@@ -88,13 +86,12 @@
                     {{ csrf_field() }}
                     <div class="modal-body">
                         <div class="card-body">
-
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Parent Account</h6>
-                                <select class="form-control" name="parent">
-                                    <option value="0" disabled="true" selected="true">Select Parent</option>
+                                <select class="form-control parent" name="input_parent" required>
+                                    <option value="" selected="true">Pilih Parent</option>
                                     @foreach ($account_parent as $a)
-                                        <option id="parentAkun" name="parentAkun" value="{{$a->id}}">
+                                        <option id="parentAkun" value="{{$a->id}}">
                                             {{$a->parent_name}}
                                         </option>
                                     @endforeach
@@ -103,15 +100,24 @@
 
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Kode Klasifikasi Akun</h6>
-                                <input type="text" class="form-control" id="" aria-describedby="kodeKlasifikasiAkun"
-                                    placeholder="ex. 11" name="code">
+                                <input type="text" class="form-control" aria-describedby="kodeKlasifikasiAkun"
+                                    placeholder="ex. 11" name="input_code" value="{{ old('input_code') }}" required>
                             </div>
-
+                            @error('input_code')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Nama Klasifikasi Akun</h6>
-                                <input type="text" class="form-control" id="" aria-describedby="namaKlasifikasiAkun"
-                                    placeholder="ex. aset lancar" name="name">
+                                <input type="text" class="form-control" aria-describedby="namaKlasifikasiAkun"
+                                    placeholder="ex. aset lancar" name="input_name" value="{{ old('input_name') }}" required>
                             </div>
+                            @error('input_name')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
                     </div>
                     <div class="modal-footer justify-content-center">
@@ -140,11 +146,11 @@
                     @csrf
                     <div class="modal-body">
                         <div class="card-body">
-
+                            <input type="hidden" class="form-control" name="classification" id="id_classification">
                             <div class="form-group parentAccount_">
                                 <h6 class="text-dark font-weight-bold m-0">Parent Account</h6>
-                                <select class="form-control" name="parent">
-                                    <option value="0" disabled="true" selected="true">Select Parent</option>
+                                <select class="form-control" name="edit_parent" id="parent" required>
+                                    <option value="" selected="true" required>Pilih Parent</option>
                                     @foreach ($account_parent as $a)
                                         <option id="parentAkun" name="parentAkun" value="{{$a->id}}">
                                             {{$a->parent_name}}
@@ -155,14 +161,19 @@
 
                             <div class="form-group classificationCode">
                                 <h6 class="text-dark font-weight-bold m-0">Kode Klasifikasi Akun</h6>
-                                <input type="text" class="form-control" name="code" aria-describedby="kodeKlasifikasiAkun"
-                                    value="11">
+                                <input type="text" class="form-control" name="edit_code" aria-describedby="kodeKlasifikasiAkun"
+                                    value="11" required id="code">        
+                                @error('edit_code')
+                                    <span class="invalid-feedback" role="alert" id="hapus">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
 
                             <div class="form-group classificationName">
                                 <h6 class="text-dark font-weight-bold m-0">Nama Klasifikasi Akun</h6>
-                                <input type="text" class="form-control" name="name" aria-describedby="namaKlasifikasiAkun"
-                                    value="aset lancar">
+                                <input type="text" class="form-control" name="edit_name" aria-describedby="namaKlasifikasiAkun"
+                                    value="aset lancar"id="name" required>
                             </div>
                         </div>
                     </div>
@@ -193,7 +204,7 @@
                             {{ csrf_field() }}
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Parent Akun</h6>
-                                <select class="form-control changeParent_" required>
+                                <select class="form-control changeParent_" name="input_parentAccount" required>
                                     <option selected="true" value="">Parent Akun</option>
                                     @foreach ($account_parent as $a)
                                         <option value="{{$a->id}}">
@@ -205,7 +216,7 @@
 
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Klasifikasi Akun</h6>
-                                <select class="form-control classification_" name="classificationAkun" required>
+                                <select class="form-control classification_" name="input_classificationAccount" required>
                                     <option selected="true" value="">Klasifikasi Akun</option>
                                     @foreach ($account_parent as $a)
                                         @foreach ($a->classification as $classification)
@@ -220,26 +231,30 @@
                             <div class="row">
                                 <div class="form-group col-6">
                                     <h6 class="text-dark font-weight-bold m-0">Kode Akun</h6>
-                                    <input type="text" class="form-control" name="codeAkun" aria-describedby="kodeAkun"
-                                        placeholder="ex. 1110" required>
+                                    <input type="text" class="form-control" name="input_codeAccount" aria-describedby="kodeAkun"
+                                        placeholder="ex. 1110" value="{{ old('input_codeAccount') }}" required>
+                                        @error('input_codeAccount')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
                                 </div>
 
                                 <div class="form-group col-6">
                                     <h6 class="text-dark font-weight-bold m-0">Posisi Normal</h6>
-                                    <select class="form-control" name="position" required>
+                                    <select class="form-control positionAccount" name="input_positionAccount" required>
                                         <option selected="true" value="">Posisi</option>
-                                        <option value="Debit">Debit</option>
-                                        <option value="Kredit">Kredit</option>
+                                        <option value="Debit" {{ old('input_positionAccount') }} == Debit ? 'selected' : ''>Debit</option>
+                                        <option value="Kredit" {{ old('input_positionAccount') }} == Kredit ? 'selected' : ''>Kredit</option>
                                     </select>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Nama Akun</h6>
-                                <input type="text" class="form-control" name="akun" aria-describedby="namaAkun"
-                                    placeholder="ex. kas di bank" required>
+                                <input type="text" class="form-control" name="input_nameAccount" aria-describedby="input_nameAccount"
+                                    placeholder="ex. kas di bank" required value="{{ old('input_nameAccount') }}">
                             </div>
-
 
                         </div>
                     </div>
@@ -267,13 +282,14 @@
                 <form class="form" method="POST" action="" id="formAccount">
                     {{method_field('PUT')}}
                     @csrf
+                    <input type="hidden" class="form-control" name="account" id="id_account">
                     <div class="modal-body">
                         <div class="card-body">
 
                             <div class="form-group parent">
                                 <h6 class="text-dark font-weight-bold m-0">Parent Akun</h6>
-                                <select class="form-control changeParent_" name="">
-                                    <option value="0" disabled="true" selected="true">Select Parent</option>
+                                <select class="form-control changeParent_" name="edit_parentAccount" required>
+                                    <option value="" selected="true">Select Parent</option>
                                     @foreach ($account_parent as $a)
                                         <option value="{{$a->id}}">
                                             {{$a->parent_name}}
@@ -284,8 +300,8 @@
 
                             <div class="form-group classification">
                                 <h6 class="text-dark font-weight-bold m-0">Klasifikasi Akun</h6>
-                                <select class="form-control classification_" name="id_classification">
-                                    <option value="0" disabled="true" selected="true">Select Parent</option>
+                                <select class="form-control classification_" name="edit_classificationAccount" required>
+                                    <option value="" selected="true">Select Parent</option>
                                     @foreach ($account_parent as $a)
                                         @foreach ($a->classification as $classification)
                                             <option value="{{$classification->id}}">
@@ -299,24 +315,29 @@
                             <div class="row">
                                 <div class="form-group col-6 acountCode">
                                     <h6 class="text-dark font-weight-bold m-0">Kode Akun</h6>
-                                    <input type="text" class="form-control" name="numberCode" aria-describedby="kodeAkun"
-                                        value="1110">
+                                    <input type="text" class="form-control" name="edit_codeAccount" aria-describedby="kodeAkun"
+                                        value="{{ old('edit_codeAccount') }}" required>
+                                    @error('edit_codeAccount')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
 
                                 <div class="form-group col-6 position">
                                     <h6 class="text-dark font-weight-bold m-0">Posisi Normal</h6>
-                                    <select class="form-control" name="position">
+                                    <select class="form-control positionAccount" name="edit_positionAccount" required>
                                         <option disabled="true" selected="true">Posisi</option>
-                                        <option value="Debit">Debit</option>
-                                        <option value="Kredit">Kredit</option>
+                                        <option value="Debit" {{ old('edit_positionAccount') }} == Debit ? 'selected' : ''>Debit</option>
+                                        <option value="Kredit" {{ old('edit_positionAccount') }} == Kredit ? 'selected' : ''>Kredit</option>
                                     </select>
                                 </div>
                             </div>
 
                             <div class="form-group accountName">
                                 <h6 class="text-dark font-weight-bold m-0">Nama Akun</h6>
-                                <input type="text" class="form-control" name="name" aria-describedby="namaAkun"
-                                    value="kas di bank">
+                                <input type="text" class="form-control" name="edit_nameAccount" aria-describedby="namaAkun"
+                                    value="{{ old('edit_nameAccount') }}" required>
                             </div>
                         </div>
                     </div>
@@ -334,8 +355,52 @@
 @push('js')
 <script type="text/javascript">
     $(document).ready(function () {
+        @if ($errors->has('input_code'))
+            $('#klasifikasiModal').modal('show');
+        @endif
+        @if ($errors->has('edit_code'))
+            $('#editKlasifikasiModal').modal('show');
+            var parent = "{{old('edit_parent')}}";
+            var code = "{{old('edit_code')}}";
+            var name = "{{old('edit_name')}}";
+            $('#parent').val(parent);
+            $('#code').val(code);
+            $('#name').val(name);
+            
+            var id = "{{old('classification')}}";
+            var action = "{{route('classification.index')}}/"+id;
+            $('#formClassification').attr('action', action);
+        @endif
+        @if ($errors->has('input_codeAccount'))
+            var id_parent = {{old('input_parentAccount')}};
+            var id_classification = {{old('input_classificationAccount')}};
+            var position = "{{old('input_positionAccount')}}";
+            $('select.changeParent_').val(id_parent);
+            $('select.classification_').val(id_classification);
+            $('select.positionAccount').val(position);
+            $('#akunModal').modal('show');
+        @endif
+        @if ($errors->has('edit_codeAccount'))
+            $('#editAkunModal').modal('show');
+            var id_parent = {{old('edit_parentAccount')}};
+            var id_classification = {{old('edit_classificationAccount')}};
+            var position = "{{old('edit_positionAccount')}}";
+            var name = "{{old('edit_nameAccount')}}";
+            console.log(name);
+            $('select.changeParent_').val(id_parent);
+            $('select.classification_').val(id_classification);
+            $('select.positionAccount').val(position);
+            var id = "{{old('account')}}";
+            var action = "{{route('akun.index')}}/"+id;
+            $('#formAccount').attr('action', action);
+        @endif
+
         $(document).on('click', '.btnEditClassification', function () {
+            @if ($errors->has('edit_code'))            
+                $('span.invalid-feedback').remove();
+            @endif
             var id = $(this).attr('value');
+            $('#id_classification').val(id);
             $.ajax({
                 type        : 'get',
                 url         : '{!!URL::to('detailClassification')!!}',
@@ -361,11 +426,14 @@
             
             var action = "{{route('classification.index')}}/"+id;
             $('#formClassification').attr('action',action);
-
         });
 
         $(document).on('click', '.btnEditAccount', function () {
+            @if ($errors->has('edit_codeAccount'))            
+                $('span.invalid-feedback').remove();
+            @endif
             var id = $(this).attr('value');
+            $('#id_account').val(id);
             var parent = $(this).attr('parent');
             var test = $(this).attr('classification');
 
@@ -380,16 +448,11 @@
                 dataType    : 'html',
                 success     : function(data){
                     var servers = $.parseJSON(data);
-                    console.log(data);
-                    console.log(servers);
-
                     $.each(servers, function(index, value){
                         var classification = value.id_classification;
                         var account_code = value.account_code;
                         var account_name = value.account_name;
                         var position = value.position;
-
-                        console.log(account_name);
 
                         $('div.classification select').val(classification);
                         $('div.acountCode input').val(account_code);
@@ -497,8 +560,6 @@
                 }
             })
         });
-
-            
     });
 </script>
 

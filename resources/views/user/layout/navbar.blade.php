@@ -11,30 +11,27 @@
             <form class="navbar-form">
             </form>
             <ul class="navbar-nav">
-                @role('employee')
+                @role('company')
                 <li class="nav-item dropdown">
                     <a class="nav-link" href="" id="navbarDropdownBusiness" data-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false">
                         <i class="material-icons">business</i>
-                        <span style="margin-bottom: 0px;">WISATA MANGUNAN (AKTIF)</span>
-                    </a>
-                </li>
-                @endrole
-                @role('owner')
-                <li class="nav-item dropdown">
-                    <a class="nav-link" href="" id="navbarDropdownBusiness" data-toggle="dropdown" aria-haspopup="true"
-                        aria-expanded="false">
-                        <i class="material-icons">business</i>
-                        <span class="text-dark" style="margin-bottom: 0px;">{{ $session }} (AKTIF)</span>
+                        <span class="text-dark" style="margin-bottom: 0px;">{{$getBusiness->business_name}} (AKTIF)</span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownBusiness">
                         @foreach ($business as $item)
                             <a class="dropdown-item" value="{{ $item->id }}" href="{{route('setBusiness', $item->id)}}">{{ $item->business_name }} {{ $item->id == $session ? "(AKTIF)" : '' }}</a>
                         @endforeach
                     </div>
-                    {{-- @php
-                        dd($session);
-                    @endphp --}}
+                </li>
+                @endrole
+                @role('employee')
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="" id="navbarDropdownBusiness" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
+                        <i class="material-icons">business</i>
+                        <span style="margin-bottom: 0px;">{{$getBusiness->business->business_name}}(AKTIF)</span>
+                    </a>
                 </li>
                 @endrole
                 <li class="nav-item dropdown">

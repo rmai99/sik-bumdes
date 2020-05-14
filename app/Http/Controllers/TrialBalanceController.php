@@ -18,7 +18,7 @@ class TrialBalanceController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['role:owner|employee']);
+        $this->middleware(['role:company|employee']);
 
         $this->middleware('auth');
         
@@ -26,61 +26,54 @@ class TrialBalanceController extends Controller
     
     public function index()
     {
+        //Mengidentifikasi role user
+        $role = Auth::user();
+        $isCompany = $role->hasRole('company');
+        $user = Auth::user()->id;
+
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first()->id;
+            }
+            $getBusiness = Business::with('company')
+            ->where('id_company', $company)
+            ->where('id', $session)->first();
+        } else {
+            $getBusiness = Employee::with('business')->where('id_user', $user)->first();
+            $session = $getBusiness->id_business;
+        }
+
         if (isset($_GET['year'])) {
             $year = $_GET['year'];
         } else {
             $year = date('Y');
         }
 
-        $role = Auth::user();
-        $isOwner = $role->hasRole('owner');
-        
-        $user = Auth::user()->id;
-
-        if($isOwner){
-            $session = session('business');
-
-            $companies = Companies::where('id_user', $user)->first();
-            // $test = Companies::where('is_actived' , 0)->get();
-            // dd($test);
-            $company = $companies->id;
-            
-            $business = Business::where('id_company', $company)->get();
-
-            $getBusiness = Business::where('id_company', $company)->first()->id;
-            
-            if($session == 0){
-                $session = $getBusiness;
-            }
-
-        } else {
-            $getBusiness = Employee::where('id_user', $user)->select('id_business')->first()->id_business;
-            
-            $session = $getBusiness;
-        }
-        
-        $save =  array();
-        $i = 0;
+        $balance =  array();
+        //Menghitung saldo akun
         $parents = AccountParent::with('classification.parent')
         ->where('id_business', $session)->get();
-        
+        $i = 0;
         foreach($parents as $p){
-            $save[$i]['parent_id'] = $p->id;
-            $save[$i]['parent_name'] = $p->parent_name;
+            $balance[$i]['parent_code'] = $p->parent_code;
+            $balance[$i]['parent_name'] = $p->parent_name;
 
             $classification = $p->classification()->get();
             $j = 0;
             foreach($classification as $c){
-                $save[$i]['classification'][$j]['classification_id'] = $c->id;
-                $save[$i]['classification'][$j]['classification_name'] = $c->classification_name;
+                $balance[$i]['classification'][$j]['classification_id'] = $c->id;
+                $balance[$i]['classification'][$j]['classification_name'] = $c->classification_name;
 
                 $account = $c->account()->with('initialBalance', 'journal')->get();
                 $k = 0;
                 foreach($account as $a){
-                    $save[$i]['classification'][$j]['account'][$k]['account_id'] = $a->id;
-                    $save[$i]['classification'][$j]['account'][$k]['account_name'] = $a->account_name;
-                    $save[$i]['classification'][$j]['account'][$k]['account_code'] = $a->account_code;
-                    $save[$i]['classification'][$j]['account'][$k]['position'] = $a->position;
+                    $balance[$i]['classification'][$j]['account'][$k]['account_id'] = $a->id;
+                    $balance[$i]['classification'][$j]['account'][$k]['account_name'] = $a->account_name;
+                    $balance[$i]['classification'][$j]['account'][$k]['account_code'] = $a->account_code;
+                    $balance[$i]['classification'][$j]['account'][$k]['position'] = $a->position;
 
                     if(!$a->initialBalance()->whereYear('date', $year)->first()){
                         $beginning_balance = 0;
@@ -109,26 +102,20 @@ class TrialBalanceController extends Controller
                             $ending_balance = "0";
                         }
                     }
-                    $save[$i]['classification'][$j]['account'][$k]['saldo_akhir'] = $ending_balance;
+                    $balance[$i]['classification'][$j]['account'][$k]['saldo_akhir'] = $ending_balance;
                     
                     $k++;
                 }
-
                 $j++;
             }
-            
             $i++;
         }
-        // dd($save);
-
+        // dd($balance);
         $years = InitialBalance::whereHas('account.classification.parent', function($q) use ($session){
             $q->where('id_business', $session);
-        })->selectRaw('YEAR(date) as year')
-        ->orderBy('date', 'desc')
-        ->distinct()
-        ->get();
+        })->selectRaw('YEAR(date) as year')->orderBy('date', 'desc')->distinct()->get();
         
-        return view('user.neracaSaldo', compact('save','years', 'year', 'business', 'session'));
+        return view('user.neracaSaldo', compact('balance','years', 'year', 'business', 'session','getBusiness'));
     }
 
     public function create()

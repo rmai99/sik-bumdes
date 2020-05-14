@@ -25,11 +25,11 @@ class ChangePasswordController extends Controller
     public function index()
     {
         $role = Auth::user();
-        $isOwner = $role->hasRole('owner');
+        $isCompany = $role->hasRole('company');
         
         $user = Auth::user()->id;
 
-        if($isOwner){
+        if($isCompany){
             $session = session('business');
 
             $data = Companies::with('user')->where('id_user', $user)->first();

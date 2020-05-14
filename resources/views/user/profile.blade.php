@@ -7,7 +7,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="row">
-        @role('owner')
+        @role('company')
         <div class="card">
             <div class="card-header card-header-primary">
                 <h4 class="card-title">Edit Profile</h4>
@@ -21,7 +21,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="bmd-label-floating">Company</label>
+                                <label class="bmd-label-floating">Perusahaan</label>
                                 <input type="text" class="form-control" value="{{ $data->name }}" name="name">
                             </div>
                         </div>
@@ -36,7 +36,8 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="bmd-label-floating">No telp</label>
-                                <input type="number" class="form-control" value="{{ $data->phone_number }}" name="phone_number">
+                                <input type="number" class="form-control" value="{{ $data->phone_number }}"
+                                    name="phone_number">
                             </div>
                         </div>
                     </div>
@@ -52,12 +53,11 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="bmd-label-floating">Status</label>
-                                <input type="text" class="form-control" 
-                                @if ($data->is_actived == 0)
-                                    value="Reguler"
+                                <input type="text" class="form-control" @if ($data->is_actived == 0)
+                                value="Reguler"
                                 @else
-                                    value="PRO"   
-                                @endif 
+                                value="PRO"
+                                @endif
                                 disabled>
                             </div>
                         </div>
@@ -104,7 +104,8 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="bmd-label-floating">Bisnis</label>
-                                <input type="text" class="form-control" disabled value="{{ $data->business->business_name }}">
+                                <input type="text" class="form-control" disabled
+                                    value="{{ $data->business->business_name }}">
                             </div>
                         </div>
                     </div>
@@ -119,5 +120,5 @@
 
 @endsection
 @push('js')
-    @include('sweetalert::alert')
+@include('sweetalert::alert')
 @endpush

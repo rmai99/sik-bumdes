@@ -15,13 +15,13 @@ class ProfileController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['role:owner|employee']);
+        $this->middleware(['role:company|employee']);
 
         $this->middleware('auth');
         
     }
 
-    public function cekpro(){
+    public function isPro(){
         $user = Auth::user();
 
         $data = Companies::with('user')->where('id_user', $user->id)->first()->is_actived;
@@ -42,32 +42,25 @@ class ProfileController extends Controller
     public function index()
     {
         $role = Auth::user();
-        $isOwner = $role->hasRole('owner');
-        
+        $isCompany = $role->hasRole('company');
         $user = Auth::user()->id;
-
-        if($isOwner){
-            $session = session('business');
-
+        if($isCompany){
             $data = Companies::with('user')->where('id_user', $user)->first();
-            $company = $data->id;
-            
+            $session = session('business');
+            $company = Companies::where('id_user', $user)->first()->id;
             $business = Business::where('id_company', $company)->get();
-
-            $getBusiness = Business::where('id_company', $company)->first()->id;
-            
-            if($session == 0){
-                $session = $getBusiness;
+            if($session == null){
+                $session = Business::where('id_company', $company)->first()->id;
             }
-
+            $getBusiness = Business::with('company')
+            ->where('id_company', $company)
+            ->where('id', $session)->first();
         } else {
-            $getBusiness = Employee::where('id_user', $user)->select('id_business')->first()->id_business;
-            
-            $session = $getBusiness;
-
+            $getBusiness = Employee::with('business')->where('id_user', $user)->first();
+            $session = $getBusiness->id_business;
             $data = Employee::with('user', 'business', 'company')->where('id_user', $user)->first();
         }
-        return view('user.profile', compact('session', 'business', 'data'));
+        return view('user.profile', compact('session', 'business', 'data', 'getBusiness'));
     }
 
     /**
@@ -128,7 +121,7 @@ class ProfileController extends Controller
         $company->phone_number = $request->phone_number;
         $company->save();
 
-        return redirect()->route('profile.index')->with('success','Berhasil Mengubah Profile!');;
+        return redirect()->route('profile.index')->with('success','Berhasil Mengubah Profile!');
     }
 
     public function updateEmployee(Request $request)
@@ -137,7 +130,7 @@ class ProfileController extends Controller
         $company->name = $request->name;
         $company->save();
 
-        return redirect()->route('profile.index')->with('success','Berhasil Mengubah Profile!');;
+        return redirect()->route('profile.index')->with('success','Berhasil Mengubah Profile!');
     }
 
     /**

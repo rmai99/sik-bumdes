@@ -16,7 +16,7 @@ class GeneralJournalController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['role:owner|employee']);
+        $this->middleware(['role:company|employee']);
 
         $this->middleware('auth');
         
@@ -29,14 +29,11 @@ class GeneralJournalController extends Controller
                 $year = $_GET['year'];
                 $month = $_GET['month'];
                 $day = $_GET['day'];
-
             } elseif(isset($_GET['year'], $_GET['month'])){
-                
                 $year = $_GET['year'];
                 $month = $_GET['month'];
                 $day = null;
             } elseif(isset($_GET['year'])){
-
                 $year = $_GET['year'];
                 $month = null;
                 $day = null;
@@ -46,29 +43,24 @@ class GeneralJournalController extends Controller
             $month = null;
             $day = null;
         }
-        
         $role = Auth::user();
-        $isOwner = $role->hasRole('owner');
+        $isCompany = $role->hasRole('company');
         $user = Auth::user()->id;
-        
-
-        if($isOwner){
+        if($isCompany){
             $session = session('business');
-            
             $company = Companies::where('id_user', $user)->first()->id;
-
             $business = Business::where('id_company', $company)->get();
-
-            $getBusiness = Business::where('id_company', $company)->first()->id;
-            
-            if($session == 0){
-                $session = $getBusiness;
+            if($session == null){
+                $session = Business::where('id_company', $company)->first()->id;
             }
+            $getBusiness = Business::with('company')
+            ->where('id_company', $company)
+            ->where('id', $session)->first();
         } else{
-            $getBusiness = Employee::where('id_user', $user)->first()->id_business;
-            
-            $session = $getBusiness;
+            $getBusiness = Employee::with('business')->where('id_user', $user)->first();
+            $session = $getBusiness->id_business;
         }
+
         $account = Account::whereHas('classification.parent', function($q) use ($session){
             $q->where('id_business', $session);
         })->get();
@@ -76,63 +68,50 @@ class GeneralJournalController extends Controller
         $data = DetailJournal::with('journal.account')
         ->whereHas('journal.account.classification.parent', function($q) use($session){
             $q->where('id_business', $session);
-        })->whereYear('date', $year)
-        ->get();
-        
-        
+        })->whereYear('date', $year)->get();
+                
         if ($month) {
             $data = DetailJournal::with('journal.account')
             ->whereHas('journal.account.classification.parent', function($q) use($session){
                 $q->where('id_business', $session);
-            })->whereYear('date', $year)->whereMonth('date', $month)
-            ->get();
+            })->whereYear('date', $year)->whereMonth('date', $month)->get();
         }
         if ($day) {
             $data = DetailJournal::with('journal.account')
             ->whereHas('journal.account.classification.parent', function($q) use($session){
                 $q->where('id_business', $session);
-            })->whereYear('date', $year)->whereMonth('date', $month)->whereDay('date', $day)
-            ->get();
+            })->whereYear('date', $year)->whereMonth('date', $month)->whereDay('date', $day)->get();
         }
-
-        $years = DetailJournal::selectRaw('YEAR(date) as year')
-        ->orderBy('date', 'desc')
-        ->distinct()
-        ->get();
-        // 99dd($years);
+        $years = DetailJournal::selectRaw('YEAR(date) as year')->orderBy('date', 'desc')->distinct()->get();
         
-        return view('user.jurnalUmum', compact('business', 'data','years', 'session', 'account'));
+        return view('user.jurnalUmum', compact('business', 'data','years', 'session', 'account', 'getBusiness'));
     }
 
     public function create()
     {
         $user = Auth::user()->id;
-
         $role = Auth::user();
-        $isOwner = $role->hasRole('owner');
-
-        if($isOwner){
-        $session = session('business');
-
-        $company = Companies::where('id_user', $user)->first()->id;
-        $business = Business::where('id_company', $company)->get();
-        $getBusiness = Business::where('id_company', $company)->first()->id;
-
-            if($session == 0){
-                $session = $getBusiness;
+        $isCompany = $role->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first()->id;
             }
-
+            $getBusiness = Business::with('company')
+            ->where('id_company', $company)
+            ->where('id', $session)->first();
         } else {
-            $getBusiness = Employee::where('id_user', $user)->select('id_business')->first()->id_business;
-            $session = $getBusiness;
+            $getBusiness = Employee::with('business')->where('id_user', $user)->first();
+            $session = $getBusiness->id_business;
         }
 
         $account = Account::whereHas('classification.parent', function($q) use ($session){
             $q->where('id_business', $session);
         })->get();
-        // dd($account);
         
-        return view('user.tambahJurnal', compact('account', 'session', 'business'));
+        return view('user.tambahJurnal', compact('account', 'session', 'business', 'getBusiness'));
     }
 
     public function store(Request $request)
@@ -143,19 +122,25 @@ class GeneralJournalController extends Controller
             $detail->description = $request->description[$key];
             $detail->date = $request->date[$key];
             $detail->save();
+
+            $amount = $request->debit[$key];
+            $convert_amount = preg_replace("/[^0-9]/", "", $amount);
     
             $kredit = new GeneralJournal();
             $kredit->id_detail = $detail->id;
             $kredit->id_account = $request->id_debit_account[$key];
             $kredit->position = "Debit";
-            $kredit->amount = $request->debit[$key];
+            $kredit->amount = $convert_amount;
             $kredit->save();
+
+            $amount = $request->credit[$key];
+            $convert_amount = preg_replace("/[^0-9]/", "", $amount);
 
             $kredit = new GeneralJournal();
             $kredit->id_detail = $detail->id;
             $kredit->id_account = $request->id_credit_account[$key];
             $kredit->position = "Kredit";
-            $kredit->amount = $request->credit[$key];
+            $kredit->amount = $convert_amount;
             $kredit->save();
         }
 
@@ -188,16 +173,22 @@ class GeneralJournalController extends Controller
         $detail->date = $request->date;
         $detail->save();
 
+        $amount = $request->credit;
+        $convert_amount = preg_replace("/[^0-9]/", "", $amount);
+
         $kredit = GeneralJournal::findOrFail($request->id_credit);
         $kredit->id_account = $request->id_credit_account;
         $kredit->position = "Kredit";
-        $kredit->amount = $request->credit;
+        $kredit->amount = $convert_amount;
         $kredit->save();
+
+        $amount = $request->debit;
+        $convert_amount = preg_replace("/[^0-9]/", "", $amount);
 
         $kredit = GeneralJournal::findOrFail($request->id_debit);
         $kredit->id_account = $request->id_debit_account;
         $kredit->position = "Debit";
-        $kredit->amount = $request->debit;
+        $kredit->amount = $convert_amount;
         $kredit->save();
 
         return redirect()->route('jurnal_umum.index')->with('success','Berhasil Mengubah Jurnal!');

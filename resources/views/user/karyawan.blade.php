@@ -139,7 +139,7 @@
                 e.preventDefault();
                 $.ajax({
                     type        :'GET',
-                    url         : '{!!URL::to('cekpro')!!}',
+                    url         : '{!!URL::to('isPro')!!}',
                     dataType    : 'html',
                     success     : function(data){
                         var servers = $.parseJSON(data);

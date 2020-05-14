@@ -71,6 +71,7 @@ table.dataTable>tbody>tr.child span.dtr-title {
     -ms-flex-direction: column;
     flex-direction: column;
     font-size: 12px;
+    top: -15.594;
     font-family: "Roboto-Regular";
     font-weight: 400;
     width: 200px;
@@ -78,7 +79,7 @@ table.dataTable>tbody>tr.child span.dtr-title {
     right: 0.2em;
     z-index: 1;
     position: absolute;
-    background: #fff;
+    background: #eee;
     border-radius: 2px;
     box-sizing: border-box;
     margin: 0 20px;

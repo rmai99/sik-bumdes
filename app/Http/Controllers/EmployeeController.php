@@ -19,7 +19,7 @@ class EmployeeController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['role:owner|employee']);
+        $this->middleware(['role:company']);
 
         $this->middleware('auth');
         
@@ -28,39 +28,36 @@ class EmployeeController extends Controller
     public function index()
     {
         $user = Auth::user()->id;
-
         $session = session('business');
-
         $company = Companies::where('id_user', $user)->first()->id;
-
         $business = Business::where('id_company', $company)->get();
-        
+        if($session == null){
+            $session = Business::where('id_company', $company)->first()->id;
+        }
+        $getBusiness = Business::with('company')
+        ->where('id_company', $company)
+        ->where('id', $session)->first();
         $employee = Employee::with('user','business')->where('id_company', $company)->get();
-        // dd($employee);
-
-        return view('user/karyawan', compact('employee', 'business', 'session'));
+        return view('user/karyawan', compact('employee', 'business', 'session', 'getBusiness'));
     }
 
     public function create()
     {
         $session = session('business');
-
         $user = Auth::user()->id;
-
         $company = Companies::where('id_user', $user)->first()->id;
         $business = Business::where('id_company', $company)->get();
+        $getBusiness = Business::where('id_company', $company)->first();
         
-        return view('user/tambahKaryawan', compact('business', 'session'));
+        return view('user/tambahKaryawan', compact('business', 'session', 'getBusiness'));
     }
 
     public function store(Request $request)
     {
-
         $this->validate($request,[
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8'],
-        ]);
-        
+        ]);   
         $user = Auth::user()->id;
         $company = Companies::where('id_user', $user)->first()->id;
 
@@ -69,7 +66,7 @@ class EmployeeController extends Controller
         $user->password = Hash::make($request->password);
         $user->save();
         $user->assignRole('employee');
-
+        
         $data = new Employee();
         $data->name = $request->name;
         $data->id_user = $user->id;
@@ -86,7 +83,6 @@ class EmployeeController extends Controller
         Mail::to($request->email)->send(new AccountRegisteredMail($user));
 
         return redirect()->route('karyawan.index')->with('success','Berhasil Menambahkan Karyawan!');
-
     }
 
     public function show($id)
@@ -113,7 +109,9 @@ class EmployeeController extends Controller
 
     public function destroy($id)
     {
-        Employee::findOrFail($id)->delete($id);
+        $user = Employee::where('id', $id)->first()->id_user;
+
+        User::findOrFail($user)->delete($user);
 
         return response()->json([
             'success'  => 'Record deleted successfully!'

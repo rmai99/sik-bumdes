@@ -6,11 +6,6 @@
 
 @section('content')
 @php
-    if (isset($_GET['year'])) {
-        $dt = $_GET['year'];
-    } else {
-        $dt = date('Y');
-    }
     $jumlah_debit = 0;
     $jumlah_kredit = 0;
 @endphp
@@ -45,15 +40,6 @@
                             </div>
                         </div>
                         <div class="material-datatables mt-4">
-                            {{-- @if ($errors->any())
-                                <div class="alert alert-danger">
-                                    <ul class="list-group">
-                                        @foreach ($errors->all() as $error)
-                                            <li style="list-style-type: none;">{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif --}}
                             <table id="datatables" class="table table-striped table-no-bordered table-hover" cellspacing="0"
                                 width="100%" style="width:100%">
                                 <thead>
@@ -114,16 +100,16 @@
                                             @endif
                                         </td>
                                         <td style="width:10%">
-                                                <button type="button" rel="tooltip" title="Edit Akun" data-toggle="modal"
-                                                    data-target="#editNeracaAwalModal" class="editInitialBalance btn-icon"
-                                                    id="{{ $item->id }}">
-                                                    <i class="material-icons"
-                                                        style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
-                                                </button>
-                                                <button type="button" rel="tooltip" class="btn-icon remove" id="{{ $item->id }}">
-                                                    <i class="material-icons"style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
-                                                </button>
-                                            
+                                            <button type="button" rel="tooltip" title="Edit Akun" data-toggle="modal"
+                                                data-target="#editNeracaAwalModal" class="editInitialBalance btn-icon"
+                                                id="{{ $item->id }}">
+                                                <i class="material-icons"
+                                                    style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
+                                            </button>
+                                            <button type="button" rel="tooltip" class="btn-icon remove" id="{{ $item->id }}">
+                                                <i class="material-icons"style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
+                                            </button>
+                                        
                                         </td>
                                     </tr>
                                     @endif
@@ -163,17 +149,16 @@
 
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Tanggal</h6>
-                                <input type="date" class="form-control" aria-describedby="date" placeholder="" name="date" required="true" aria-required="true">
+                                <input type="date" class="form-control" aria-describedby="date" placeholder="" name="date" aria-required="true" value="{{ old('date') }}">
                             </div>
                             @if ($errors->has('date'))
                                 <span class="invalid">
                                     {{ $errors->first('date') }}
                                 </span>
                             @endif 
-
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Nama Akun</h6>
-                                <select class="w-100 pl-1 padding-select" name="id_account" style="border-radius: 3px;">
+                                <select class="w-100 pl-1 padding-select" name="id_account" style="border-radius: 3px;" id="account">
                                     <option value="0" selected disabled>Akun</option>
                                     @foreach ($account_parent as $data)
                                         @foreach ($data->classification as $item)
@@ -187,8 +172,7 @@
 
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Jumlah</h6>
-                                <input name="amount" type="number" class="form-control" id="harga" onkeyup="copytextbox();" required="true" aria-required="true">
-                                <input type="text" class="form-control" id="hasil" disabled>
+                                <input name="amount" type="text" class="form-control" required="true" aria-required="true" data-type="currency" value="{{ old('date') }}">
                             </div>
                         </div>
                     </div>
@@ -210,7 +194,7 @@
                     <div class="card-header card-header-primary text-center">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                             <i class="material-icons">clear</i></button>
-                        <h4 class="card-title">Tambah Neraca Awal</h4>
+                        <h4 class="card-title">Edit Neraca Awal</h4>
                     </div>
                 </div>
                 <form class="form" method="POST" action="" id="editInitial">
@@ -218,15 +202,20 @@
                     @csrf
                     <div class="modal-body">
                         <div class="card-body">
-
+                            <input type="hidden" class="form-control" name="initial_balance" id="id_initialBalances">
                             <div class="form-group date">
                                 <h6 class="text-dark font-weight-bold m-0">Tanggal</h6>
-                                <input type="date" class="form-control" name="date" aria-describedby="date" placeholder="">
+                                <input type="date" class="form-control" name="edit_date" aria-describedby="date" value="{{ old('edit_date') }}" required>
+                                @error('edit_date')
+                                    <span class="invalid-feedback">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
 
                             <div class="form-group id_account">
                                 <h6 class="text-dark font-weight-bold m-0">Nama Akun</h6>
-                                <select class="w-100 pl-1 padding-select" name="id_account" style="border-radius: 3px;">
+                                <select class="w-100 pl-1 padding-select" name="edit_acount" style="border-radius: 3px;" id="editAccount">
                                     <option value="0" selected disabled>Akun</option>
                                     @foreach ($account_parent as $data)
                                         @foreach ($data->classification as $item)
@@ -240,7 +229,7 @@
 
                             <div class="form-group amount">
                                 <h6 class="text-dark font-weight-bold m-0">Jumlah</h6>
-                                <input type="number" class="form-control" aria-describedby="amountAccount" name="amount">
+                                <input type="text" class="form-control" aria-describedby="amountAccount" name="edit_amount" data-type="currency" value="{{ old('edit_amount') }}">
                             </div>
                         </div>
                     </div>
@@ -252,16 +241,23 @@
         </div>
     </div>
 </div>
-
 @endsection
 @push('js')
 <script>
-    
-    @if (count($errors) > 0)
-        $('#neracaAwalModal').modal('show');
-    @endif
-
     $(document).ready(function () {
+        @if ($errors->has('date'))
+            $('#neracaAwalModal').modal('show');
+            var id_account = {{old('id_account')}};
+            $('#account').val(id_account);
+        @endif
+        @if ($errors->has('edit_date'))
+            $('#editNeracaAwalModal').modal('show');
+            var id_account = {{old('edit_acount')}};
+            $('#editAccount').val(id_account)
+            var id = {{old('initial_balance')}};
+            var action = "{{route('neraca_awal.index')}}/"+id;
+            $('#editNeracaAwalModal').attr('action', action);
+        @endif
         $('#datatables').DataTable({
             "info":     false,
             "ordering": false,
@@ -323,11 +319,14 @@
 
         var url = "{{route('neraca_awal.index')}}?year=" + year;
         window.location.href = url;
-
     });
 
     $(document).on('click', '.editInitialBalance', function () {
+        @if ($errors->has('edit_date'))            
+            $('span.invalid-feedback').remove();
+        @endif
         var id = $(this).attr('id');
+        $('#id_initialBalances').val(id);
         $.ajax({
             type        : 'GET',
             url         : '{!!URL::to('detail_balance')!!}',
@@ -339,7 +338,10 @@
                 $.each(servers, function(index, value){
                     var date = value.date;
                     var id_account = value.id_account;
-                    var amount = value.amount ;
+                    var rupiah = '';
+                    var convert = value.amount.toString().split('').reverse().join('');
+                    for(var i = 0; i < convert.length; i++) if(i%3 == 0) rupiah += convert.substr(i,3)+',';
+                    var amount = 'Rp'+ rupiah.split('',rupiah.length-1).reverse().join('');
 
                     $('div.date input').val(date);
                     $('div.id_account select').val(id_account);
@@ -355,16 +357,82 @@
         $('#editInitial').attr('action', action);
 
     });
+    
+</script>
+<script>
+    // Jquery Dependency
+    $("input[data-type='currency']").on({
+        keyup: function() {
+            formatCurrency($(this));
+        },
+        click : function(){
+            formatCurrency($(this));
+        }
+    });
 
-    function copytextbox() {
-        var angka = document.getElementById('harga').value;
-        var rupiah = '';		
-        var angkarev = angka.toString().split('').reverse().join('');
-        for(var i = 0; i < angkarev.length; i++) if(i%3 == 0) rupiah += angkarev.substr(i,3)+'.';
-            // 'Rp. '+rupiah.split('',rupiah.length-1).reverse().join('')
-        document.getElementById('hasil').value = "Rp"+rupiah.split('',rupiah.length-1).reverse().join('');
+    function formatNumber(n) {
+    // format number 1000000 to 1,234,567
+    return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
     }
 
+    function formatCurrency(input, blur) {
+    // appends $ to value, validates decimal side
+    // and puts cursor back in right position.
+    
+    // get input value
+    var input_val = input.val();
+    
+    // don't validate empty input
+    if (input_val === "") { return; }
+    
+    // original length
+    var original_len = input_val.length;
+
+    // initial caret position 
+    var caret_pos = input.prop("selectionStart");
+        
+    // check for decimal
+    if (input_val.indexOf(".") >= 0) {
+
+        // get position of first decimal
+        // this prevents multiple decimals from
+        // being entered
+        var decimal_pos = input_val.indexOf(".");
+
+        // split number by decimal point
+        var left_side = input_val.substring(0, decimal_pos);
+        var right_side = input_val.substring(decimal_pos);
+
+        // add commas to left side of number
+        left_side = formatNumber(left_side);
+
+        // validate right side
+        right_side = formatNumber(right_side);
+        
+        // Limit decimal to only 2 digits
+        right_side = right_side.substring(0, 2);
+
+        // join number by .
+        input_val = "Rp" + left_side + "." + right_side;
+
+    } else {
+        // no decimal entered
+        // add commas to number
+        // remove all non-digits
+        // console.log('input_val', input_val)
+        input_val = formatNumber(input_val);
+        input_val = "Rp" + input_val;
+        
+    }
+    
+    // send updated string to input
+    input.val(input_val);
+
+    // put caret back in the right position
+    var updated_len = input_val.length;
+    caret_pos = updated_len - original_len + caret_pos;
+    input[0].setSelectionRange(caret_pos, caret_pos);
+    }
 </script>
 @include('sweetalert::alert')
 @endpush

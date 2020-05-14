@@ -59,36 +59,31 @@
                                         <td style="width:15%"></td>
                                         <td style="width:10%"></td>
                                     </tr>
-                                        @php
-                                            $sum_biaya = 0;
-                                            $another_sum = 0;
-                                            $another_biaya = 0;
-                                        @endphp
-                                    @for ($i = 0; $i < sizeof($array); $i++)
+                                    @for ($i = 0; $i < sizeof($incomeArray); $i++)
                                         <tr>
                                             <td style="width:60%;padding-left: 1.5rem!important;">
-                                                <strong>{{$array[$i]['class']}}</strong>
+                                                <strong>{{$incomeArray[$i]['classification']}}</strong>
                                             </td>
                                             <td style="width:15%"></td>
                                             <td style="width:15%"></td>
                                             <td style="width:10%"></td>
                                         </tr>
-                                        @if (isset($array[$i]['nama']))
-                                            @for ($y = 0; $y < sizeof($array[$i]['nama']); $y++) 
-                                                @if($array[$i]['saldo_akhir'][$y] !="0" )
+                                        @if (isset($incomeArray[$i]['name']))
+                                            @for ($y = 0; $y < sizeof($incomeArray[$i]['name']); $y++) 
+                                                @if($incomeArray[$i]['ending balance'][$y] !="0" )
                                                     <tr>
                                                         <td style="width:60%;padding-left: 3rem!important;">
-                                                            {{$array[$i]['kode'][$y]}}- {{$array[$i]['nama'][$y]}}
+                                                            {{$incomeArray[$i]['code'][$y]}}- {{$incomeArray[$i]['name'][$y]}}
                                                         </td>
                                                         <td style="width:15%">
                                                         </td>
                                                         <td style="width:10%">
                                                         </td>
                                                         <td class="text-right" style="width:10%">
-                                                            @if ($array[$i]['saldo_akhir'][$y] < 0)
-                                                                -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$array[$i]['saldo_akhir'][$y])),3)))}}
+                                                            @if ($incomeArray[$i]['ending balance'][$y] < 0)
+                                                                -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$incomeArray[$i]['ending balance'][$y])),3)))}}
                                                             @else
-                                                                Rp{{strrev(implode('.',str_split(strrev(strval($array[$i]['saldo_akhir'][$y])),3)))}}
+                                                                Rp{{strrev(implode('.',str_split(strrev(strval($incomeArray[$i]['ending balance'][$y])),3)))}}
                                                             @endif
                                                         </td>
                                                     </tr>
@@ -97,7 +92,7 @@
                                         @endif
                                         <tr>
                                             <td style="width:60%;padding-left: 1.5rem!important;">
-                                                Total {{$array[$i]['class']}}
+                                                Total {{$incomeArray[$i]['classification']}}
                                             </td>
                                             <td style="width:15%"></td>
                                             <td style="width:15%"></td>
@@ -111,7 +106,7 @@
                                         <td style="width:15%"></td>
                                         <td style="width:15%"></td>
                                         <td class="text-right" style="width:10%">
-                                            Rp{{strrev(implode('.',str_split(strrev(strval($pendapatan)),3)))}}
+                                            Rp{{strrev(implode('.',str_split(strrev(strval($income)),3)))}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -122,30 +117,27 @@
                                         <td style="width:15%"></td>
                                         <td style="width:10%"></td>
                                     </tr>
-                                    @for ($i = 0; $i < sizeof($bebanArray); $i++)
+                                    @for ($i = 0; $i < sizeof($expenseArray); $i++)
                                         <tr>
                                             <td style="width:60%;padding-left: 1.5rem!important;">
-                                                <strong>{{$bebanArray[$i]['class']}}</strong>
+                                                <strong>{{$expenseArray[$i]['classification']}}</strong>
                                             </td>
                                             <td style="width:15%"></td>
                                             <td style="width:15%"></td>
                                             <td style="width:10%"></td>
                                         </tr>
-                                        @if (isset($array[$i]['nama']))
-                                            @for ($j = 0; $j < sizeof($bebanArray[$i]['saldo_akhir']); $j++)
-                                                @if($bebanArray[$i]['saldo_akhir'][$j] !=0)
+                                        @if (isset($incomeArray[$i]['name']))
+                                            @for ($j = 0; $j < sizeof($expenseArray[$i]['ending balance']); $j++)
+                                                @if($expenseArray[$i]['ending balance'][$j] !=0)
                                                     <tr>
                                                         <td style="width:60%;padding-left: 3rem!important;">
-                                                            {{$bebanArray[$i]['kode'][$j]}} -
-                                                            {{$bebanArray[$i]['nama'][$j]}}
+                                                            {{$expenseArray[$i]['code'][$j]}} -
+                                                            {{$expenseArray[$i]['name'][$j]}}
                                                         </td>
                                                         <td style="width:15%"></td>
                                                         <td style="width:15%"></td>
                                                         <td class="text-right" style="width:10%">
-                                                            Rp{{strrev(implode('.',str_split(strrev(strval($bebanArray[$i]['saldo_akhir'][$j])),3)))}}
-                                                            @php
-                                                                $sum_biaya += $bebanArray[$i]['saldo_akhir'][$j];
-                                                            @endphp
+                                                            Rp{{strrev(implode('.',str_split(strrev(strval($expenseArray[$i]['ending balance'][$j])),3)))}}
                                                         </td>
                                                     </tr>
                                                 @endif
@@ -153,7 +145,7 @@
                                         @endif
                                         <tr>
                                             <td style="width:60%;padding-left: 1.5rem!important;">
-                                                Total {{ $bebanArray[$i]['class'] }}
+                                                Total {{ $expenseArray[$i]['classification'] }}
                                             </td>
                                             <td style="width:15%"></td>
                                             <td style="width:15%"></td>
@@ -167,10 +159,10 @@
                                         <td style="width:15%"></td>
                                         <td style="width:15%"></td>
                                         <td class="text-right" style="width:10%">
-                                            @if ($sum_biaya < 0)
-                                                <strong>-Rp{{strrev(implode('.',str_split(strrev(strval(-1*$sum_biaya)),3)))}}</strong>
+                                            @if ($expense < 0)
+                                                <strong>-Rp{{strrev(implode('.',str_split(strrev(strval(-1*$expense)),3)))}}</strong>
                                             @else
-                                                <strong>Rp{{strrev(implode('.',str_split(strrev(strval($sum_biaya)),3)))}}</strong>
+                                                <strong>Rp{{strrev(implode('.',str_split(strrev(strval($expense)),3)))}}</strong>
                                             @endif
                                         </td>
                                     </tr>
@@ -182,10 +174,10 @@
                                         <td style="width:15%"></td>
                                         <td class="text-right" style="width:10%">
                                             <strong class="text-danger">
-                                                @if (($pendapatan - $sum_biaya) < 0)
-                                                    -Rp{{strrev(implode('.',str_split(strrev(strval(-1*($pendapatan - $sum_biaya))),3)))}}
+                                                @if (($income - $expense) < 0)
+                                                    -Rp{{strrev(implode('.',str_split(strrev(strval(-1*($income - $expense))),3)))}}
                                                 @else
-                                                    Rp{{strrev(implode('.',str_split(strrev(strval($pendapatan - $sum_biaya)),3)))}}
+                                                    Rp{{strrev(implode('.',str_split(strrev(strval($income - $expense)),3)))}}
                                                 @endif
                                             </strong>
                                         </td>
@@ -198,35 +190,27 @@
                                         <td style="width:15%"></td>
                                         <td style="width:10%"></td>
                                     </tr>
-                                    @for ($i = 0; $i < sizeof($array_pendapatan_lainnya); $i++)
+                                    @for ($i = 0; $i < sizeof($othersIncomeArray); $i++)
                                         <tr>
                                             <td style="width:60%;padding-left: 1.5rem!important;">
-                                                <strong>{{$array_pendapatan_lainnya[$i]['class']}}</strong>
+                                                <strong>{{$othersIncomeArray[$i]['classification']}}</strong>
                                             </td>
                                             <td style="width:15%"></td>
                                             <td style="width:15%"></td>
                                             <td class="text-right" style="width:10%">
-                                                {{$array_pendapatan_lainnya[$i]['sum']}}
-                                                @php
-                                                    $pendapatan += $array_pendapatan_lainnya[$i]['sum'];
-                                                    $another_sum += $array_pendapatan_lainnya[$i]['sum'];
-                                                @endphp
+                                                {{$othersIncome}}
                                             </td>
                                         </tr>
                                     @endfor
-                                    @for ($i = 0; $i < sizeof($array_biaya_lainnya); $i++)
+                                    @for ($i = 0; $i < sizeof($othersExpenseArray); $i++)
                                         <tr>
                                             <td style="width:60%;padding-left: 1.5rem!important;">
-                                                <strong>{{$array_biaya_lainnya[$i]['class']}}</strong>
+                                                <strong>{{$othersExpenseArray[$i]['classification']}}</strong>
                                             </td>
                                             <td style="width:15%"></td>
                                             <td style="width:15%"></td>
                                             <td class="text-right" style="width:10%">
-                                                {{$array_biaya_lainnya[$i]['sum']}}
-                                                @php
-                                                    $sum_biaya += $array_biaya_lainnya[$i]['sum'];
-                                                    $another_biaya += $array_biaya_lainnya[$i]['sum'];
-                                                @endphp
+                                                {{$othersExpense}}
                                             </td>
                                         </tr>
                                     @endfor
@@ -236,7 +220,7 @@
                                         </td>
                                         <td style="width:15%"></td>
                                         <td style="width:15%"></td>
-                                        <td class="text-right" style="width:10%">{{ $another_sum - $another_biaya}}</td>
+                                        <td class="text-right" style="width:10%">{{ $othersIncome - $othersExpense}}</td>
                                     </tr>
                                     <tr>
                                         <td style="width:60%">
@@ -245,10 +229,10 @@
                                         <td style="width:15%"></td>
                                         <td style="width:15%"></td>
                                         <td class="text-right" style="width:10%">
-                                            @if (($pendapatan - $sum_biaya) < 0)
-                                                -Rp{{strrev(implode('.',str_split(strrev(strval(-1*($pendapatan - $sum_biaya))),3)))}}
+                                            @if (($income + $othersIncome - $expense - $othersExpense) < 0)
+                                                -Rp{{strrev(implode('.',str_split(strrev(strval(-1*($income + $othersIncome - $expense - $othersExpense))),3)))}}
                                             @else
-                                                Rp{{strrev(implode('.',str_split(strrev(strval($pendapatan - $sum_biaya)),3)))}}
+                                                Rp{{strrev(implode('.',str_split(strrev(strval($income + $othersIncome - $expense - $othersExpense)),3)))}}
                                             @endif 
                                         </td>
                                     </tr>
