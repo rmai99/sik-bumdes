@@ -49,6 +49,8 @@ class DashboardController extends Controller
             $q->where('id_business', $session);
         })->count();
 
+        $year = date('Y');
+
         $transaction = DetailJournal::whereHas('journal.account.classification.parent', function ($q) use ($session){
             $q->where('id_business', $session);
         })->whereYear('date', $year)->count();
@@ -65,7 +67,6 @@ class DashboardController extends Controller
             $q->where('id_business', $session);
         })->where('account_name', 'Kas')->first();
         
-        $year = date('Y');
         if($cash != null){
             $sum = 0;
             if(!$cash->initialBalance()->whereYear('date', $year)->first()){

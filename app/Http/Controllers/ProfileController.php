@@ -41,13 +41,11 @@ class ProfileController extends Controller
 
     public function index()
     {
-        $role = Auth::user();
-        $isCompany = $role->hasRole('company');
-        $user = Auth::user()->id;
+        $user = Auth::user();
+        $isCompany = $user->hasRole('company');
         if($isCompany){
-            $data = Companies::with('user')->where('id_user', $user)->first();
             $session = session('business');
-            $company = Companies::where('id_user', $user)->first()->id;
+            $company = Companies::where('id_user', $user->id)->first()->id;
             $business = Business::where('id_company', $company)->get();
             if($session == null){
                 $session = Business::where('id_company', $company)->first()->id;
@@ -55,10 +53,11 @@ class ProfileController extends Controller
             $getBusiness = Business::with('company')
             ->where('id_company', $company)
             ->where('id', $session)->first();
+            $data = Companies::with('user')->where('id_user', $user->id)->first();
         } else {
-            $getBusiness = Employee::with('business')->where('id_user', $user)->first();
+            $getBusiness = Employee::with('business')->where('id_user', $user->id)->first();
             $session = $getBusiness->id_business;
-            $data = Employee::with('user', 'business', 'company')->where('id_user', $user)->first();
+            $data = Employee::with('user', 'business', 'company')->where('id_user', $user->id)->first();
         }
         return view('user.profile', compact('session', 'business', 'data', 'getBusiness'));
     }
@@ -121,7 +120,7 @@ class ProfileController extends Controller
         $company->phone_number = $request->phone_number;
         $company->save();
 
-        return redirect()->route('profile.index')->with('success','Berhasil Mengubah Profile!');
+        return redirect()->route('profile.index')->with('success','Berhasil Mengubah Profil!');
     }
 
     public function updateEmployee(Request $request)
@@ -130,7 +129,7 @@ class ProfileController extends Controller
         $company->name = $request->name;
         $company->save();
 
-        return redirect()->route('profile.index')->with('success','Berhasil Mengubah Profile!');
+        return redirect()->route('profile.index')->with('success','Berhasil Mengubah Profil!');
     }
 
     /**
@@ -142,5 +141,31 @@ class ProfileController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function upgrade()
+    {
+        $user = Auth::user();
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $data = Companies::with('user')->where('id_user', $user->id)->first()->is_actived;
+            if($data == 0 ){
+                $session = session('business');
+                $company = Companies::where('id_user', $user->id)->first()->id;
+                $business = Business::where('id_company', $company)->get();
+                if($session == null){
+                    $session = Business::where('id_company', $company)->first()->id;
+                }
+                $getBusiness = Business::with('company')
+                ->where('id_company', $company)
+                ->where('id', $session)->first();
+                $data = Companies::with('user')->where('id_user', $user->id)->first();
+                return view('user.home', compact('session', 'getBusiness', 'business'));
+            }else {
+                abort(403);
+            }
+        } else {
+            abort(403);
+        }
     }
 }

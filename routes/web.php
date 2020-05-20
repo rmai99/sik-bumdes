@@ -14,7 +14,7 @@ use RealRashid\SweetAlert\Facades\Alert;
 |
 */
 /* ======== DASHBOARD ======== */
-Route::resource('dashboard', 'DashboardController');
+Route::resource('main', 'DashboardController');
 Route::get('/monthly-income/{date?}', 'DashboardController@getMonthly')->name('income_statement');
 Route::get('/get_monthly_cash_flow/{year?}', 'DashboardController@get_monthly_cash_flow')->name('cash_flow');
 Route::get('/get_daily_cash_flow/{date?}', 'DashboardController@get_daily_cash_flow')->name('cash_flow_daily');
@@ -44,9 +44,9 @@ Route::get('detailJournal', 'GeneralJournalController@detailJournal');
 Route::resource('buku_besar', 'GeneralLedgerController');
 
 /* ======== REPORT ======== */
-Route::get('laporan_laba_rugi', 'FinancialReportController@incomeStatement');
-Route::get('perubahan_ekuitas', 'FinancialReportController@changeInEquity');
-Route::get('neraca', 'FinancialReportController@balanceSheet');
+Route::get('laporan_laba_rugi', 'FinancialReportController@incomeStatement')->name('laporan_laba_rugi');
+Route::get('perubahan_ekuitas', 'FinancialReportController@changeInEquity')->name('perubahan_ekuitas');
+Route::get('neraca', 'FinancialReportController@balanceSheet')->name('neraca');
 
 /* ======== EMPLOYEE ======== */
 Route::resource('karyawan','EmployeeController');
@@ -62,9 +62,7 @@ Route::resource('profile', 'ProfileController')->except('update');
 Route::put('profile/update', 'ProfileController@update')->name('profile.update');
 Route::put('profile/karyawan/update', 'ProfileController@updateEmployee')->name('profile_karyawan.update');
 Route::get('isPro', 'ProfileController@isPro');
-
-Route::get('/home', 'HomeController@index')->name('home');
-
+Route::get('upgrade', 'ProfileController@upgrade')->name('upgrade');
 
 Route::prefix('admin')->middleware('auth')->name('admin.')->group(function(){
     Route::resource('/', 'AdminDashboardController');

@@ -38,30 +38,30 @@
                             <tbody>
                                 @foreach ($companies as $item)
                                     <tr>
-                                        <td style="width:20%">
+                                        <td>
                                             {{$item->name}}
                                         </td>
-                                        <td style="width:15%">
+                                        <td>
                                             {{$item->user->email}}
                                         </td>
-                                        <td style="width:20%">
+                                        <td>
                                             {{$item->address}}
                                         </td>
-                                        <td style="width:15%">
+                                        <td>
                                             {{$item->phone_number}}
                                         </td>
-                                        <td>
+                                        <td class="text-center" style="width:20%">
                                             @if ($item->is_actived == 1)
-                                                <div class="col-8 user pro">
+                                                <div class="offset-2 col-8 user pro">
                                                     Pro
                                                 </div>
                                             @else
-                                                <div class="col-8 user reguler">
+                                                <div class="offset-2 col-8 user reguler">
                                                     Reguler
                                                 </div>
                                             @endif
                                         </td>
-                                        <td>
+                                        <td class="text-right" style="width:8%">
                                             <button type="button" class="edit btn-icon" rel="tooltip" data-toggle="modal" data-target="#edit" value="{{$item->id}}">
                                                 <i class="material-icons" style="color: #2B82BC;font-size:1.1rem;cursor: pointer;">edit</i>
                                             </button>
@@ -169,7 +169,7 @@
                 
                 $.ajax({
                     type        : 'get',
-                    url         : '{!!URL::to('admin/user')!!}/'+id,
+                    url         : '{!!url('admin/user')!!}/'+id,
                     dataType    : 'html',
                     success     : function(data){
                         var servers = $.parseJSON(data);
@@ -197,5 +197,7 @@
             })
         })
     </script>
-    
+@endpush
+@push('js')
+    @include('sweetalert::alert')
 @endpush

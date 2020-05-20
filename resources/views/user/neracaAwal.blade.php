@@ -150,12 +150,12 @@
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Tanggal</h6>
                                 <input type="date" class="form-control" aria-describedby="date" placeholder="" name="date" aria-required="true" value="{{ old('date') }}">
+                                @error('date')
+                                    <span class="invalid-feedback">
+                                        <strong>The year must be once in 1 account.</strong>
+                                    </span>
+                                @enderror
                             </div>
-                            @if ($errors->has('date'))
-                                <span class="invalid">
-                                    {{ $errors->first('date') }}
-                                </span>
-                            @endif 
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Nama Akun</h6>
                                 <select class="w-100 pl-1 padding-select" name="id_account" style="border-radius: 3px;" id="account">
@@ -208,7 +208,7 @@
                                 <input type="date" class="form-control" name="edit_date" aria-describedby="date" value="{{ old('edit_date') }}" required>
                                 @error('edit_date')
                                     <span class="invalid-feedback">
-                                        <strong>{{ $message }}</strong>
+                                        <strong>The year must be once in 1 account.</strong>
                                     </span>
                                 @enderror
                             </div>
@@ -285,13 +285,14 @@
             // console.log(sid);
             var url = "{{ route('neraca_awal.index') }}/"+id;
             Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
+                title : 'Anda yakin menghapus neraca awal?',
+                text : 'Anda tidak dapat mengembalikan data yang telah dihapus!',
+                icon : 'warning',
                 showCancelButton: true,
+                cancelButtonText: 'Batal!',
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Ya, hapus!'
             }).then((result) => {
                 if (result.value) {
                     $.ajax({
@@ -300,14 +301,19 @@
                         dataType: "json",
                         success: (response) => {
                             Swal.fire(
-                                'Deleted!',
-                                'Your file has been deleted.',
+                                'Hapus!',
+                                'Neraca awal telah dihapus.',
                                 'success'
                             )
-                            console.log(url);
                             $(this).closest('tr').remove();
                         }
                     });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire(
+                    'Batal',
+                    'Data batal dihapus :)',
+                    'error'
+                    )
                 }
             })
         });
@@ -329,7 +335,7 @@
         $('#id_initialBalances').val(id);
         $.ajax({
             type        : 'GET',
-            url         : '{!!URL::to('detail_balance')!!}',
+            url         : '{!!url('detail_balance')!!}',
             data        : {'id':id},
             dataType    : 'html',
             success     : function(data){

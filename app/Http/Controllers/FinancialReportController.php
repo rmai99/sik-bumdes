@@ -35,8 +35,7 @@ class FinancialReportController extends Controller
                 $session = Business::where('id_company', $company)->first()->id;
             }
             $getBusiness = Business::with('company')
-            ->where('id_company', $company)
-            ->where('id', $session)->first();
+            ->where('id_company', $company)->where('id', $session)->first();
         } else {
             $getBusiness = Employee::with('business')->where('id_user', $user)->first();
             $session = $getBusiness->id_business;
@@ -48,8 +47,7 @@ class FinancialReportController extends Controller
             $year = date('Y');
         }
 
-        $parent = AccountParent::with('classification.account')
-        ->where('id_business', $session)->get();
+        $parent = AccountParent::with('classification.account')->where('id_business', $session)->get();
 
         $othersExpense = 0;
         $othersIncome = 0;
@@ -144,11 +142,6 @@ class FinancialReportController extends Controller
 
     public function changeInEquity()
     {
-        if (isset($_GET['year'])) {
-            $year = $_GET['year'];   
-        } else {
-            $year = date('Y');
-        }
         $role = Auth::user();
         $isCompany = $role->hasRole('company');        
         $user = Auth::user()->id;
@@ -167,8 +160,13 @@ class FinancialReportController extends Controller
             $session = $getBusiness->id_business;
         }
 
-        $parent = AccountParent::with('classification.account')
-        ->where('id_business', $session)->get();
+        if (isset($_GET['year'])) {
+            $year = $_GET['year'];   
+        } else {
+            $year = date('Y');
+        }
+
+        $parent = AccountParent::with('classification.account')->where('id_business', $session)->get();
         $saldo_berjalan = 0;
         foreach($parent as $p){
             foreach($p->classification as $c){
@@ -238,22 +236,13 @@ class FinancialReportController extends Controller
         }
         $years = InitialBalance::whereHas('account.classification.parent', function($q) use ($session){
             $q->where('id_business', $session);
-        })->selectRaw('YEAR(date) as year')
-        ->orderBy('date', 'desc')
-        ->distinct()
-        ->get();
+        })->selectRaw('YEAR(date) as year')->orderBy('date', 'desc')->distinct()->get();
         
         return view('user.perubahanEkuitas', compact('session', 'business', 'equityArray', 'saldo_berjalan', 'years', 'year', 'getBusiness'));
     }
 
     public function balanceSheet()
     {
-        if (isset($_GET['year'])) {
-            $year = $_GET['year'];            
-        } else {
-            $year = date('Y');
-        }
-
         $role = Auth::user();
         $isCompany = $role->hasRole('company');
         $user = Auth::user()->id;
@@ -267,14 +256,18 @@ class FinancialReportController extends Controller
             $getBusiness = Business::with('company')
             ->where('id_company', $company)
             ->where('id', $session)->first();
-
         } else {
             $getBusiness = Employee::with('business')->where('id_user', $user)->first();
             $session = $getBusiness->id_business;
         }
 
-        $parent = AccountParent::with('classification.account')
-        ->where('id_business', $session)->get();
+        if (isset($_GET['year'])) {
+            $year = $_GET['year'];            
+        } else {
+            $year = date('Y');
+        }
+
+        $parent = AccountParent::with('classification.account')->where('id_business', $session)->get();
         $saldo_berjalan = 0;
         foreach($parent as $p){
             $i = 0;
@@ -314,6 +307,11 @@ class FinancialReportController extends Controller
                         } else {
                             $sum -= $endingBalance;
                         }
+                        $assetArray[$i]['classification'] = $c->classification_name;
+                        $assetArray[$i]['name'][] = $a->account_name;
+                        $assetArray[$i]['code'][] = $a->account_code;
+                        $assetArray[$i]['ending balance'][] = $endingBalance;
+                        $assetArray[$i]['sum'] = $sum;
                     }
                     else if($p->parent_name == "Liabilitas"){
                         if($position == "Kredit"){
@@ -321,6 +319,11 @@ class FinancialReportController extends Controller
                         } else {
                             $sum -= $endingBalance;
                         }
+                        $liabilityArray[$i]['classification'] = $c->classification_name;
+                        $liabilityArray[$i]['name'][] = $a->account_name;
+                        $liabilityArray[$i]['code'][] = $a->account_code;
+                        $liabilityArray[$i]['ending balance'][] = $endingBalance;
+                        $liabilityArray[$i]['sum'] = $sum;
                     } 
                     else if ($p->parent_name == "Ekuitas"){
                         if($position == "Kredit"){
@@ -331,6 +334,11 @@ class FinancialReportController extends Controller
                         if($a->account_name == "Laba Ditahan" || $a->account_name == "Saldo Laba Ditahan"){
                             $laba_ditahan = $endingBalance;
                         }
+                        $equityArray[$i]['classification'] = $c->classification_name;
+                        $equityArray[$i]['name'][] = $a->account_name;
+                        $equityArray[$i]['code'][] = $a->account_code;
+                        $equityArray[$i]['ending balance'][] = $endingBalance;
+                        $equityArray[$i]['sum'] = $sum;
                     }
                     else if($p->parent_name == "Pendapatan"){
                         if($position == "Kredit"){
@@ -360,33 +368,11 @@ class FinancialReportController extends Controller
                             $saldo_berjalan += $endingBalance;
                         }
                     }
-                    
-                    if($p->parent_name == "Asset"){
-                        $assetArray[$i]['classification'] = $c->classification_name;
-                        $assetArray[$i]['name'][] = $a->account_name;
-                        $assetArray[$i]['code'][] = $a->account_code;
-                        $assetArray[$i]['ending balance'][] = $endingBalance;
-                        $assetArray[$i]['sum'] = $sum;
-                    } 
-                    else if($p->parent_name == "Liabilitas"){
-                        $liabilityArray[$i]['classification'] = $c->classification_name;
-                        $liabilityArray[$i]['name'][] = $a->account_name;
-                        $liabilityArray[$i]['code'][] = $a->account_code;
-                        $liabilityArray[$i]['ending balance'][] = $endingBalance;
-                        $liabilityArray[$i]['sum'] = $sum;
-                    }
-                    else if($p->parent_name == "Ekuitas"){
-                        $equityArray[$i]['classification'] = $c->classification_name;
-                        $equityArray[$i]['name'][] = $a->account_name;
-                        $equityArray[$i]['code'][] = $a->account_code;
-                        $equityArray[$i]['ending balance'][] = $endingBalance;
-                        $equityArray[$i]['sum'] = $sum;
-                    }
                 }
                 $i++;
             }
         }
-        // dd($liabilityArray);
+
         $equitas = $saldo_berjalan + $laba_ditahan;
         $years = InitialBalance::whereHas('account.classification.parent', function($q) use ($session){
             $q->where('id_business', $session);

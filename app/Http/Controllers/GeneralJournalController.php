@@ -43,12 +43,11 @@ class GeneralJournalController extends Controller
             $month = null;
             $day = null;
         }
-        $role = Auth::user();
-        $isCompany = $role->hasRole('company');
-        $user = Auth::user()->id;
+        $user = Auth::user();
+        $isCompany = $user->hasRole('company');
         if($isCompany){
             $session = session('business');
-            $company = Companies::where('id_user', $user)->first()->id;
+            $company = Companies::where('id_user', $user->id)->first()->id;
             $business = Business::where('id_company', $company)->get();
             if($session == null){
                 $session = Business::where('id_company', $company)->first()->id;
@@ -57,7 +56,7 @@ class GeneralJournalController extends Controller
             ->where('id_company', $company)
             ->where('id', $session)->first();
         } else{
-            $getBusiness = Employee::with('business')->where('id_user', $user)->first();
+            $getBusiness = Employee::with('business')->where('id_user', $user->id)->first();
             $session = $getBusiness->id_business;
         }
 
@@ -89,12 +88,11 @@ class GeneralJournalController extends Controller
 
     public function create()
     {
-        $user = Auth::user()->id;
-        $role = Auth::user();
-        $isCompany = $role->hasRole('company');
+        $user = Auth::user();
+        $isCompany = $user->hasRole('company');
         if($isCompany){
             $session = session('business');
-            $company = Companies::where('id_user', $user)->first()->id;
+            $company = Companies::where('id_user', $user->id)->first()->id;
             $business = Business::where('id_company', $company)->get();
             if($session == null){
                 $session = Business::where('id_company', $company)->first()->id;
@@ -103,7 +101,7 @@ class GeneralJournalController extends Controller
             ->where('id_company', $company)
             ->where('id', $session)->first();
         } else {
-            $getBusiness = Employee::with('business')->where('id_user', $user)->first();
+            $getBusiness = Employee::with('business')->where('id_user', $user->id)->first();
             $session = $getBusiness->id_business;
         }
 
@@ -144,7 +142,7 @@ class GeneralJournalController extends Controller
             $kredit->save();
         }
 
-        return redirect()->route('jurnal_umum.index')->with('success','Berhasil Menambah Jurnal!');;
+        return redirect()->route('jurnal_umum.index')->with('success','Jurnal Ditambahkan!');
     }
 
     public function detailJournal(Request $request){
@@ -202,6 +200,5 @@ class GeneralJournalController extends Controller
         return response()->json([
             'success' => 'Record deleted successfully!'
         ]);
-        
     }
 }

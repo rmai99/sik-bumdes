@@ -49,7 +49,6 @@ class AccountController extends Controller
         $account_parent = AccountParent::with('classification.account')
         ->where('id_business', $session)
         ->orderby('parent_code')->get();
-
         
         return view('user.akun', compact('account_parent','business', 'session', 'getBusiness'));
     }
@@ -88,7 +87,7 @@ class AccountController extends Controller
         $data->position = $request->input('input_positionAccount');
         $data->save();
 
-        return redirect()->route('akun.index')->with('success','Berhasil Menambahkan Data!');
+        return redirect()->route('akun.index')->with('success','Berhasil Menambahkan Akun!');
     }
 
     public function show($id)
@@ -125,7 +124,7 @@ class AccountController extends Controller
         $data->position = $request->edit_positionAccount;
         $data->save();
 
-        return redirect()->route('akun.index')->with('success','Berhasil Mengubah Data!');
+        return redirect()->route('akun.index')->with('success','Berhasil Mengubah Akun!');
     }
 
     public function destroy($id)

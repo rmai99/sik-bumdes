@@ -33,7 +33,7 @@ class InitialBalanceController extends Controller
         $isCompany = $user->hasRole('company');
         if($isCompany){
             $session = session('business');
-            $company = Companies::where('id_user', $user>id)->first()->id;
+            $company = Companies::where('id_user', $user->id)->first()->id;
             $business = Business::where('id_company', $company)->get();
             if($session == null){
                 $session = Business::where('id_company', $company)->first()->id;
@@ -52,9 +52,7 @@ class InitialBalanceController extends Controller
             $year = date('Y');
         }
         $account_parent = AccountParent::with('classification.account')
-        ->where('id_business', $session)
-        ->get();
-        // dd($account_parent);
+        ->where('id_business', $session)->get();
 
         $initial_balance = InitialBalance::with('account.classification.parent')
         ->whereHas('account.classification.parent', function($q) use ($session){
@@ -65,9 +63,7 @@ class InitialBalanceController extends Controller
         $years = InitialBalance::whereHas('account.classification.parent', function($q) use ($session){
             $q->where('id_business', $session);
         })->selectRaw('YEAR(date) as year')
-        ->orderBy('date', 'desc')
-        ->distinct()
-        ->get();
+        ->orderBy('date', 'desc')->distinct()->get();
 
         return view('user.neracaAwal',compact('initial_balance','account_parent','years','business', 'year', 'session', 'getBusiness'));
     }
@@ -102,7 +98,7 @@ class InitialBalanceController extends Controller
         $data->amount = $convert_amount;
         $data->save();
 
-        return redirect()->route('neraca_awal.index')->with('success','Berhasil Menambahkan Data!');
+        return redirect()->route('neraca_awal.index')->with('success','Neraca Awal Ditambahkan!');
     }
 
     public function show($id)
@@ -117,24 +113,19 @@ class InitialBalanceController extends Controller
 
     public function update(Request $request, $id)
     {
-        $data = InitialBalance::where('id', $id)->first();
-        $db = date('Y', strtotime($data->date)); //ada di db
-        $dates = date('Y', strtotime($request->edit_date)); //direquest
-        $date = InitialBalance::where('id_account', $request->edit_acount)->whereYear('date','=', $dates)->first();
-        if($db == $dates){
+        if(InitialBalance::where('id', $id)->where('id_account', $request->edit_acount)->whereYear('date','=', $request->edit_date)->first()){
             $dates = 0000-00-00;
-        } else {
-            if($date){
-                $dates = date('Y-m-d', strtotime($date->date . " +1 year") );
-            } else {
-                $dates = 0000-00-00;
-            }
+        } else if(!InitialBalance::where('id_account', $request->edit_acount)->whereYear('date','=', $request->edit_date)->first()){
+            $dates = 0000-00-00;
+        } else if(InitialBalance::where('id_account', $request->edit_acount)->whereYear('date','=', $request->edit_date)->first()){
+            $dates = date('Y-m-d', strtotime($request->date . " +1 year") );
         }
-        
+
         $this->validate($request,[
             'edit_date' => 'required|after_or_equal:'.$dates,
         ]);
 
+        $data = InitialBalance::where('id', $id)->first();
         $amount = $request->edit_amount;
         $convert_amount = preg_replace("/[^0-9]/", "", $amount);
         
@@ -143,7 +134,7 @@ class InitialBalanceController extends Controller
         $data->date = $request->edit_date;
         $data->save();
         
-        return redirect()->route('neraca_awal.index')->with('success','Berhasil Mengubah Data!');
+        return redirect()->route('neraca_awal.index')->with('success','Neraca Awal Diubah!');
     }
 
     public function destroy($id)

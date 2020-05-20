@@ -18,9 +18,9 @@
                             <div class="input-group mb-2 ">
                                 <div class="input-group-append">
                                     <div class="input-group-text">
-                                            <i class=" material-icons" style="font-size:18px">
-                                                business
-                                            </i>
+                                        <i class=" material-icons" style="font-size:18px">
+                                            business
+                                        </i>
                                     </div>
                                 </div>
                                 <input id="name" type="text" class="form-control @error('name') is-invalid @enderror"

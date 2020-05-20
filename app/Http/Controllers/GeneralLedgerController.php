@@ -26,29 +26,26 @@ class GeneralLedgerController extends Controller
     
     public function index()
     {
-        $user = Auth::user()->id;
-        $role = Auth::user();
-        $isCompany = $role->hasRole('company');
+        $user = Auth::user();
+        $isCompany = $user->hasRole('company');
         if($isCompany){
             $session = session('business');
-            $company = Companies::where('id_user', $user)->first()->id;
+            $company = Companies::where('id_user', $user->id)->first()->id;
             $business = Business::where('id_company', $company)->get();
             if($session == null){
                 $session = Business::where('id_company', $company)->first()->id;
             }
             $getBusiness = Business::with('company')
-            ->where('id_company', $company)
-            ->where('id', $session)->first();
+            ->where('id_company', $company)->where('id', $session)->first();
         } else {
-            $getBusiness = Employee::with('business')->where('id_user', $user)->first();
+            $getBusiness = Employee::with('business')->where('id_user', $user->id)->first();
             $session = $getBusiness->id_business;
         }
         $account = Account::with('classification.parent')
-            ->whereHas('classification.parent.business', function ($q) use ($session){
-                $q->where('id_business', $session);
-            })->first()->id;
+        ->whereHas('classification.parent.business', function ($q) use ($session){
+            $q->where('id_business', $session);
+        })->first()->id;
 
-        //Parameter dalam Index
         if(isset($_GET['year'], $_GET['akun'])){
             $year = $_GET['year'];
             $akun = $_GET['akun'];
@@ -88,15 +85,12 @@ class GeneralLedgerController extends Controller
         ->get();
 
         $years = DetailJournal::selectRaw('YEAR(date) as year')
-            ->orderBy('date', 'desc')
-            ->distinct()
-        ->get();
+        ->orderBy('date', 'desc')->distinct()->get();
 
         $akuns = Account::with('classification.parent')
-            ->whereHas('classification.parent', function ($q) use ($session){
-                $q->where('id_business', $session);
-            })
-        ->get();
+        ->whereHas('classification.parent', function ($q) use ($session){
+            $q->where('id_business', $session);
+        })->get();
 
         return view('user.bukuBesar', compact('business', 'data', 'years', 'akuns', 'account','log', 'session', 'getBusiness'));
     }

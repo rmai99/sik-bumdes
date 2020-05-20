@@ -106,7 +106,7 @@
                     <div class="col-12 pl-0">
                         <p class="mb-0">Nama Akun</p>
                         <div class="input-group">
-                            <input type="text" class="form-control border-select" name="credit[]" required="true" aria-required="true" pattern="^\Rp\d{1,3}(,\d{3})*(\.\d+)?Rp" value="100" data-type="currency">
+                            <input type="text" class="form-control border-select" name="credit[]" required="true" aria-required="true" pattern="^\Rp\d{1,3}(,\d{3})*(\.\d+)?Rp" data-type="currency">
                         </div>
                     </div>
                 </div>

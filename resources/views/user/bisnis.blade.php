@@ -78,7 +78,12 @@
 
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Nama</h6>
-                                <input type="text" class="form-control" name="business_name" aria-describedby="date" placeholder="">
+                                <input type="text" class="form-control" name="business_name" aria-describedby="date" placeholder="" value="{{old('business_name')}}" required>
+                                @error('business_name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -133,15 +138,19 @@
 @push('js')
 <script>
     $(document).ready(function () {
-        @if (count($errors) > 0)
-            swal.fire({
-                title: "Ubah Akun Menjadi PRO",
-                icon: "warning",
-                closeOnClickOutside: false,
-                showConfirmButton: false,
-                // timer       :2000,
-                footer: '<a href="/home">Upgrade Account?</a>'
-            })
+        // @if (count($errors) > 0)
+        //     swal.fire({
+        //         title: "Ubah Akun Menjadi PRO",
+        //         icon: "warning",
+        //         closeOnClickOutside: false,
+        //         showConfirmButton: false,
+        //         // timer       :2000,
+        //         footer: '<a href="/home">Upgrade Account?</a>'
+        //     })
+        // @endif
+        @if ($errors->has('business_name'))
+            console.log("Maida");
+            $('#tambahBisnis').modal('show');
         @endif
         @if ($errors->has('name'))
             $('#editBusiness').modal('show');
@@ -186,6 +195,7 @@
                 text: "Data akan dihapus secara permanen",
                 icon: 'warning',
                 showCancelButton: true,
+                cancelButtonText: 'Batal!',
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Ya, hapus!'
@@ -214,41 +224,44 @@
                             })
                         },
                     });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire(
+                    'Batal',
+                    'Data batal dihapus :)',
+                    'error'
+                    )
                 }
             })
         });
     });
     
     $(document).ready(function () {
-    $(document).on('click', '.edit', function() {
-        var id = $(this).attr('id');
-        $('#formEditId').val(id);
-        $.ajax({
-            type        : 'GET',
-            url         : '{!!URL::to('detail_bisnis')!!}',
-            data        : {'id' : id},
-            dataType    : 'html',
-            success     : function(data){
-                var servers = $.parseJSON(data);
-                $.each(servers, function(index, value){
-                    var name = value.business_name;
-                    
-                    $('#name').val(name);
-                });
-            }, error    : function(){
-
-            },
-        })
-        var action = "{{route('bisnis.index')}}/"+id;
-        $('#formEdit').attr('action', action);
-
-    });
+        $(document).on('click', '.edit', function() {
+            var id = $(this).attr('id');
+            $('#formEditId').val(id);
+            $.ajax({
+                type        : 'GET',
+                url         : '{!!url('detail_bisnis')!!}',
+                data        : {'id' : id},
+                dataType    : 'html',
+                success     : function(data){
+                    var servers = $.parseJSON(data);
+                    $.each(servers, function(index, value){
+                        var name = value.business_name;
+                        
+                        $('#name').val(name);
+                    });
+                }
+            })
+            var action = "{{route('bisnis.index')}}/"+id;
+            $('#formEdit').attr('action', action);
+        });
 
         $(document).on('click', '.addBusiness', function(e) {
             e.preventDefault();
             $.ajax({
                 type        : 'GET',
-                url         : '{!!URL::to('isPro')!!}',
+                url         : '{!!url('isPro')!!}',
                 dataType    : 'html',
                 success     : function(data){
                     var servers = $.parseJSON(data);
@@ -256,12 +269,12 @@
                     // console.log(servers.result);
                     if (servers.result == "REGULER") {
                         swal.fire({
-                            title: "Ubah Akun Menjadi PRO",
+                            title: "Ubah Akun Perusahaan Menjadi PRO",
                             icon: "warning",
                             closeOnClickOutside: false,
                             showConfirmButton: false,
                             // timer       :2000,
-                            footer: '<a href="/home">Upgrade Account?</a>'
+                            footer: '<a href="/home">Upgrade Akun Perusahaan?</a>'
                         });
                     }else {
                         $('#tambahBisnis').modal('show')

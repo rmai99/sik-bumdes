@@ -28,10 +28,9 @@ class BusinessController extends Controller
      */
     public function index()
     {
-        $user = Auth::user()->id;
-
+        $user = Auth::user();
         $session = session('business');
-        $company = Companies::where('id_user', $user)->first();
+        $company = Companies::where('id_user', $user->id)->first();
         $business = Business::where('id_company', $company->id)->get();
         if($session == null){
             $session = Business::where('id_company', $company->id)->first()->id;
@@ -45,7 +44,7 @@ class BusinessController extends Controller
     public function setBusiness($id){
         session(['business' => $id]);
 
-        return redirect()->route('dashboard.index');
+        return redirect()->route('main.index');
     }
 
     /**
@@ -105,7 +104,7 @@ class BusinessController extends Controller
             array('71'=>'Biaya Lainnya')
         );
         $akun_array = array(
-            array("kas"=>array("1110"=>"Debit"), "kas di bank"=> array("1111"=>"Debit"), "Piutang Dagang" => array("1120" => "Debit"), "Sewa Dibayar Dimuka"=>array("1130"=>"Debit")),
+            array("Kas"=>array("1110"=>"Debit"), "Kas di bank"=> array("1111"=>"Debit"), "Piutang Dagang" => array("1120" => "Debit"), "Sewa Dibayar Dimuka"=>array("1130"=>"Debit")),
             array("Tanah"=>array("1210"=>"Debit"), "Gedung"=> array("1220"=>"Debit"), "Akumulasi Penyusutan Gedung" => array("1220-1"=>"Kredit"), "Kendaraan" => array("1230"=>"Debit"), 
                 "Akumulasi Penyusutan Kendaraan"=>array("1230-1"=>"Kredit"), "Peralatan Kantor"=>array("1240"=> "Debit"), "Akumulasi Penyusutan Peralatan Kantor"=>array("1240-1"=>"Kredit")),
             array("Aset Lainnya"=>array("1310"=>"Debit")),
@@ -190,14 +189,14 @@ class BusinessController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request,[
-            'name' => ['required', 'string', 'max:30'],
+            'business_name' => ['required', 'string', 'max:30'],
         ]);
         
         $data = Business::where('id', $id)->first();
         $data->business_name = $request->name;
         $data->save();
 
-        return redirect()->route('bisnis.index')->with('success','Berhasil Mengubah Data!');
+        return redirect()->route('bisnis.index')->with('success','Berhasil Mengubah Bisnis!');
     }
 
     /**

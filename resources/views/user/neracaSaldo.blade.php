@@ -41,10 +41,6 @@
                                         <b class="caret"></b>
                                     </div>
                                 </div>
-                                <div class="col-lg-6 col-md-12 pr-0">
-                                    <button type="button" class="btn btn-primary m-1 pl-2 pr-2" data-toggle="modal"
-                                        data-target="#neracaAwalModal" style="float:right;">Tambah Neraca Awal</button>
-                                </div>
                             </div>
                         </div>
                         <div class="material-datatables mt-4">
@@ -54,18 +50,13 @@
                                     <tr>
                                         <th rowspan="2" style="width:40%">Nama Akun</th>
                                         <th rowspan="2" style="width:10%">Posisi Normal</th>
-                                        <th colspan="2" class="text-center">Jumlah</th>
-                                    </tr>
-                                    <tr>
                                         <th style="width:20%">Debit</th>
                                         <th style="width:20%">Kredit</th>
                                     </tr>
                                 </thead>
-                                <tfoot>
-                                </tfoot>
                                 <tbody>
                                 @for ($i = 0; $i < sizeof($balance); $i++)
-                                    <tr data-toggle="collapse" class="accordion-toggle">
+                                    <tr>
                                         <td>
                                             <strong>{{$balance[$i]['parent_code']}} - {{$balance[$i]['parent_name']}}</strong>
                                         </td>
@@ -75,8 +66,7 @@
                                     </tr>
                                     @if (isset($balance[$i]['classification']))
                                         @for ($j = 0; $j < sizeof($balance[$i]['classification']); $j++)
-                                            <tr class="accordian-body collapse accordion-toggle show data{{$balance[$i]['parent_code']}}"
-                                                data-toggle="collapse" data-target=".dataAkun">
+                                            <tr>
                                                 <td style="padding-left: 1.5rem!important;">
                                                     {{$balance[$i]['classification'][$j]['classification_name']}}
                                                 </td>
@@ -89,7 +79,6 @@
                                                     @if ($balance[$i]['classification'][$j]['account'][$k]['saldo_akhir'] != "0")
                                                         <tr class="accordian-body collapse show accordion-toggle pl-3 dataAkun">
                                                             <td style="padding-left: 3rem!important;">
-                                                                
                                                                 {{ $balance[$i]['classification'][$j]['account'][$k]['account_code'] }} - {{ $balance[$i]['classification'][$j]['account'][$k]['account_name'] }}
                                                             </td>
                                                             <td>
@@ -106,6 +95,7 @@
                                                                         $jumlah_debit += $balance[$i]['classification'][$j]['account'][$k]['saldo_akhir']
                                                                     @endphp
                                                                 @endif
+                                                                
                                                             </td>
                                                             <td>
                                                                 @if ($balance[$i]['classification'][$j]['account'][$k]['position'] == "Kredit")
@@ -126,14 +116,13 @@
                                         @endfor
                                     @endif
                                 @endfor
+                                <tr>
+                                    <td><strong>Total</strong></td>
+                                    <td><strong></strong></td>
+                                    <td><strong>Rp{{strrev(implode('.',str_split(strrev(strval($jumlah_debit)),3)))}} </strong></td>
+                                    <td><strong>Rp{{strrev(implode('.',str_split(strrev(strval($jumlah_kredit)),3)))}} </strong></td>
+                                </tr>
                                 </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="2"><strong>Total</strong></td>
-                                        <td><strong>Rp{{strrev(implode('.',str_split(strrev(strval($jumlah_debit)),3)))}} </strong></td>
-                                        <td><strong>Rp{{strrev(implode('.',str_split(strrev(strval($jumlah_kredit)),3)))}} </strong></td>
-                                    </tr>
-                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -160,9 +149,9 @@
     });
     $(document).ready(function () {
         $('#datatables').DataTable({
-            "paging":   false,
             "ordering": false,
             "info":     false,
+            "bPaginate": false,
             responsive: true,
             language: {
             search: "_INPUT_",

@@ -49,7 +49,6 @@ class AdminMgtController extends Controller
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
         $user->save();
-        
         $user->assignRole('admin');
 
         return redirect()->route('admin.manajemen_admin.index')->with('success','Berhasil Menambahkan Admin!');

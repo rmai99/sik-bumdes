@@ -180,7 +180,13 @@
                                         <td style="width:15%"></td>
                                         <td style="width:15%"></td>
                                         <td style="width:10%" class="text-right">
-                                          </b>{{$liabilityArray[$i]['sum']}}</b>
+                                          </b>
+                                            @if ($liabilityArray[$i]['sum'] < 0)
+                                              - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$liabilityArray[$i]['sum'])),3)))}}
+                                            @else
+                                              Rp{{strrev(implode('.',str_split(strrev(strval($liabilityArray[$i]['sum'])),3)))}}  
+                                            @endif
+                                          </b>
                                         </td>
                                       </tr>
                                     @endfor

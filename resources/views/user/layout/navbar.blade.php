@@ -40,11 +40,11 @@
                         aria-haspopup="true" aria-expanded="false">
                         <i class="material-icons">person</i>
                         <p class="d-lg-none d-md-block">
-                            Account
+                            Akun
                         </p>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownProfile">
-                        <a class="dropdown-item" href="{{ route('profile.index') }}">Profile</a>
+                        <a class="dropdown-item" href="{{ route('profile.index') }}">Profil</a>
                         <a class="dropdown-item" href="{{ route('ganti_password.index') }}">Ganti Kata Sandi</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ route('logout') }}"

@@ -33,18 +33,16 @@
                         <th class="p-2 text-center" style="width:8%"><strong>{{ $c->classification_code }}</strong></th>
                         <th class="p-2"><strong>{{ $c->classification_name }}</strong></th>
                         <th></th>
-                        <th style="width:10%" class="text-center">
-                            <form action="{{ route('classification.destroy', $c->id) }}" method="post">
-                                <button class="btnEditClassification btn-icon" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editKlasifikasiModal"
-                                    value="{{ $c->id }}" data-parent= "{{ $c->id_parent }}">
-                                    <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
-                                </button>
-                                    {{ csrf_field() }}
-                                    {{ method_field('DELETE') }}
-                                <button type="submit" rel="tooltip" title="Remove" onclick="return confirm('Anda yakin mau menghapus item ini ?')" class="btn-icon">
-                                    <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
-                                </button>
-                            </form>
+                        <td style="width:10%" class="text-center">
+                            <button class="btnEditClassification btn-icon" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editKlasifikasiModal"
+                                value="{{ $c->id }}" data-parent= "{{ $c->id_parent }}">
+                                <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
+                            </button>
+                                {{ csrf_field() }}
+                                {{ method_field('DELETE') }}
+                            <button type="button" rel="tooltip" title="Remove" class="btn-icon remove_classification" id="{{ $c->id }}">
+                                <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
+                            </button>
                         </th>
                     </tr>    
                     <tbody>
@@ -102,12 +100,12 @@
                                 <h6 class="text-dark font-weight-bold m-0">Kode Klasifikasi Akun</h6>
                                 <input type="text" class="form-control" aria-describedby="kodeKlasifikasiAkun"
                                     placeholder="ex. 11" name="input_code" value="{{ old('input_code') }}" required>
+                                @error('input_code')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>That code number has been taken. Please choose another.</strong>
+                                    </span>
+                                @enderror
                             </div>
-                            @error('input_code')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Nama Klasifikasi Akun</h6>
                                 <input type="text" class="form-control" aria-describedby="namaKlasifikasiAkun"
@@ -162,10 +160,10 @@
                             <div class="form-group classificationCode">
                                 <h6 class="text-dark font-weight-bold m-0">Kode Klasifikasi Akun</h6>
                                 <input type="text" class="form-control" name="edit_code" aria-describedby="kodeKlasifikasiAkun"
-                                    value="11" required id="code">        
+                                    value="{{old('edit_code')}}" required>
                                 @error('edit_code')
                                     <span class="invalid-feedback" role="alert" id="hapus">
-                                        <strong>{{ $message }}</strong>
+                                        <strong>That code number has been taken. Please choose another.</strong>
                                     </span>
                                 @enderror
                             </div>
@@ -173,7 +171,7 @@
                             <div class="form-group classificationName">
                                 <h6 class="text-dark font-weight-bold m-0">Nama Klasifikasi Akun</h6>
                                 <input type="text" class="form-control" name="edit_name" aria-describedby="namaKlasifikasiAkun"
-                                    value="aset lancar"id="name" required>
+                                    value="{{old('edit_name')}}" required>
                             </div>
                         </div>
                     </div>
@@ -235,7 +233,7 @@
                                         placeholder="ex. 1110" value="{{ old('input_codeAccount') }}" required>
                                         @error('input_codeAccount')
                                             <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
+                                                <strong>That code number has been taken. Please choose another.</strong>
                                             </span>
                                         @enderror
                                 </div>
@@ -319,7 +317,7 @@
                                         value="{{ old('edit_codeAccount') }}" required>
                                     @error('edit_codeAccount')
                                         <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
+                                            <strong>That code number has been taken. Please choose another.</strong>
                                         </span>
                                     @enderror
                                 </div>
@@ -356,16 +354,14 @@
 <script type="text/javascript">
     $(document).ready(function () {
         @if ($errors->has('input_code'))
+            var parent = "{{old('input_parent')}}";
+            $('.parent').val(parent);
             $('#klasifikasiModal').modal('show');
         @endif
         @if ($errors->has('edit_code'))
             $('#editKlasifikasiModal').modal('show');
             var parent = "{{old('edit_parent')}}";
-            var code = "{{old('edit_code')}}";
-            var name = "{{old('edit_name')}}";
             $('#parent').val(parent);
-            $('#code').val(code);
-            $('#name').val(name);
             
             var id = "{{old('classification')}}";
             var action = "{{route('classification.index')}}/"+id;
@@ -403,7 +399,7 @@
             $('#id_classification').val(id);
             $.ajax({
                 type        : 'get',
-                url         : '{!!URL::to('detailClassification')!!}',
+                url         : '{!!url('detailClassification')!!}',
                 data        : {'id':id},
                 dataType    : 'html',
                 success     : function(data){
@@ -419,9 +415,7 @@
                         $("div.parentAccount_ select").val(id_parent);
 
                     });
-                }, error : function(){
-
-                },
+                }
             });
             
             var action = "{{route('classification.index')}}/"+id;
@@ -443,7 +437,7 @@
             $("div.parent select").val(parent);
             $.ajax({
                 type        : 'GET',
-                url         : '{!!URL::to('detailAccount')!!}',
+                url         : '{!!url('detailAccount')!!}',
                 data        : {'id':id},
                 dataType    : 'html',
                 success     : function(data){
@@ -458,16 +452,13 @@
                         $('div.acountCode input').val(account_code);
                         $("div.accountName input").val(account_name);
                         $("div.position select").val(position);
-
                     });
-                }, error : function(){
-
-                },
+                }
             });
 
             $.ajax({
                 type        : 'GET',
-                url         : '{!!URL::to('findClassification')!!}',
+                url         : '{!!url('findClassification')!!}',
                 data        : {'id':parent},
                 success:function(data){
                     op+='<option value="0" disabled="true"="true">Select Classification</option>';
@@ -482,9 +473,6 @@
 
                     $('div.classification select').html(" ");
                     $('div.classification select').append(op);
-                },
-                error:function(){
-
                 }
             });
 
@@ -501,20 +489,15 @@
             
             $.ajax({
                 type        : 'GET',
-                url         : '{!!URL::to('findClassification')!!}',
+                url         : '{!!url('findClassification')!!}',
                 data        : {'id':parent},
                 success:function(data){
                     op+='<option value="" selected="true">Select Classification</option>';
                     for(var i=0;i<data.length;i++){
                         op+='<option value="'+data[i].id+'">'+data[i].classification_name+'</option>'
                     }
-                    console.log(op);
-
                     div.find('.classification_').html(" ");
                     div.find('.classification_').append(op);
-                },
-                error:function(){
-    
                 }
             });
 
@@ -534,13 +517,14 @@
             // console.log(sid);
             var url = "{{ route('akun.index') }}/"+id;
             Swal.fire({
-                title: 'Anda yakin ingin menghapus bisnis?',
+                title: 'Anda yakin ingin menghapus akun?',
                 text: "Data akan dihapus secara permanen",
                 icon: 'warning',
                 showCancelButton: true,
+                confirmButtonText: 'Ya, hapus!',
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, hapus!'
+                cancelButtonText: 'Batal!'
             }).then((result) => {
                 if (result.value) {
                     $.ajax({
@@ -550,19 +534,63 @@
                         success: (response) => {
                             Swal.fire(
                             'Dihapus!',
-                            'Bisnis telah dihapus.',
+                            'Akun telah dihapus.',
                             'success'
                             )
-                            console.log(url);
                             $(this).closest('tr').remove();
                         }
                     });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire(
+                    'Batal',
+                    'Akun batal dihapus :)',
+                    'error'
+                    )
+                }
+            })
+        });
+
+        // Delete a record
+        $(document).on('click', '.remove_classification', function(e) {
+            e.preventDefault();
+            var id = $(this).attr('id');
+            
+            // console.log(sid);
+            var url = "{{ route('classification.index') }}/"+id;
+            Swal.fire({
+                title: 'Anda yakin ingin menghapus klasifikasi?',
+                text: "Data akan dihapus secara permanen",
+                icon: 'warning',
+                showCancelButton: true,
+                cancelButtonText: 'Batal!',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: "delete",
+                        url: url,
+                        dataType: "json",
+                        success: (response) => {
+                            Swal.fire(
+                            'Dihapus!',
+                            'Klasifikasi telah dihapus.',
+                            'success'
+                            )
+                            $(this).closest('tr').remove();
+                        }
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire(
+                    'Batal',
+                    'Data batal dihapus :)',
+                    'error'
+                    )
                 }
             })
         });
     });
 </script>
-
 @include('sweetalert::alert')
-
 @endpush

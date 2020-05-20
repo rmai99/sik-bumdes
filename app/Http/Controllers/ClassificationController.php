@@ -11,7 +11,7 @@ class ClassificationController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['role:owner|employee']);
+        $this->middleware(['role:company|employee']);
 
         $this->middleware('auth');
         
@@ -65,7 +65,7 @@ class ClassificationController extends Controller
         $data->classification_name = $request->input_name;
         $data->save();
 
-        return redirect()->action('AccountController@index')->with('success','Berhasil Menambahkan Data!');
+        return redirect()->action('AccountController@index')->with('success','Berhasil Menambahkan Klasifikasi!');
     }
 
     public function show($id)
@@ -101,13 +101,15 @@ class ClassificationController extends Controller
         $data->classification_name = $request->edit_name;
         $data->save();
 
-        return redirect()->route('akun.index')->with('success','Berhasil Mengubah Data!');;
+        return redirect()->route('akun.index')->with('success','Berhasil Mengubah Klasifikasi!');;
     }
 
     public function destroy($id)
     {
-        $data = AccountClassification::where('id',$id)->first();
-        $data->delete();
-        return redirect()->route('akun.index')->with('success','Akun berhasil di hapus');;
+        AccountClassification::findOrFail($id)->delete($id);
+
+        return response()->json([
+            'success' => 'Record deleted sucessfully'
+        ]);
     }
 }

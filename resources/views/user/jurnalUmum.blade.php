@@ -132,7 +132,7 @@
                                         <th rowspan="2">Keterangan</th>
                                         <th colspan="2">Debit</th>
                                         <th colspan="2">Kredit</th>
-                                        <th rowspan="2">aksi</th>
+                                        <th rowspan="2">Aksi</th>
                                     </tr>
                                     <tr>
                                         <th>Akun</th>
@@ -311,10 +311,11 @@
 
             var url = "{{route('jurnal_umum.index')}}/"+id;
             Swal.fire({
-                title : 'Anda yakin menghapus data ini?',
+                title : 'Anda yakin menghapus jurnal?',
                 text : 'Anda tidak dapat mengembalikan data yang telah dihapus!',
                 icon : 'warning',
                 showCancelButton: true,
+                cancelButtonText: 'Batal!',
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Ya, hapus!'
@@ -327,12 +328,18 @@
                         success     : (response) => {
                             Swal.fire(
                                 'Dihapus!',
-                                'Data anda telah dihapus.',
+                                'Jurnal anda telah dihapus.',
                                 'success'
                             )
                             $(this).closest('tr').remove();
                         }
                     })
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire(
+                    'Batal',
+                    'Data batal dihapus :)',
+                    'error'
+                    )
                 }
             })
         })
@@ -374,7 +381,7 @@
         var id = $(this).attr('id');
         $.ajax({
             type        : 'GET',
-            url         : '{!!URL::to('detailJournal')!!}',
+            url         : '{!!url('detailJournal')!!}',
             data        : {'id' : id},
             dataType    : 'html',
             success     : function(data){

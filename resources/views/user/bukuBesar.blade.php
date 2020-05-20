@@ -60,10 +60,10 @@
                             <div class="row mt-4">
                                 <div class="col-lg-6">
                                     <div class="row d-flex">
-                                        <div class="col-lg-6">
+                                        <div class="col-md-6 col-sm-3">
                                             <p class="mb-0">Nama Akun</p>
                                         </div>
-                                        <div class="col-lg-6">
+                                        <div class="col-md-6 col-sm-3">
                                             <p class="mb-0"><strong> : {{$log['nama_akun']}}</strong></p>
                                         </div>
                                     </div>
@@ -86,7 +86,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="row d-flex">
-                                        <div class="col-lg-6">
+                                        <div class="col-lg-6 col-md-3">
                                             <p class="mb-0">Saldo Awal</p>
                                         </div>
                                         <div class="col-lg-6">
@@ -94,10 +94,10 @@
                                         </div>
                                     </div>
                                     <div class="row d-flex">
-                                        <div class="col-lg-6">
+                                        <div class="col-lg-6 col-md-3">
                                             <p class="mb-0">Saldo Akhir</p>
                                         </div>
-                                        <div class="col-lg-6">
+                                        <div class="col-lg-6 col-md-3">
                                             <p class="mb-0"> : <strong id="saldo_akhir"></strong></p>
                                         </div>
                                     </div>
@@ -188,15 +188,6 @@
                                     </tr>
                                     @endforeach
                                 </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>Tanggal</th>
-                                        <th>Keterangan</th>
-                                        <th>{{ $debit }}</th>
-                                        <th>{{ $kredit }}</th>
-                                        <th>Saldo</th>
-                                    </tr>    
-                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -216,25 +207,18 @@
 <script>
     $(document).ready(function () {
         $('#generalLedger').DataTable({
-            "pagingType": "full_numbers",
+            "paging": false,
             "ordering": false,
-            "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
-            ],
             responsive: true,
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Cari",
             }
         });
+        var table = $('#generalLedger').DataTable();
+        var test = table.row( ':last-child' ).data();
+        $('#saldo_akhir').text(test[4]);
     });
-
-    var test = $('#generalLedger tr:last');
-    var tt = test.find("td:eq(4)").text();
-    console.log(test);
-    alert(test);
-    $('#saldo_akhir').text(tt);
 
     $(document).on('click', '#search', function(e){
         e.preventDefault();

@@ -37,7 +37,7 @@ class LoginController extends Controller
         } 
         else if ($user->hasRole('company') || $user->hasRole('employee'))
         {
-            return redirect()->route('dashboard.index');
+            return redirect()->route('main.index');
         }
     }
 

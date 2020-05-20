@@ -35,7 +35,7 @@
                                     Bisnis
                                 </th>
                                 <th class="text-right">
-                                    Actions
+                                    Aksi
                                 </th>
                             </thead>
                             <tbody>
@@ -121,12 +121,12 @@
     <script>
         @if (count($errors) > 0)
             swal.fire({
-                title: "Ubah Akun Menjadi PRO",
+                title: "Ubah Akun Perusahaan Menjadi PRO",
                 icon: "warning",
                 closeOnClickOutside: false,
                 showConfirmButton: false,
                 // timer       :2000,
-                footer: '<a href="/home">Upgrade Account?</a>'
+                footer: '<a href="/home">Upgrade Akun Perusahaan?</a>'
             })
         @endif
         
@@ -150,18 +150,18 @@
                 e.preventDefault();
                 $.ajax({
                     type        :'GET',
-                    url         : '{!!URL::to('isPro')!!}',
+                    url         : '{!!url('isPro')!!}',
                     dataType    : 'html',
                     success     : function(data){
                         var servers = $.parseJSON(data);
                         if(servers.result == "REGULER"){
                             swal.fire({
-                                title: "Ubah Akun Menjadi PRO",
+                                title: "Ubah Akun Perusahaan Menjadi PRO",
                                 icon: "warning",
                                 closeOnClickOutside: false,
                                 showConfirmButton: false,
                                 // timer       :2000,
-                                footer: '<a href="/home">Upgrade Account?</a>'
+                                footer: '<a href="/home">Upgrade Akun Perusahaan?</a>'
                             })
                         } else {
                             var href="{{ route('karyawan.create') }}"
@@ -178,7 +178,7 @@
                 console.log(id);
                 $.ajax({
                     type        : 'GET',
-                    url         : '{!!URL::to('detailEmployee')!!}',
+                    url         : '{!!url('detailEmployee')!!}',
                     data        : {'id' : id},
                     dataType    : 'html',
                     success     : function(data){
@@ -218,6 +218,7 @@
                     text: "Data akan dihapus secara permanen",
                     icon: 'warning',
                     showCancelButton: true,
+                    cancelButtonText: 'Batal!',
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Ya, hapus!'
@@ -237,6 +238,12 @@
                                 $(this).closest('tr').remove();
                             }
                         });
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        Swal.fire(
+                        'Batal',
+                        'Data batal dihapus :)',
+                        'error'
+                        )
                     }
                 })
             });

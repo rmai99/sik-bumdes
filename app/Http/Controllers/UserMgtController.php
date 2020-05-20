@@ -81,11 +81,10 @@ class UserMgtController extends Controller
     public function update(Request $request, $id)
     {
         $data = Companies::where('id',$id)->first();
-
         $data->is_actived = $request->status;
         $data->save();
 
-        return redirect()->route('admin.user.index')->with('success','Berhasil Mengubah Data!');
+        return redirect()->route('admin.user.index')->with('toast_success','Berhasil Mengubah Data!');
     }
 
     /**

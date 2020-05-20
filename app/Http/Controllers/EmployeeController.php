@@ -67,8 +67,8 @@ class EmployeeController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8'],
         ]);   
-        $user = Auth::user()->id;
-        $company = Companies::where('id_user', $user)->first()->id;
+        $user = Auth::user();
+        $company = Companies::where('id_user', $user->id)->first()->id;
 
         $user = new User();
         $user->email = $request->email;
@@ -120,7 +120,7 @@ class EmployeeController extends Controller
     {
         $user = Employee::where('id', $id)->first()->id_user;
 
-        User::findOrFail($user)->delete($user);
+    User::findOrFail($user)->delete($user);
 
         return response()->json([
             'success'  => 'Record deleted successfully!'

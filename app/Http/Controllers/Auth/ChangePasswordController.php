@@ -10,6 +10,7 @@ use App\User;
 use Auth;
 use App\Companies;
 use App\Business;
+use App\Employee;
 
 class ChangePasswordController extends Controller
 {
@@ -24,32 +25,26 @@ class ChangePasswordController extends Controller
      */
     public function index()
     {
-        $role = Auth::user();
-        $isCompany = $role->hasRole('company');
-        
-        $user = Auth::user()->id;
-
-        if($isCompany){
-            $session = session('business');
-
-            $data = Companies::with('user')->where('id_user', $user)->first();
-            $company = $data->id;
-            
-            $business = Business::where('id_company', $company)->get();
-
-            $getBusiness = Business::where('id_company', $company)->first()->id;
-            
-            if($session == 0){
-                $session = $getBusiness;
+        $user = Auth::user();
+        $isCompany = $user->hasRole('company');
+        if($user->hasRole('company') || $user->hasRole('employee')){
+            if($isCompany){
+                $session = session('business');
+                $company = Companies::where('id_user', $user->id)->first()->id;
+                $business = Business::where('id_company', $company)->get();
+                if($session == null){
+                    $session = Business::where('id_company', $company)->first()->id;
+                }
+                $getBusiness = Business::with('company')
+                ->where('id_company', $company)->where('id', $session)->first();
+            } else {
+                $getBusiness = Employee::with('business')->where('id_user', $user->id)->first();
+                $session = $getBusiness->id_business;
             }
-
-        } else {
-            $getBusiness = Employee::where('id_user', $user)->select('id_business')->first()->id_business;
-            
-            $session = $getBusiness;
+            return view('user.changePassword', compact('session', 'getBusiness', 'business'));
+        } else if($user->hasRole('super admin') || $user->hasRole('admin')){
+            return view('admin.changePassword');
         }
-
-        return view('user.changePassword', compact('session', 'business'));
     }
 
     /**
@@ -76,9 +71,9 @@ class ChangePasswordController extends Controller
             'new_password' => ['required'],
             'new_confirm_password' => ['same:new_password'],
         ]);
-   
         User::find(auth()->user()->id)->update(['password'=> Hash::make($request->new_password)]);
-        return redirect()->route('ganti_password.index')->withMessage('Berhasil Merubah Data');
+
+        return redirect()->route('ganti_password.index')->with('toast_success','Berhasil Mengubah kata Sandi!');
     }
 
     /**

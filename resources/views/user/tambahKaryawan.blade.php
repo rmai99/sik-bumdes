@@ -26,8 +26,8 @@
                             <label class="col-sm-2 col-form-label">Nama</label>
                             <div class="col-sm-7">
                                 <div class="form-group">
-                                    <input class="form-control" name="name" id="input-name" type="text"
-                                        placeholder="Name" value="" required="true" aria-required="true" />
+                                    <input class="form-control" name="name" type="text"
+                                        placeholder="Name" value="{{ old('name') }}" required="true" aria-required="true" />
                                 </div>
                             </div>
                         </div>
@@ -35,14 +35,14 @@
                             <label class="col-sm-2 col-form-label">Email</label>
                             <div class="col-sm-7">
                                 <div class="form-group">
-                                    <input class="form-control" name="email" id="input-email" type="email"
-                                        placeholder="Email" value="" required />
+                                    <input class="form-control" name="email" type="email"
+                                        placeholder="Email" value="{{ old('email') }}" required />
+                                        @error('email')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
                                 </div>
-                                @if ($errors->has('email'))
-                                    <span class="invalid">
-                                        {{ $errors->first('email') }}
-                                    </span>
-                                @endif 
                             </div>
                         </div>
                         <div class="row">

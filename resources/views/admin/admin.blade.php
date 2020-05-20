@@ -36,12 +36,9 @@
                                             {{$a->email}}
                                         </td>
                                         <td class="text-right">
-                                                <button type="button" class="edit btn-icon" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editBusiness">
-                                                    <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
-                                                </button>
-                                                <button type="button" class="btn-icon remove" id="{{$a->id}}">
-                                                    <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
-                                                </button>
+                                            <button type="button" class="btn-icon remove" id="{{$a->id}}">
+                                                <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -89,13 +86,14 @@
             // console.log(sid);
             var url = "{{ route('admin.manajemen_admin.index') }}/"+id;
             Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
+                title: 'Anda yakin ingin menghapus?',
+                text: "Data akan dihapus secara permanen!",
                 icon: 'warning',
                 showCancelButton: true,
+                cancelButtonText: 'Batal!',
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Ya, hapus!'
             }).then((result) => {
                 if (result.value) {
                     $.ajax({
@@ -104,14 +102,19 @@
                         dataType: "json",
                         success: (response) => {
                             Swal.fire(
-                            'Deleted!',
-                            'Your file has been deleted.',
+                            'Dihapus!',
+                            'Admin telah dihapus.',
                             'success'
                             )
-                            console.log(url);
                             $(this).closest('tr').remove();
                         }
                     });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire(
+                    'Batal',
+                    'Admin batal dihapus :)',
+                    'error'
+                    )
                 }
             })
         });

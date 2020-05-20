@@ -23,15 +23,13 @@ class AdminDashboardController extends Controller
      */
     public function index()
     {
-        $role = Auth::user();
         $companies = Companies::count();
         $pro = Companies::where('is_actived', 1)->count();
         $reguler = Companies::where('is_actived', 0)->count();
         $admin = User::role('admin')->count();
 
         $years = Companies::selectRaw('YEAR(created_at) as year')->orderBy('created_at', 'desc')
-        ->distinct()
-        ->get();
+        ->distinct()->get();
 
         return view('admin/dashboard', compact('companies', 'pro', 'reguler', 'admin', 'years'));
     }
