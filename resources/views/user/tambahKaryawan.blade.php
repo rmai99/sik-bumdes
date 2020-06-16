@@ -26,8 +26,7 @@
                             <label class="col-sm-2 col-form-label">Nama</label>
                             <div class="col-sm-7">
                                 <div class="form-group">
-                                    <input class="form-control" name="name" type="text"
-                                        placeholder="Name" value="{{ old('name') }}" required="true" aria-required="true" />
+                                    <input class="form-control" name="name" type="text" value="{{ old('name') }}" required="true" aria-required="true" />
                                 </div>
                             </div>
                         </div>
@@ -35,8 +34,7 @@
                             <label class="col-sm-2 col-form-label">Email</label>
                             <div class="col-sm-7">
                                 <div class="form-group">
-                                    <input class="form-control" name="email" type="email"
-                                        placeholder="Email" value="{{ old('email') }}" required />
+                                    <input class="form-control" name="email" type="email" value="{{ old('email') }}" required />
                                         @error('email')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -49,8 +47,7 @@
                             <label class="col-sm-2 col-form-label" for="input-password">Password</label>
                             <div class="col-sm-7">
                                 <div class="form-group">
-                                    <input class="form-control" name="password" id="input-password" type="password"
-                                        placeholder="password" value="" required />
+                                    <input class="form-control" name="password" id="input-password" type="password" required />
                                 </div>
                                 @if ($errors->has('password'))
                                     <span class="invalid">

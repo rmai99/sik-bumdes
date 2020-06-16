@@ -98,9 +98,6 @@
 
 {{--  <script src="{{url('/')}}/assets/js/chart.js"></script>  --}}
 
-
-
-
 <script>
     $(document).ready(function () {
         $().ready(function () {

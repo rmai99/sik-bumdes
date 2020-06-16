@@ -10,8 +10,8 @@
         <div class="col-lg-3 col-md-6 col-sm-6">
             <div class="card card-stats mt-0">
                 <div class="card-header card-header-warning card-header-icon pb-4 pt-4">
-                    <div class="card-icon">
-                        <i class="material-icons">content_copy</i>
+                    <div class="card-icon" style="background: linear-gradient(60deg, #ffa726, #fb8c00);">
+                        <i class="material-icons">account_circle</i>
                     </div>
                     <p class="card-category">Pengguna</p>
                     <h3 class="card-title">
@@ -24,7 +24,7 @@
             <div class="card card-stats mt-0">
                 <div class="card-header card-header-success card-header-icon pb-4 pt-4">
                     <div class="card-icon">
-                        <i class="material-icons">store</i>
+                        <i class="material-icons">account_circle</i>
                     </div>
                     <p class="card-category">Akun Reguler</p>
                     <h3 class="card-title">{{$reguler}}</h3>
@@ -35,7 +35,7 @@
             <div class="card card-stats mt-0">
                 <div class="card-header card-header-danger card-header-icon pb-4 pt-4">
                     <div class="card-icon">
-                        <i class="material-icons">info_outline</i>
+                        <i class="material-icons">account_circle</i>
                     </div>
                     <p class="card-category">Akun Pro</p>
                     <h3 class="card-title">{{$pro}}</h3>
@@ -46,7 +46,7 @@
             <div class="card card-stats mt-0">
                 <div class="card-header card-header-info card-header-icon pb-4 pt-4">
                     <div class="card-icon">
-                            <i class="material-icons">account_balance_wallet</i>
+                            <i class="material-icons">account_circle</i>
                     </div>
                     <p class="card-category">Admin</p>
                     <h3 class="card-title">{{$admin}}</h3>

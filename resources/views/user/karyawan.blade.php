@@ -23,7 +23,7 @@
                         <table class="table" id="datatables">
                             <thead class=" text-primary">
                                 <th>
-                                    Name
+                                    Nama
                                 </th>
                                 <th>
                                     Email
@@ -119,14 +119,14 @@
 @endsection
 @push('js')
     <script>
-        @if (count($errors) > 0)
+        @if ($errors->has('disable'))
             swal.fire({
                 title: "Ubah Akun Perusahaan Menjadi PRO",
                 icon: "warning",
                 closeOnClickOutside: false,
                 showConfirmButton: false,
                 // timer       :2000,
-                footer: '<a href="/home">Upgrade Akun Perusahaan?</a>'
+                footer: '<a href="{{route('upgrade')}}">Upgrade Akun Perusahaan?</a>'
             })
         @endif
         
@@ -161,7 +161,7 @@
                                 closeOnClickOutside: false,
                                 showConfirmButton: false,
                                 // timer       :2000,
-                                footer: '<a href="/home">Upgrade Akun Perusahaan?</a>'
+                                footer: '<a href="{{route('upgrade')}}">Upgrade Akun Perusahaan?</a>'
                             })
                         } else {
                             var href="{{ route('karyawan.create') }}"

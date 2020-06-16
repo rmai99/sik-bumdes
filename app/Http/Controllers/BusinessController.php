@@ -64,7 +64,7 @@ class BusinessController extends Controller
         }
 
         if($pro != 1){
-            return redirect()->route('bisnis.index')->withErrors('error!');
+            return redirect()->route('bisnis.index')->withErrors(['disable'=>'disable']);
         }
         else{
             return view('auth.tambahBisnis');
@@ -84,6 +84,10 @@ class BusinessController extends Controller
 
         $this->validate($request,[
             'business_name' => ['required', 'string', 'max:30'],
+        ],[
+            'business_name.required' => 'Nama bisnis tidak boleh kosong',
+            'business_name.string' => 'Nama bisnis berupa huruf',
+            'business_name.max' => 'Nama bisnis tidak boleh melebihi 30 huruf'
         ]);
 
         $data = new Business;
@@ -189,7 +193,11 @@ class BusinessController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request,[
-            'business_name' => ['required', 'string', 'max:30'],
+            'name' => ['required', 'string', 'max:30'],
+        ],[
+            'name.required' => 'Nama tidak boleh kosong',
+            'name.string' => 'Nama harus berupa huruf',
+            'name.max' => 'Nama maksimal terdiri dari 30 huruf',
         ]);
         
         $data = Business::where('id', $id)->first();
@@ -216,6 +224,5 @@ class BusinessController extends Controller
                 'success' => 'Record deleted successfully!'
             ]);
         }
-
     }
 }

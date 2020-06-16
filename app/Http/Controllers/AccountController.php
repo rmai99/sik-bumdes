@@ -19,30 +19,24 @@ class AccountController extends Controller
     public function __construct()
     {
         $this->middleware(['role:company|employee']);
-
         $this->middleware('auth');
-        
     }
 
     public function index()
     {
-        $role = Auth::user();
-        $isCompany = $role->hasRole('company');
-        $user = $role->id;
+        $user = Auth::user();
+        $isCompany = $user->hasRole('company');
         if($isCompany){
             $session = session('business');
-            $company = Companies::where('id_user', $user)->first()->id;
+            $company = Companies::where('id_user', $user->id)->first()->id;
             $business = Business::where('id_company', $company)->get();
             if($session == null){
                 $session = Business::where('id_company', $company)->first()->id;
             }
             $getBusiness = Business::with('company')
-            ->where('id_company', $company)
-            ->where('id', $session)->first();
-        }
-        else 
-        {
-            $getBusiness = Employee::with('business')->where('id_user', $user)->first();
+            ->where('id_company', $company)->where('id', $session)->first();
+        } else {
+            $getBusiness = Employee::with('business')->where('id_user', $user->id)->first();
             $session = $getBusiness->id_business;
         }
         
@@ -78,6 +72,9 @@ class AccountController extends Controller
         
         $this->validate($request,[
             'input_codeAccount' => Rule::notIn($array),
+        ],
+        [
+            'input_codeAccount.not_in' => 'Kode akun tidak boleh sama',
         ]);
 
         $data = new Account;
@@ -116,6 +113,9 @@ class AccountController extends Controller
         
         $this->validate($request,[
             'edit_codeAccount' => Rule::notIn($array),
+        ],
+        [
+            'edit_codeAccount.not_in' => 'Kode akun tidak boleh sama',
         ]);
 
         $data->id_classification = $request->edit_classificationAccount;

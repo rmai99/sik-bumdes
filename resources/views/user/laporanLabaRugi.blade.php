@@ -8,10 +8,12 @@
     @php
     if (isset($_GET['year'])) {
         $dt = $_GET['year'];
+        $month = $_GET['month'];
     } else {
         $dt = date('Y');
+        $month = date('m');
     }
-
+    setlocale(LC_ALL, 'id_ID');
     @endphp
     
 <div class="content">
@@ -21,17 +23,20 @@
                 <div class="card">
                     <div class="header text-center mt-2 mb-2">
                         <h3 class="title" style="font-weight: 400;">Laba Rugi</h3>
-                        <p class=""><strong>Periode</strong> {{ $dt }}</p>
+                        @php
+                            $dateObj   = DateTime::createFromFormat('!m', $month);
+                            $monthName = $dateObj->format('F');
+                        @endphp
+                        <p class=""><strong>Periode</strong> {{ strftime("%B", strtotime($monthName)) }} {{ $dt }} </p>
                     </div>
                     <div class="card-body">
                         <div class="toolbar">
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex">
                                 <div class="col-md-2 pl-0">
                                     <div class="form-group">
                                         <strong class="mr-3">Tahun : </strong>
-                                        <select class="pl-1 padding-select groupbyYear" style="border-radius: 3px;"
-                                            id="search">
-                                            <option value="0" disabled="true" selected="true">Year</option>
+                                        <select class="w-100 pl-1 padding-select groupbyYear" style="border-radius: 3px;">
+                                            <option value="0" disabled="true" selected="true">Tahun</option>
                                             @foreach ($years as $y)
                                             <option value="{{$y->year}}" {{ $year == $y->year ? 'selected' : '' }}>
                                                 {{$y->year}}</option>
@@ -40,13 +45,38 @@
                                         <b class="caret"></b>
                                     </div>
                                 </div>
+                                <div class="col-md-2 pl-md-0 pr-2">
+                                    <div class="form-group">
+                                        <strong class="mr-3">Bulan</strong>
+                                        <select class="w-100 pl-1 padding-select groupbyMonth" style="border-radius: 3px;">
+                                            <option value="0" disabled="true" selected="true">Bulan</option>
+                                            <option value="0">All</option>
+                                            <option value="01" {{ $month == '01' ? 'selected' : '' }}>Januari</option>
+                                            <option value="02" {{ $month == '02' ? 'selected' : '' }}>Februari</option>
+                                            <option value="03" {{ $month == '03' ? 'selected' : '' }}>Maret</option>
+                                            <option value="04" {{ $month == '04' ? 'selected' : '' }}>April</option>
+                                            <option value="05" {{ $month == '05' ? 'selected' : '' }}>Mei</option>
+                                            <option value="06" {{ $month == '06' ? 'selected' : '' }}>Juni</option>
+                                            <option value="07" {{ $month == '07' ? 'selected' : '' }}>Juli</option>
+                                            <option value="08" {{ $month == '08' ? 'selected' : '' }}>Agustus</option>
+                                            <option value="09" {{ $month == '09' ? 'selected' : '' }}>September</option>
+                                            <option value="10" {{ $month == '10' ? 'selected' : '' }}>Oktober</option>
+                                            <option value="11" {{ $month == '11' ? 'selected' : '' }}>November</option>
+                                            <option value="12" {{ $month == '12' ? 'selected' : '' }}>Desember</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 mt-4">
+                                    <button type="button" class="btn btn-primary" id="search">Cari</button>
+                                </div>
+                                <div class="col-md-6 mt-4 text-right">
+                                    <a href="{{route('export.laba_rugi', ['year' => $dt, 'month' => $month])}}" class="btn btn-primary" target="_blank" id="export">Export</a>
+                                </div>
                             </div>
                         </div>
                         <div class="material-datatables mt-4">
                             <table id="datatables" class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
                                 <thead>
-                                    <th></th>
-                                    <th></th>
                                     <th></th>
                                     <th></th>
                                 </thead>
@@ -55,8 +85,6 @@
                                         <td style="width:60%">
                                             Pendapatan
                                         </td>
-                                        <td style="width:15%"></td>
-                                        <td style="width:15%"></td>
                                         <td style="width:10%"></td>
                                     </tr>
                                     @for ($i = 0; $i < sizeof($incomeArray); $i++)
@@ -64,8 +92,6 @@
                                             <td style="width:60%;padding-left: 1.5rem!important;">
                                                 <strong>{{$incomeArray[$i]['classification']}}</strong>
                                             </td>
-                                            <td style="width:15%"></td>
-                                            <td style="width:15%"></td>
                                             <td style="width:10%"></td>
                                         </tr>
                                         @if (isset($incomeArray[$i]['name']))
@@ -74,10 +100,6 @@
                                                     <tr>
                                                         <td style="width:60%;padding-left: 3rem!important;">
                                                             {{$incomeArray[$i]['code'][$y]}}- {{$incomeArray[$i]['name'][$y]}}
-                                                        </td>
-                                                        <td style="width:15%">
-                                                        </td>
-                                                        <td style="width:10%">
                                                         </td>
                                                         <td class="text-right" style="width:10%">
                                                             @if ($incomeArray[$i]['ending balance'][$y] < 0)
@@ -94,8 +116,6 @@
                                             <td style="width:60%;padding-left: 1.5rem!important;">
                                                 Total {{$incomeArray[$i]['classification']}}
                                             </td>
-                                            <td style="width:15%"></td>
-                                            <td style="width:15%"></td>
                                             <td class="text-right" style="width:10%"></td>
                                         </tr>
                                     @endfor
@@ -103,18 +123,12 @@
                                         <td style="width:60%">
                                             <strong>Total Pendapatan</strong>
                                         </td>
-                                        <td style="width:15%"></td>
-                                        <td style="width:15%"></td>
                                         <td class="text-right" style="width:10%">
                                             Rp{{strrev(implode('.',str_split(strrev(strval($income)),3)))}}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="width:60%">
-                                            Biaya
-                                        </td>
-                                        <td style="width:15%"></td>
-                                        <td style="width:15%"></td>
+                                        <td style="width:60%">Biaya</td>
                                         <td style="width:10%"></td>
                                     </tr>
                                     @for ($i = 0; $i < sizeof($expenseArray); $i++)
@@ -122,8 +136,6 @@
                                             <td style="width:60%;padding-left: 1.5rem!important;">
                                                 <strong>{{$expenseArray[$i]['classification']}}</strong>
                                             </td>
-                                            <td style="width:15%"></td>
-                                            <td style="width:15%"></td>
                                             <td style="width:10%"></td>
                                         </tr>
                                         @if (isset($incomeArray[$i]['name']))
@@ -134,8 +146,6 @@
                                                             {{$expenseArray[$i]['code'][$j]}} -
                                                             {{$expenseArray[$i]['name'][$j]}}
                                                         </td>
-                                                        <td style="width:15%"></td>
-                                                        <td style="width:15%"></td>
                                                         <td class="text-right" style="width:10%">
                                                             Rp{{strrev(implode('.',str_split(strrev(strval($expenseArray[$i]['ending balance'][$j])),3)))}}
                                                         </td>
@@ -147,8 +157,6 @@
                                             <td style="width:60%;padding-left: 1.5rem!important;">
                                                 Total {{ $expenseArray[$i]['classification'] }}
                                             </td>
-                                            <td style="width:15%"></td>
-                                            <td style="width:15%"></td>
                                             <td style="width:10%" class="text-right"></td>
                                         </tr>
                                     @endfor
@@ -156,8 +164,6 @@
                                         <td style="width:60%">
                                             <strong>Total Biaya</strong>
                                         </td>
-                                        <td style="width:15%"></td>
-                                        <td style="width:15%"></td>
                                         <td class="text-right" style="width:10%">
                                             @if ($expense < 0)
                                                 <strong>-Rp{{strrev(implode('.',str_split(strrev(strval(-1*$expense)),3)))}}</strong>
@@ -170,8 +176,6 @@
                                         <td style="width:60%">
                                             <strong class="text-danger">Laba Usaha</strong>
                                         </td>
-                                        <td style="width:15%"></td>
-                                        <td style="width:15%"></td>
                                         <td class="text-right" style="width:10%">
                                             <strong class="text-danger">
                                                 @if (($income - $expense) < 0)
@@ -183,11 +187,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="width:60%">
-                                            Pendapatan dan Biaya Lainnya
-                                        </td>
-                                        <td style="width:15%"></td>
-                                        <td style="width:15%"></td>
+                                        <td style="width:60%">Pendapatan dan Biaya Lainnya</td>
                                         <td style="width:10%"></td>
                                     </tr>
                                     @for ($i = 0; $i < sizeof($othersIncomeArray); $i++)
@@ -195,8 +195,6 @@
                                             <td style="width:60%;padding-left: 1.5rem!important;">
                                                 <strong>{{$othersIncomeArray[$i]['classification']}}</strong>
                                             </td>
-                                            <td style="width:15%"></td>
-                                            <td style="width:15%"></td>
                                             <td class="text-right" style="width:10%">
                                                 {{$othersIncome}}
                                             </td>
@@ -207,8 +205,6 @@
                                             <td style="width:60%;padding-left: 1.5rem!important;">
                                                 <strong>{{$othersExpenseArray[$i]['classification']}}</strong>
                                             </td>
-                                            <td style="width:15%"></td>
-                                            <td style="width:15%"></td>
                                             <td class="text-right" style="width:10%">
                                                 {{$othersExpense}}
                                             </td>
@@ -218,16 +214,12 @@
                                         <td style="width:60%">
                                             <strong>Total Pendapatan dan Biaya Lainnya</strong>
                                         </td>
-                                        <td style="width:15%"></td>
-                                        <td style="width:15%"></td>
                                         <td class="text-right" style="width:10%">{{ $othersIncome - $othersExpense}}</td>
                                     </tr>
                                     <tr>
                                         <td style="width:60%">
                                             <strong>SALDO LABA/RUGI TAHUN BERJALAN</strong>
                                         </td>
-                                        <td style="width:15%"></td>
-                                        <td style="width:15%"></td>
                                         <td class="text-right" style="width:10%">
                                             @if (($income + $othersIncome - $expense - $othersExpense) < 0)
                                                 -Rp{{strrev(implode('.',str_split(strrev(strval(-1*($income + $othersIncome - $expense - $othersExpense))),3)))}}
@@ -264,11 +256,16 @@
             }
         });
     });
-    $(document).on('change', '#search', function (e) {
+    $(document).on('click', '#search', function (e) {
         e.preventDefault();
         var year = $("select.groupbyYear").val();
+        var month = $("select.groupbyMonth").val();
 
-        var url = "/laporan_laba_rugi?year=" + year;
+        var url = "{{route('laporan_laba_rugi')}}?year=" + year;
+        if (month != null) {
+            url = url + "&month=" + month;
+            console.log('month');
+        }
         window.location.href = url;
 
     })

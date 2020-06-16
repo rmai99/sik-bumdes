@@ -24,8 +24,8 @@
                                 <div class="col-md-2 pl-0">
                                     <div class="form-group">
                                         <strong class="mr-3">Tahun : </strong>
-                                        <select class="pl-1 padding-select groupbyYear" id="test" style="border-radius: 3px;">
-                                            <option value="0" disabled="true" selected="true">Year</option>
+                                        <select class="pl-1 padding-select groupbyYear" id="select-year" style="border-radius: 3px;">
+                                            <option value="0" disabled="true" selected="true">Tahun</option>
                                             @foreach ($years as $y)
                                             <option value="{{$y->year}}" {{ $year == $y->year ? 'selected' : '' }}>
                                                 {{$y->year}}</option>
@@ -33,7 +33,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-lg-6 col-md-12 mt-3 pr-0">
+                                <div class="col-lg-6 mt-3 pr-0 pl-0">
                                     <button type="button" class="btn btn-primary m-1 pl-2 pr-2" data-toggle="modal"
                                         data-target="#neracaAwalModal" style="float:right;">Tambah Neraca Awal</button>
                                 </div>
@@ -50,14 +50,6 @@
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
-                                <tfoot>
-                                    <tr>
-                                        <th>Akun</th>
-                                        <th>Debit</th>
-                                        <th class="text-center">Kredit</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </tfoot>
                                 <tbody>
                                 @foreach ($account_parent as $p)
                                     <tr data-toggle="collapse" data-target=".data{{ $p->id }}" class="accordion-toggle">
@@ -117,6 +109,26 @@
                                     @endforeach
                                     @endforeach
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Jumlah</th>
+                                        <th>
+                                            @if ($jumlah_debit < 0)
+                                                -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$jumlah_debit)),3)))}}
+                                            @else
+                                                Rp{{strrev(implode('.',str_split(strrev(strval($jumlah_debit)),3)))}}
+                                            @endif
+                                        </th>
+                                        <th class="text-center">
+                                            @if ($jumlah_kredit < 0)
+                                                -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$jumlah_kredit)),3)))}}
+                                            @else
+                                                Rp{{strrev(implode('.',str_split(strrev(strval($jumlah_kredit)),3)))}}
+                                            @endif
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -152,7 +164,7 @@
                                 <input type="date" class="form-control" aria-describedby="date" placeholder="" name="date" aria-required="true" value="{{ old('date') }}">
                                 @error('date')
                                     <span class="invalid-feedback">
-                                        <strong>The year must be once in 1 account.</strong>
+                                        <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
                             </div>
@@ -208,7 +220,7 @@
                                 <input type="date" class="form-control" name="edit_date" aria-describedby="date" value="{{ old('edit_date') }}" required>
                                 @error('edit_date')
                                     <span class="invalid-feedback">
-                                        <strong>The year must be once in 1 account.</strong>
+                                        <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
                             </div>
@@ -319,7 +331,7 @@
         });
     });
 
-    $(document).on('change', '#test', function(e){
+    $(document).on('change', '#select-year', function(e){
         e.preventDefault();
         var year = $("select.groupbyYear").val();
 

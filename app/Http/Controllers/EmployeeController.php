@@ -55,7 +55,7 @@ class EmployeeController extends Controller
         ->where('id', $session)->first();
         $pro = $company->is_actived;
         if($pro != 1){
-            return redirect()->route('karyawan.index')->withErrors('error!');
+            return redirect()->route('karyawan.index')->withErrors(['disable'=>'disable']);
         } else {
             return view('user/tambahKaryawan', compact('business', 'session', 'getBusiness'));
         }
@@ -66,6 +66,14 @@ class EmployeeController extends Controller
         $this->validate($request,[
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8'],
+        ],
+        [
+            'email.required' => 'Email tidak boleh kosong',
+            'email.max' => 'Email maksimal 255 karakter',
+            'email.email' => 'Email tidak valid',
+            'email.unique' => 'Email sudah dipakai',
+            'password.min' => 'Password tidak boleh kurang dari 8 karakter',
+            'password.required' => 'Password tidak boleh kosong',
         ]);   
         $user = Auth::user();
         $company = Companies::where('id_user', $user->id)->first()->id;
@@ -82,14 +90,13 @@ class EmployeeController extends Controller
         $data->id_company = $company;
         $data->id_business = $request->id_business;
         $data->save();
-
-        $user = ([
+        
+        $biodata = ([
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password
-            ]);
-
-        Mail::to($request->email)->send(new AccountRegisteredMail($user));
+        ]);
+        Mail::to($request->email)->send(new AccountRegisteredMail($biodata));
 
         return redirect()->route('karyawan.index')->with('success','Berhasil Menambahkan Karyawan!');
     }
@@ -129,8 +136,7 @@ class EmployeeController extends Controller
 
     public function detailEmployee(Request $request)
     {
-        $account = Employee::with('user','business')->where('id', $request->id)
-        ->get();
+        $account = Employee::with('user','business')->where('id', $request->id)->get();
 
         return response()->json($account);
     }

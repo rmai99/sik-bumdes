@@ -79,10 +79,12 @@ class GeneralLedgerController extends Controller
         $data = GeneralJournal::with('account.classification.parent', 'detail')
             ->whereHas('account.classification.parent', function($q) use($session){
                 $q->where('id_business', $session);
-            })->whereHas('detail', function($q) use($year){
+            })->whereHas('detail', function($q) use ($year){
                 $q->whereYear('date', $year);
             })->where('id_account', $akun)
         ->get();
+
+        $data=$data->sortBy('detail.date');
 
         $years = DetailJournal::selectRaw('YEAR(date) as year')
         ->orderBy('date', 'desc')->distinct()->get();

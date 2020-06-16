@@ -55,8 +55,23 @@ class RegisterController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'name' => ['required', 'string', 'max:191'],
-            'address' => ['required', 'string', 'max:255'],
-            'phone_number' => ['string', 'max:15'],
+            'phone_number' => ['required', 'min:10', 'max:15', 'unique:companies'],
+            'address' => ['required', 'string', 'max:255']
+        ],
+        [
+            'email.required' => 'Email tidak boleh kosong',
+            'email.max' => 'Email maksimal 255 karakter',
+            'email.email' => 'Email tidak valid',
+            'email.unique' => 'Email sudah dipakai',
+            'name.required' => 'Nama lengkap tidak boleh kosong',
+            'name.string' => 'Nama lengkap harus berupa huruf',
+            'phone_number.min' => 'No telp tidak boleh kurang dari 10 angka',
+            'phone_number.max' => 'No telp tidak boleh lebih dari 15 angka',
+            'phone_number.unique' => 'No telp sudah terdaftar',
+            'password.min' => 'Password tidak boleh kurang dari 8 karakter',
+            'password.required' => 'Password tidak boleh kosong',
+            'password.confirmed' => 'Konfirmasi password tidak sama',
+            'address.required' => 'Alamat tidak boleh kosong',
         ]);
     }
 
@@ -78,7 +93,7 @@ class RegisterController extends Controller
         $detail_user = Companies::create([
             'name'=> $data['name'],
             'address' => $data['address'],
-            'phone_number' => $data['phoneNumber'],
+            'phone_number' => $data['phone_number'],
             'id_user' => $user->id,
         ]);
 

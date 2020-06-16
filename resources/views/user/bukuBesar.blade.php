@@ -18,6 +18,7 @@
     $saldo_akhir = $log['saldo_awal'];
     $debit = 0;
     $kredit = 0;
+    setlocale(LC_ALL, 'id_ID')
 @endphp
 <div class="content">
     <div class="container-fluid">
@@ -26,23 +27,23 @@
                 <div class="card">
                     <div class="header text-center mt-2">
                         <h3 class="title" style="font-weight: 400;">Buku Besar</h3>
-                        <p class=""><strong>Periode</strong> {{$year}} </p>
+                        <p><strong>Periode</strong> {{$year}} </p>
                     </div>
                     <div class="card-body">
                         <div class="toolbar">
                             <div class="row d-flex">
-                                <div class="col-md-1 pr-2">
+                                <div class="col-md-2 pr-2">
                                     <div class="form-group">
                                         <strong class="mr-3">Tahun</strong>
-                                        <select class="pl-1 padding-select groupbyYear" id="" style="border-radius: 3px;">
-                                            <option value="0" disabled="true" selected="true">Year</option>
+                                        <select class="w-100 pl-1 padding-select groupbyYear" style="border-radius: 3px;">
+                                            <option value="0" disabled="true" selected="true">Tahun</option>
                                             @foreach ($years as $y)
                                                 <option value="{{$y->year}}" {{ $year == $y->year ? 'selected' : '' }}>{{$y->year}}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3 pl-0 pr-2">
+                                <div class="col-md-3 pl-md-2 pr-2">
                                     <div class="form-group">
                                         <strong class="mr-3">Akun</strong>
                                         <select class="w-100 pl-1 padding-select groupbyAccount" id="" style="border-radius: 3px;">
@@ -58,47 +59,47 @@
                                 </div>  
                             </div>
                             <div class="row mt-4">
-                                <div class="col-lg-6">
+                                <div class="col-md-6">
                                     <div class="row d-flex">
-                                        <div class="col-md-6 col-sm-3">
-                                            <p class="mb-0">Nama Akun</p>
+                                        <div class="col-sm-6 col-md-6">
+                                            Nama Akun
                                         </div>
-                                        <div class="col-md-6 col-sm-3">
-                                            <p class="mb-0"><strong> : {{$log['nama_akun']}}</strong></p>
+                                        <div class="col-md-6">
+                                            <strong> : {{$log['nama_akun']}}</strong>
                                         </div>
                                     </div>
                                     <div class="row d-flex">
-                                        <div class="col-lg-6">
-                                            <p class="mb-0">Kode Akun</p>
+                                        <div class="col-md-6">
+                                            Kode Akun
                                         </div>
-                                        <div class="col-lg-6">
-                                            <p class="mb-0"><strong> : {{$log['kode_akun']}}</strong></p>
+                                        <div class="col-md-6">
+                                            <strong> : {{$log['kode_akun']}}</strong>
                                         </div>
                                     </div>
                                     <div class="row d-flex">
-                                        <div class="col-lg-6">
-                                            <p class="mb-0">Posisi Normal</p>
+                                        <div class="col-md-6">
+                                            Posisi Normal
                                         </div>
-                                        <div class="col-lg-6">
-                                            <p class="mb-0"><strong> : {{$log['position']}}</strong></p>
+                                        <div class="col-md-6">
+                                            <strong> : {{$log['position']}}</strong>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-md-6">
                                     <div class="row d-flex">
-                                        <div class="col-lg-6 col-md-3">
-                                            <p class="mb-0">Saldo Awal</p>
+                                        <div class="col-lg-6 col-md-6">
+                                            Saldo Awal
                                         </div>
-                                        <div class="col-lg-6">
-                                            <p class="mb-0"><strong> : Rp{{strrev(implode('.',str_split(strrev(strval($saldo_awal)),3)))}}</strong></p>
+                                        <div class="col-lg-6 col-md-6">
+                                            <strong> : Rp{{strrev(implode('.',str_split(strrev(strval($saldo_awal)),3)))}}</strong>
                                         </div>
                                     </div>
                                     <div class="row d-flex">
-                                        <div class="col-lg-6 col-md-3">
-                                            <p class="mb-0">Saldo Akhir</p>
+                                        <div class="col-md-6">
+                                            Saldo Akhir
                                         </div>
-                                        <div class="col-lg-6 col-md-3">
-                                            <p class="mb-0"> : <strong id="saldo_akhir"></strong></p>
+                                        <div class="col-md-6">
+                                            : <strong id="saldo_akhir"></strong>
                                         </div>
                                     </div>
                                 </div>
@@ -111,7 +112,7 @@
                                     <tr>
                                         <th rowspan="2" style="width:15%">Tanggal</th>
                                         <th rowspan="2" style="width:40%">Keterangan</th>
-                                        <th colspan="2" class="text-center">Nama Akun</th>
+                                        <th colspan="2" class="text-center">Posisi</th>
                                         <th rowspan="2">Saldo</th>
                                     </tr>
                                     <tr>
@@ -135,25 +136,25 @@
                                         <td>{{ $d->detail->description }}</td>
                                         <td>
                                             @if ($d->position=="Debit")
-                                                @if ($d->amount < 0)
-                                                    -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$d->amount)),3)))}}
+                                                @if ($d->detail->amount < 0)
+                                                    -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$d->detail->amount)),3)))}}
                                                 @else
-                                                    Rp{{strrev(implode('.',str_split(strrev(strval($d->amount)),3)))}}
+                                                    Rp{{strrev(implode('.',str_split(strrev(strval($d->detail->amount)),3)))}}
                                                 @endif
                                                 @php
-                                                    $debit += $d->amount;
+                                                    $debit += $d->detail->amount;
                                                 @endphp
                                             @endif
                                         </td>
                                         <td>
                                             @if ($d->position == "Kredit")
-                                                @if ($d->amount < 0)
-                                                    -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$d->amount)),3)))}}
+                                                @if ($d->detail->amount < 0)
+                                                    -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$d->detail->amount)),3)))}}
                                                 @else
-                                                    Rp{{strrev(implode('.',str_split(strrev(strval($d->amount)),3)))}}
+                                                    Rp{{strrev(implode('.',str_split(strrev(strval($d->detail->amount)),3)))}}
                                                 @endif
                                                 @php
-                                                    $kredit += $d->amount;
+                                                    $kredit += $d->detail->amount;
                                                 @endphp
                                             @endif
                                         </td>
@@ -161,21 +162,21 @@
                                             @if ($log['position'] == "Debit")
                                                 @if ($d->position == "Kredit")
                                                     @php
-                                                        $saldo_akhir -= $d->amount;        
+                                                        $saldo_akhir -= $d->detail->amount;        
                                                     @endphp
                                                 @elseif ($d->position == "Debit")
                                                     @php
-                                                        $saldo_akhir += $d->amount;        
+                                                        $saldo_akhir += $d->detail->amount;        
                                                     @endphp
                                                 @endif
                                             @elseif ($log['position'] == "Kredit")
                                                 @if ($d->position == "Kredit")
                                                     @php
-                                                        $saldo_akhir += $d->amount;        
+                                                        $saldo_akhir += $d->detail->amount;        
                                                     @endphp
                                                 @elseif ($d->position == "Debit")
                                                     @php
-                                                        $saldo_akhir -= $d->amount;
+                                                        $saldo_akhir -= $d->detail->amount;
                                                     @endphp
                                                 @endif
                                             @endif

@@ -14,10 +14,16 @@ class AdminsTableSeeder extends Seeder
      */
     public function run()
     {
-        $admin = User::create([
-                    'email' => 'superadmin@gmail.com',
+        $superadmin = User::create([
+                    'email' => 'superadmin@bumdes.com',
                     'password' => Hash::make('password'),
                 ]);
-        $admin->assignRole('super admin');
+        $superadmin->assignRole('super admin');
+
+        $admin = User::create([
+                    'email' => 'admin@bumdes.com',
+                    'password' => Hash::make('password'),
+                ]);
+        $admin->assignRole('admin');
     }
 }

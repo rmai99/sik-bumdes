@@ -9,6 +9,7 @@ use Auth;
 use App\Employee;
 use App\Companies;
 use App\Business;
+use App\User;
 
 
 class ProfileController extends Controller
@@ -114,6 +115,30 @@ class ProfileController extends Controller
      */
     public function update(Request $request)
     {
+        $this->validate($request,[
+            'email' => "required|string|email|max:255|unique:users,email,$request->id_user",
+            'name' => 'required|string|max:191',
+            'phone_number' => "required|min:10|max:15|unique:companies,phone_number,$request->id",
+            'address' => 'required|string|max:255'
+        ],
+        [
+            'email.required' => 'Email tidak boleh kosong',
+            'email.max' => 'Email maksimal 255 karakter',
+            'email.email' => 'Email tidak valid',
+            'email.unique' => 'Email sudah dipakai',
+            'name.required' => 'Nama lengkap tidak boleh kosong',
+            'name.string' => 'Nama lengkap harus berupa huruf',
+            'phone_number.min' => 'No telp tidak boleh kurang dari 10 angka',
+            'phone_number.max' => 'No telp tidak boleh lebih dari 15 angka',
+            'phone_number.unique' => 'No telp sudah terdaftar',
+            'address.required' => 'Alamat tidak boleh kosong',
+            'address.max' => 'Alamat tidak boleh lebih dari 255 karakter',
+        ]);
+        
+        $user = User::findOrFail($request->id_user);
+        $user->email = $request->email;
+        $user->save();
+
         $company = Companies::findOrFail($request->id);
         $company->name = $request->name;
         $company->address = $request->address;
@@ -125,6 +150,22 @@ class ProfileController extends Controller
 
     public function updateEmployee(Request $request)
     {
+        $this->validate($request,[
+            'email' => "required|string|email|max:255|unique:users,email,$request->id_user",
+            'name' => 'required|string|max:191',
+        ],
+        [
+            'email.required' => 'Email tidak boleh kosong',
+            'email.max' => 'Email maksimal 255 karakter',
+            'email.email' => 'Email tidak valid',
+            'email.unique' => 'Email sudah dipakai',
+            'name.required' => 'Nama lengkap tidak boleh kosong',
+            'name.string' => 'Nama lengkap harus berupa huruf',
+        ]);
+        $user = User::findOrFail($request->id_user);
+        $user->email = $request->email;
+        $user->save();
+
         $company = Employee::findOrFail($request->id);
         $company->name = $request->name;
         $company->save();

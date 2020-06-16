@@ -30,10 +30,10 @@
             @foreach ($p->classification as $c)
                 <table class="table table-striped table-no-bordered table-hover mb-0" cellspacing="0" width="100%">
                     <tr>
-                        <th class="p-2 text-center" style="width:8%"><strong>{{ $c->classification_code }}</strong></th>
+                        <th class="p-2 text-center" style="width:10%"><strong>{{ $c->classification_code }}</strong></th>
                         <th class="p-2"><strong>{{ $c->classification_name }}</strong></th>
                         <th></th>
-                        <td style="width:10%" class="text-center">
+                        <td style="width:15%" class="text-right">
                             <button class="btnEditClassification btn-icon" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editKlasifikasiModal"
                                 value="{{ $c->id }}" data-parent= "{{ $c->id_parent }}">
                                 <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
@@ -48,10 +48,10 @@
                     <tbody>
                         @foreach ($c->account as $account)
                             <tr>
-                                <td class="text-center" style="width:5%" class="p-2">{{ $account->account_code }}</td>
+                                <td class="text-center" style="width:10%" class="p-2">{{ $account->account_code }}</td>
                                 <td style="width:60%" class="p-2">{{ $account->account_name }}</td>
                                 <td>{{ $account->position }}</td>
-                                <td style="width:10%" class="text-center">
+                                <td style="width:15%" class="text-right">
                                     <button class="btnEditAccount btn-icon" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editAkunModal" value="{{ $account->id }}" parent="{{ $p->id }}" classification="{{ $c->id }}">
                                         <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
                                     </button>
@@ -102,7 +102,7 @@
                                     placeholder="ex. 11" name="input_code" value="{{ old('input_code') }}" required>
                                 @error('input_code')
                                     <span class="invalid-feedback" role="alert">
-                                        <strong>That code number has been taken. Please choose another.</strong>
+                                        <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
                             </div>
@@ -163,7 +163,7 @@
                                     value="{{old('edit_code')}}" required>
                                 @error('edit_code')
                                     <span class="invalid-feedback" role="alert" id="hapus">
-                                        <strong>That code number has been taken. Please choose another.</strong>
+                                        <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
                             </div>
@@ -233,7 +233,7 @@
                                         placeholder="ex. 1110" value="{{ old('input_codeAccount') }}" required>
                                         @error('input_codeAccount')
                                             <span class="invalid-feedback" role="alert">
-                                                <strong>That code number has been taken. Please choose another.</strong>
+                                                <strong>{{ $message }}</strong>
                                             </span>
                                         @enderror
                                 </div>
@@ -317,7 +317,7 @@
                                         value="{{ old('edit_codeAccount') }}" required>
                                     @error('edit_codeAccount')
                                         <span class="invalid-feedback" role="alert">
-                                            <strong>That code number has been taken. Please choose another.</strong>
+                                            <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
                                 </div>
@@ -429,7 +429,7 @@
             var id = $(this).attr('value');
             $('#id_account').val(id);
             var parent = $(this).attr('parent');
-            var test = $(this).attr('classification');
+            var classification = $(this).attr('classification');
 
             var div= $(".classification");
             var op=" ";
@@ -443,12 +443,10 @@
                 success     : function(data){
                     var servers = $.parseJSON(data);
                     $.each(servers, function(index, value){
-                        var classification = value.id_classification;
                         var account_code = value.account_code;
                         var account_name = value.account_name;
                         var position = value.position;
 
-                        $('div.classification select').val(classification);
                         $('div.acountCode input').val(account_code);
                         $("div.accountName input").val(account_name);
                         $("div.position select").val(position);
@@ -463,12 +461,12 @@
                 success:function(data){
                     op+='<option value="0" disabled="true"="true">Select Classification</option>';
                     for(var i=0;i<data.length;i++){
-                    if (data[i].id == test) {
+                    if (data[i].id == classification) {
                         var x = "selected";
                     } else {
                         var x = "";
                     }
-                    op+='<option '+x+' value="'+data[i].id+'">'+data[i].classification_name+'</option>'
+                    op +='<option '+x+' value="'+data[i].id+'">'+data[i].classification_name+'</option>'
                     }
 
                     $('div.classification select').html(" ");

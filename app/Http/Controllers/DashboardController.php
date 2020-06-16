@@ -82,9 +82,9 @@ class DashboardController extends Controller
                 
                 foreach($jurnals as $jurnal){
                     if($jurnal->position == "Debit"){
-                        $sum += $jurnal->amount;
+                        $sum += $jurnal->detail->amount;
                     } else if($jurnal->position == "Kredit"){
-                        $sum -= $jurnal->amount;
+                        $sum -= $jurnal->detail->amount;
                     }
                 }
             } else {
@@ -97,10 +97,9 @@ class DashboardController extends Controller
         } else {
             $sum = 0;
         }
-        if($sum >=1000000){
+        if($sum >=1000000 || $sum <=1000000){
             $sum = round(($sum/1000000),1).' jt';
         }
-
         $parent = AccountParent::with('classification.account')
         ->where('id_business', $session)->get();
         $saldo_berjalan = 0;
@@ -120,9 +119,9 @@ class DashboardController extends Controller
                         })->get();
                         foreach($jurnals as $jurnal){
                             if ($jurnal->position == $position) {
-                                $endingBalance += $jurnal->amount;
+                                $endingBalance += $jurnal->detail->amount;
                             }else {
-                                $endingBalance -= $jurnal->amount;
+                                $endingBalance -= $jurnal->detail->amount;
                             }
                         }
                     } else {
@@ -164,7 +163,7 @@ class DashboardController extends Controller
                 }
             }
         }
-        if($saldo_berjalan >=1000000){
+        if($saldo_berjalan >=1000000 || $saldo_berjalan <=1000000){
             $saldo_berjalan = round(($saldo_berjalan/1000000),1).' jt';
         }
 
@@ -217,9 +216,9 @@ class DashboardController extends Controller
                 
                 foreach($jurnals as $jurnal){
                     if($jurnal->position == "Debit"){
-                        $cash_in += $jurnal->amount;
+                        $cash_in += $jurnal->detail->amount;
                     } else if($jurnal->position == "Kredit"){
-                        $cash_out += $jurnal->amount;
+                        $cash_out += $jurnal->detail->amount;
                     }
                 }
             } else {
@@ -306,9 +305,9 @@ class DashboardController extends Controller
                 
                 foreach($jurnals as $jurnal){
                     if($jurnal->position == "Debit"){
-                        $cash_in += $jurnal->amount;
+                        $cash_in += $jurnal->detail->amount;
                     } else if($jurnal->position == "Kredit"){
-                        $cash_out += $jurnal->amount;
+                        $cash_out += $jurnal->detail->amount;
                     }
                 }
             } else {

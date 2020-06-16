@@ -87,6 +87,16 @@ class UserMgtController extends Controller
         return redirect()->route('admin.user.index')->with('toast_success','Berhasil Mengubah Data!');
     }
 
+    public function changeStatus($id)
+    {
+        $data = Companies::where('id',$id)->first();
+        $status = $data->is_actived == 1? 0 : 1;
+        $data->is_actived = $status;
+        $data->save();
+
+        return response()->json(['success'=>'berhasil dibah']);
+    }
+
     /**
      * Remove the specified resource from storage.
      *

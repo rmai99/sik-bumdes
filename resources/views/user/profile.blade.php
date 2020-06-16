@@ -13,6 +13,9 @@
                 <h4 class="card-title">Edit Profile</h4>
                 {{-- <p class="card-category">Complete your profile</p> --}}
             </div>
+            {{-- @php
+                dd($errors);
+            @endphp --}}
             <div class="card-body">
                 <form method="POST" action="{{ route('profile.update') }}">
                     {{ method_field('PUT') }}
@@ -22,7 +25,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="bmd-label-floating">Perusahaan</label>
-                                <input type="text" class="form-control" value="{{ $data->name }}" name="name">
+                                <input type="text" class="form-control" value="{{ $data->name }}" name="name" required>
                             </div>
                         </div>
                     </div>
@@ -30,14 +33,24 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="bmd-label-floating">Email</label>
-                                <input type="email" class="form-control" value="{{ $data->user->email }}" disabled>
+                                <input type="email" name="email" class="form-control" value="{{ $data->user->email }}" required>
+                                <input type="hidden" name="id_user" value="{{ $data->user->id }}">
+                                @error('email')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="bmd-label-floating">No telp</label>
-                                <input type="number" class="form-control" value="{{ $data->phone_number }}"
-                                    name="phone_number">
+                                <input type="number" class="form-control" value="{{ $data->phone_number }}" name="phone_number" required>
+                                @error('phone_number')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -62,7 +75,7 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary pull-right">SIMPAN PROFILE</button>
+                    <button type="submit" class="btn btn-primary pull-right">SIMPAN PROFIL</button>
                     <div class="clearfix"></div>
                 </form>
             </div>
@@ -89,14 +102,20 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="bmd-label-floating">Nama Lengkap</label>
-                                <input type="text" class="form-control" value="{{ $data->name }}" name="name">
+                                <input type="text" class="form-control" value="{{ $data->name }}" name="name" required>
                                 <input type="hidden" class="form-control" value="{{ $data->id }}" name="id">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="bmd-label-floating">Email</label>
-                                <input type="text" class="form-control" value="{{ $data->user->email }}" disabled>
+                                <input type="text" class="form-control" value="{{ $data->user->email }}" name="email" required>
+                                <input type="hidden" value="{{ $data->user->id }}" name="id_user">
+                                @error('email')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -109,7 +128,7 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary pull-right">Update Profile</button>
+                    <button type="submit" class="btn btn-primary pull-right">SIMPAN PROFIL</button>
                     <div class="clearfix"></div>
                 </form>
             </div>

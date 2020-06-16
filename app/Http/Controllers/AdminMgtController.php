@@ -43,6 +43,14 @@ class AdminMgtController extends Controller
         $this->validate($request,[
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8'],
+        ],
+        [
+            'email.required' => 'Email tidak boleh kosong',
+            'email.max' => 'Email maksimal 255 karakter',
+            'email.email' => 'Email tidak valid',
+            'email.unique' => 'Email sudah dipakai',
+            'password.min' => 'Password tidak boleh kurang dari 8 karakter',
+            'password.required' => 'Password tidak boleh kosong',
         ]);
 
         $user = new User();

@@ -33,7 +33,7 @@
 
                             @error('email')
                             <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
+                                <strong>Kami tidak dapat menemukan pengguna dengan alamat email {{ old('email') }}.</strong>
                             </span>
                             @enderror
                         </div>

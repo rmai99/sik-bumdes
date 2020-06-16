@@ -51,15 +51,22 @@
                                             {{$item->phone_number}}
                                         </td>
                                         <td class="text-center" style="width:20%">
-                                            @if ($item->is_actived == 1)
-                                                <div class="offset-2 col-8 user pro">
-                                                    Pro
-                                                </div>
-                                            @else
-                                                <div class="offset-2 col-8 user reguler">
-                                                    Reguler
-                                                </div>
-                                            @endif
+                                            {{-- <label class="switch">
+                                                <input id="customSwitch1" class="custom-control-input" data-id="{{$item->id}}" type="checkbox" {{ $item->is_actived ? 'checked' : '' }}>
+                                                <span data-id="{{$item->id}}" class="slider round" for="customSwitch1">
+                                                <span class="slider round"></span>
+                                              </label> --}}
+                                            <div class="custom-control custom-switch">
+                                                @if ($item->is_actived == 1)
+                                                    <div class="offset-2 col-8 user pro">
+                                                        Pro
+                                                    </div>
+                                                @else
+                                                    <div class="offset-2 col-8 user reguler">
+                                                        Reguler
+                                                    </div>
+                                                @endif
+                                            </div>
                                         </td>
                                         <td class="text-right" style="width:8%">
                                             <button type="button" class="edit btn-icon" rel="tooltip" data-toggle="modal" data-target="#edit" value="{{$item->id}}">
@@ -146,6 +153,28 @@
     </div>
 </div>
 @endsection
+{{-- @section('sweet')
+<script>
+    $(function () {
+            $('.custom-control-input').change(function(){
+            var status = $(this).prop('checked') == true ? 1 : 0;
+            alert('Are you sure change user status?');
+            var user_id = $(this).data('id');
+            console.log(user_id);
+            console.log($(this));
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "{{route('admin.user.index')}}/set_status/"+user_id,
+                data: {'status': status},
+                success: function(data){
+                alert('successfully change user status');
+                }
+            });
+            })
+        });
+</script>
+@endsection --}}
 @push('js')
     <script>
         $(document).ready(function () {

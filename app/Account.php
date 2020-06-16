@@ -23,4 +23,11 @@ class Account extends Model
         return $this->hasMany('App\GeneralJournal', 'id_account');
     }
 
+    public function messages()
+    {
+        return [
+            'input_codeAccount.notIn' => 'A title is required',
+        ];
+    }
+
 }

@@ -87,6 +87,9 @@ class InitialBalanceController extends Controller
             'id_account' => 'required',
             'amount' => 'required',
             'date' => 'required|after_or_equal:'.$dates,
+        ],
+        [
+            'date.after_or_equal' => 'Penginputan neraca awal hanya sekali dalam setahun',
         ]);
 
         $amount = $request->amount;
@@ -123,6 +126,9 @@ class InitialBalanceController extends Controller
 
         $this->validate($request,[
             'edit_date' => 'required|after_or_equal:'.$dates,
+        ],
+        [
+            'edit_date.after_or_equal' => 'Penginputan neraca awal hanya sekali dalam setahun',
         ]);
 
         $data = InitialBalance::where('id', $id)->first();

@@ -7,6 +7,7 @@
 @section('content')
 @php
     $month = null;
+    setlocale(LC_ALL, 'id_ID')
 @endphp
 <div class="container-fluid">
     <div class="row">
@@ -72,7 +73,7 @@
                             </div>
                             <div class="col-4">
                                 <p class="d-flex justify-content-end mb-0 font-20">
-                                    Rp{{strrev(implode('.',str_split(strrev(strval($item->journal[0]->amount)),3)))}}
+                                    Rp{{strrev(implode('.',str_split(strrev(strval($item->amount)),3)))}}
                                 </p>
                             </div>
                             <div class="col">

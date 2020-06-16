@@ -16,7 +16,7 @@
                         aria-haspopup="true" aria-expanded="false">
                         <i class="material-icons">person</i>
                         <p class="d-lg-none d-md-block">
-                            Account
+                            Akun
                         </p>
                     </a>
                     

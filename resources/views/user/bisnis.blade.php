@@ -138,23 +138,23 @@
 @push('js')
 <script>
     $(document).ready(function () {
-        // @if (count($errors) > 0)
-        //     swal.fire({
-        //         title: "Ubah Akun Menjadi PRO",
-        //         icon: "warning",
-        //         closeOnClickOutside: false,
-        //         showConfirmButton: false,
-        //         // timer       :2000,
-        //         footer: '<a href="/home">Upgrade Account?</a>'
-        //     })
-        // @endif
+        @if ($errors->has('disable'))
+            swal.fire({
+                title: "Ubah Akun Menjadi PRO",
+                icon: "warning",
+                closeOnClickOutside: false,
+                showConfirmButton: false,
+                // timer       :2000,
+                footer: '<a href="{{route('upgrade')}}">Upgrade Account?</a>'
+            })
+        @endif
         @if ($errors->has('business_name'))
-            console.log("Maida");
             $('#tambahBisnis').modal('show');
         @endif
         @if ($errors->has('name'))
             $('#editBusiness').modal('show');
             var name = "{{old('name')}}";
+            console.log("maidaa");
             $('#name').val(name);
             
             var id = "{{old('id')}}";
@@ -274,7 +274,7 @@
                             closeOnClickOutside: false,
                             showConfirmButton: false,
                             // timer       :2000,
-                            footer: '<a href="/home">Upgrade Akun Perusahaan?</a>'
+                            footer: '<a href="{{route('upgrade')}}">Upgrade Akun Perusahaan?</a>'
                         });
                     }else {
                         $('#tambahBisnis').modal('show')

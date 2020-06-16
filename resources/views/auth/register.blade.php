@@ -3,14 +3,13 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-5">
+        <div class="col-sm-7 col-lg-5">
             <div class="card">
                 <div class="card">
                     <div class="card-body">
                         <div class="text-center mt-3 mb-1">
                             <h3> SIK <strong> BUMDES </strong> </h3>
                         </div>
-
                         <form method="POST" action="{{ route('register') }}">
                             @csrf
                             <h4 class="font-weight-bold">Daftar</h2>
@@ -60,15 +59,15 @@
                                         </i>
                                     </div>
                                 </div>
-                                <input id="phoneNumber" type="text"
-                                    class="form-control @error('phoneNumber') is-invalid @enderror" name="phoneNumber"
-                                    value="{{ old('phoneNumber') }}" required autocomplete="phoneNumber"
+                                <input id="phone_number" type="text"
+                                    class="form-control @error('phone_number') is-invalid @enderror" name="phone_number"
+                                    value="{{ old('phone_number') }}" required autocomplete="phone_number"
                                     placeholder="Nomor Telepon">
-                                    @if ($errors->has('phone_number'))
-                                        <span class="invalid">
-                                            <strong>{{ $errors->first('phone_number') }}</strong>
+                                    @error('phone_number')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
                                         </span>
-                                    @endif
+                                    @enderror
                             </div>
                             <p class="mb-0 font-14">Email</p>
                             <div class="input-group mb-2">
@@ -104,13 +103,13 @@
                                 <input id="password" type="password"
                                     class="form-control @error('password') is-invalid @enderror" name="password"
                                     required autocomplete="new-password" placeholder="Password">
+                                    @if ($errors->has('password'))
+                                        <span class="invalid">
+                                            <strong>{{ $errors->first('password') }}<strong>
+                                        </span>
+                                    @endif 
                                 </div>
-                                @if ($errors->has('password'))
-                                    <span class="invalid">
-                                        <strong>{{ $errors->first('password') }}<strong>
-                                    </span>
-                                @endif 
-                            <p class="mb-0 font-14">Confirm Password</p>
+                            <p class="mb-0 font-14">Konfirmasi Password</p>
                             <div class="input-group mb-2">
                                 <div class="input-group-append">
                                     <div class="input-group-text">

@@ -18,6 +18,7 @@ class CreateReceiptsTable extends Migration
             $table->string('receipt');
             $table->longText('description');
             $table->date('date');
+            $table->integer('amount');
             $table->timestamps();
         });
     }

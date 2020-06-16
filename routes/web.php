@@ -34,6 +34,7 @@ Route::get('detail_balance', 'InitialBalanceController@detailBalance');
 
 /* ======== TRIAL BALANCE ======== */
 Route::resource('neraca_saldo', 'TrialBalanceController');
+Route::get('export/neraca_saldo/{year}/{month?}', 'TrialBalanceController@export')->name('export.neraca_saldo');
 
 /* ======== GENERAL JOURNAL ======== */
 Route::resource('jurnal_umum', 'GeneralJournalController')->except('update');
@@ -45,8 +46,11 @@ Route::resource('buku_besar', 'GeneralLedgerController');
 
 /* ======== REPORT ======== */
 Route::get('laporan_laba_rugi', 'FinancialReportController@incomeStatement')->name('laporan_laba_rugi');
+Route::get('export/laporan_laba_rugi/{year}/{month?}', 'FinancialReportController@incomeStatementExport')->name('export.laba_rugi');
 Route::get('perubahan_ekuitas', 'FinancialReportController@changeInEquity')->name('perubahan_ekuitas');
+Route::get('export/perubahan_ekuitas/{year}/{month?}', 'FinancialReportController@changeInEquityExport')->name('export.perubahan_ekuitas');
 Route::get('neraca', 'FinancialReportController@balanceSheet')->name('neraca');
+Route::get('export/neraca/{year}/{month?}', 'FinancialReportController@balanceSheetExport')->name('export.neraca');
 
 /* ======== EMPLOYEE ======== */
 Route::resource('karyawan','EmployeeController');
@@ -67,7 +71,8 @@ Route::get('upgrade', 'ProfileController@upgrade')->name('upgrade');
 Route::prefix('admin')->middleware('auth')->name('admin.')->group(function(){
     Route::resource('/', 'AdminDashboardController');
     Route::get('user/user_register', 'AdminDashboardController@user_register')->name('user_register');
-    Route::resource('/user', 'UserMgtController');
+    Route::resource('user', 'UserMgtController');
+    Route::post('user/set_status/{$id}', 'UserMgtController@changeStatus')->name('setStatus');
     Route::resource('/manajemen_admin', 'AdminMgtController');
 });
 
@@ -75,8 +80,8 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function(){
 Route::resource('ganti_password', 'Auth\ChangePasswordController');
 
 Route::get('/', function () {
-
     return view('welcome');
     
 });
+
 Auth::routes();

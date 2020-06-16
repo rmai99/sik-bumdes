@@ -28,6 +28,7 @@
         $month = null;
         $day = null;
     }
+    setlocale(LC_ALL, 'id_ID');
     @endphp
 
 <div class="content">
@@ -42,11 +43,11 @@
                     <div class="card-body">
                         <div class="toolbar">
                             <div class="row d-flex">
-                                <div class="col-md-1 pr-2">
+                                <div class="col-md-2 pr-2">
                                     <div class="form-group">
                                         <strong class="mr-3">Tahun</strong>
                                         <select class="w-100 pl-1 padding-select groupbyYear" style="border-radius: 3px;">
-                                            <option value="0" disabled="true" selected="true">Year</option>
+                                            <option value="0" disabled="true" selected="true">Tahun</option>
                                             @foreach ($years as $y)
                                             <option id="year" name="year" value="{{$y->year}}"
                                                 {{ $year == $y->year ? 'selected' : '' }}>{{$y->year}}</option>
@@ -54,11 +55,11 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-1 pl-0 pr-2">
+                                <div class="col-md-2 pl-md-0 pr-2">
                                     <div class="form-group">
                                         <strong class="mr-3">Bulan</strong>
                                         <select class="w-100 pl-1 padding-select groupbyMonth" style="border-radius: 3px;">
-                                            <option value="0" disabled="true" selected="true">Month</option>
+                                            <option value="0" disabled="true" selected="true">Bulan</option>
                                             <option value="0">All</option>
                                             <option value="01" {{ $month == '01' ? 'selected' : '' }}>Januari</option>
                                             <option value="02" {{ $month == '02' ? 'selected' : '' }}>Februari</option>
@@ -75,11 +76,11 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-2 pl-0 pl-0">
+                                <div class="col-md-2 pl-md-0">
                                     <div class="form-group">
                                         <strong class="mr-3">Tanggal</strong>
                                         <select class="w-100 pl-1 padding-select groupbyDate" style="border-radius: 3px;" disabled>
-                                            <option selected="true" value="null" selected>All</option>
+                                            <option selected="true" value="null" selected>Semua</option>
                                             <option value="01" {{ $day == '01' ? 'selected' : '' }}>1</option>
                                             <option value="02" {{ $day == '02' ? 'selected' : '' }}>2</option>
                                             <option value="03" {{ $day == '03' ? 'selected' : '' }}>3</option>
@@ -114,10 +115,10 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3 mt-4">
+                                <div class="col-md-2 mt-4">
                                     <button type="button" class="btn btn-primary" id="search">Cari</button>
                                 </div>
-                                <div class="col-md-5 mt-4 text-right">
+                                <div class="col-md-4 mt-4 text-right">
                                     <a href="{{ route('jurnal_umum.create') }}" class="btn btn-primary">Tambah
                                         Jurnal</a>
                                 </div>
@@ -144,21 +145,38 @@
                                 <tbody>
                                     @foreach ($data as $item)
                                         <tr>
-                                            <td style="width:15%">{{ $item->date }}</td>
+                                            <td style="width:15%">{{ strftime("%d %B %G", strtotime($item->date)) }}</td>
                                             <td>{{ $item->receipt }}</td>
                                             <td style="width:35%">{{ $item->description }}</td>
                                             @foreach ($item->journal()->orderBy('id', 'ASC')->get() as $cek)
-                                                @if ($cek->position == "Debit")
-                                                    <td>{{ $cek->account->account_name }}</td>
-                                                    <td>
-                                                        Rp{{strrev(implode('.',str_split(strrev(strval($cek->amount)),3)))}}
-                                                    </td>
-                                                @endif
-                                                @if ($cek->position == "Kredit")
-                                                    <td>{{ $cek->account->account_name }}</td>
-                                                    <td>
-                                                        Rp{{strrev(implode('.',str_split(strrev(strval($cek->amount)),3)))}}
-                                                    </td>
+                                                @if ($item->journal()->count() == 2)
+                                                    @if ($cek->position == "Debit")
+                                                        <td>{{ $cek->account->account_name }}</td>
+                                                        <td>
+                                                            Rp{{strrev(implode('.',str_split(strrev(strval($item->amount)),3)))}}
+                                                        </td>
+                                                    @endif
+                                                    @if ($cek->position == "Kredit")
+                                                        <td>{{ $cek->account->account_name }}</td>
+                                                        <td>
+                                                            Rp{{strrev(implode('.',str_split(strrev(strval($item->amount)),3)))}}
+                                                        </td>
+                                                    @endif
+                                                @else
+                                                    @if ($cek->position == "Debit")
+                                                        <td>{{ $cek->account->account_name }}</td>
+                                                        <td>
+                                                            Rp{{strrev(implode('.',str_split(strrev(strval($item->amount)),3)))}}
+                                                        </td>
+                                                        <td><td>
+                                                    @endif
+                                                    @if ($cek->position == "Kredit")
+                                                        <td></td>
+                                                        <td>{{ $cek->account->account_name }}</td>
+                                                        <td>
+                                                            Rp{{strrev(implode('.',str_split(strrev(strval($item->amount)),3)))}}
+                                                        </td>
+                                                    @endif
                                                 @endif
                                             @endforeach
                                             <td style="width:10%" class="text-center">
@@ -192,6 +210,7 @@
         <form class="form" method="POST" action="" id="formEditJournal">
             {{ csrf_field() }}
             {{ method_field('PUT') }}
+            <input type="hidden" id="id_detail" name="id_detail">
             <div class="modal-content">
                 <div class="card card-signup card-plain">
                     <div class="modal-header">
@@ -203,26 +222,23 @@
                     </div>
                     <div class="modal-body">
                         <div class="card-body detail">
-                            <input type="hidden" name="id_detail">
+                            {{-- <input type="hidden" name="id_detail"> --}}
                             <div class="form-group description">
                                 <h6 class="text-dark font-weight-bold m-0">Keterangan</h6>
-                                <input type="text" class="form-control" name="description" aria-describedby="ketJurnal"
-                                    value="Membeli peralatan secara kredit" required>
+                                <input type="text" class="form-control" name="description" value="{{ old('description') }}" required>
                             </div>
 
                             <div class="row">
                                 <div class="col-6">
                                     <div class="form-group receipt">
                                         <h6 class="text-dark font-weight-bold m-0">No Kwitansi</h6>
-                                        <input type="text" class="form-control" name="receipt"
-                                            aria-describedby="kwitansiJurnal" required>
+                                        <input type="text" class="form-control" name="receipt" value="{{ old('receipt') }}" required>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group date">
                                         <h6 class="text-dark font-weight-bold m-0">Tanggal</h6>
-                                        <input type="date" class="form-control" name="date"
-                                            aria-describedby="kwitansiJurnal" required>
+                                        <input type="date" class="form-control" name="date" value="{{ old('date') }}" required>
                                     </div>
                                 </div>
                             </div>
@@ -240,11 +256,11 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                    </div>
-                                    <div class="form-group amount_debit">
-                                        <h6 class="text-dark font-weight-bold m-0">Jumlah</h6>
-                                        <input type="text" class="form-control" name="debit"
-                                            aria-describedby="amountDebit" data-type="currency" required>
+                                        @error('id_credit_account')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="col-6">
@@ -259,11 +275,19 @@
                                                 </option>
                                             @endforeach
                                         </select>
+                                        @error('id_credit_account')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
                                     </div>
-                                    <div class="form-group amount_credit">
+                                </div>
+                            </div>
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-12">
+                                    <div class="form-group amount">
                                         <h6 class="text-dark font-weight-bold m-0">Jumlah</h6>
-                                        <input type="text" class="form-control" name="credit"
-                                            aria-describedby="amountDebit" data-type="currency" required>
+                                        <input type="text" class="form-control" name="amount" value="{{ old('amount') }}" data-type="currency" required>
                                     </div>
                                 </div>
                             </div>
@@ -284,13 +308,31 @@
 
 <script>
     $(document).ready(function () {
+        @if ($errors->has('id_debit_account'))
+            $('#editJournal').modal('show');
+            var id = "{{old('id_detail')}}";
+            var debit = "{{old('id_debit_account')}}";
+            var credit = "{{old('id_credit_account')}}";
+            var id_credit = "{{old('id_credit')}}";
+            var id_debit = "{{old('id_debit')}}";
+            $('#id_detail').val(id);
+            $('div.debit select').val(debit);
+            $('div.credit select').val(credit);
+            $('div.credit input').val(id_credit);
+            $('div.debit input').val(id_debit);
+
+            var action = "{{route('jurnal.update')}}";
+            $('#formEditJournal').attr('action', action);
+        @endif
+
         $('#datatables').DataTable({
             "pagingType"        : "full_numbers",
             "lengthMenu"        : [
                                 [10, 25, 50, -1],
                                 [10, 25, 50, "All"]
                                 ],
-            responsive          : true, 
+            responsive          : true,
+            "ordering": false,
             language            : {
             search              : "_INPUT_",
             searchPlaceholder   : "Cari",
@@ -379,6 +421,7 @@
 
     $(document).on('click', '.btnEditJournal', function(){
         var id = $(this).attr('id');
+        $('#id_detail').val(id);
         $.ajax({
             type        : 'GET',
             url         : '{!!url('detailJournal')!!}',
@@ -394,32 +437,23 @@
                     var id_debit = value.journal[0].id;
                     var id_account_debit = value.journal[0].id_account;
                     var rupiah = '';
-
-                    var convert = value.journal[0].amount.toString().split('').reverse().join('');
-                    for(var i = 0; i < convert.length; i++) if(i%3 == 0) rupiah += convert.substr(i,3)+',';
-                    var amount_debit = 'Rp'+ rupiah.split('',rupiah.length-1).reverse().join('');
-
                     var id_credit = value.journal[1].id;
                     var id_account_credit = value.journal[1].id_account;
 
-                    var convert_journal = value.journal[1].amount.toString().split('').reverse().join('');
-                    console.log(convert);
-                    for(var i = 0; i < convert.length_; i++) if(i%3 == 0) rupiah += convert_journal.substr(i,3)+',';
-                    var amount_credit = 'Rp'+ rupiah.split('',rupiah.length-1).reverse().join('');
+                    var convert = value.amount.toString().split('').reverse().join('');
+                    for(var i = 0; i < convert.length; i++) if(i%3 == 0) rupiah += convert.substr(i,3)+',';
+                    var amount = 'Rp'+ rupiah.split('',rupiah.length-1).reverse().join('');
 
-                    console.log(amount_credit);
-
-                    console.log(id_debit);
                     $('div.detail input').val(detail);
                     $('div.receipt input').val(receipt);
                     $('div.date input').val(date);
                     $('div.description input').val(description);
                     $('div.debit select').val(id_account_debit);
                     $('div.debit input').val(id_debit);
-                    $('div.amount_debit input').val(amount_debit);
+                    $('div.amount input').val(amount);
+                    console.log(id_account_credit);
                     $('div.credit select').val(id_account_credit);
                     $('div.credit input').val(id_credit);
-                    $('div.amount_credit input').val(amount_credit);
                 })
             }, error    : function(){
                 

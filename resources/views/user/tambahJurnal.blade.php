@@ -13,14 +13,8 @@
     {{ csrf_field() }}
     <div id="test">
         <div class="card card-journal ml-4 mt-0 mb-4 puss">
-            <div class="row d-flex justify-content-end">
-                <div class="card-header">
-                    <button type="button" class="close remove" data-dismiss="modal" aria-hidden="true">
-                        <i class="material-icons">clear</i></button>
-                </div>
-            </div>
             <div class="row m-3 justify-content-between">
-                <div class="col-4 pl-0">
+                <div class="col-lg-6 col-md-12 pl-0">
                     <p class="font-weight-bold mb-0">No kwitansi</p>
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -28,21 +22,23 @@
                                 <i class="material-icons">receipt</i>
                             </span>
                         </div>
-                        <input type="text" class="form-control border-select" name="receipt[]" required="true" aria-required="true">
+                        <input type="text" class="form-control border-select" name="receipt" required="true" aria-required="true" value="{{ old('receipt') }}">
                     </div>
                 </div>
-                <div class="col-4 pl-0">
-                    <p class="font-weight-bold mb-0">Date</p>
+                <div class="col-lg-6 col-md-12 pl-0">
+                    <p class="font-weight-bold mb-0">Tanggal</p>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text">
                                 <i class="material-icons">date_range</i>
                             </span>
                         </div>
-                        <input type="date" class="form-control border-select" name="date[]" required="true" aria-required="true">
+                        <input type="date" class="form-control border-select" name="date" required="true" aria-required="true" value="{{ old('date') }}">
                     </div>
                 </div>
-                <div class="col-4 pl-0">
+            </div>
+            <div class="row m-3 justify-content-between">
+                <div class="col-lg-6 col-md-12 pl-0">
                     <p class="font-weight-bold mb-0">Keterangan</p>
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -50,7 +46,7 @@
                                 <i class="material-icons">description</i>
                             </span>
                         </div>
-                        <textarea rows="1" style="width:80%" name="description[]" required="true" aria-required="true"></textarea>
+                        <textarea rows="1" style="width:80%" name="description" required="true" aria-required="true">{{ old('description') }}</textarea>
                     </div>
                     @error('description[$key]')
                         <span class="invalid-feedback" role="alert">
@@ -58,9 +54,15 @@
                         </span>
                     @enderror
                 </div>
+                <div class="col-lg-6 col-md-12 pl-0">
+                    <p class="font-weight-bold mb-0">Jumlah</p>
+                    <div class="input-group">
+                        <input type="text" class="form-control border-select" name="amount" required="true" aria-required="true" data-type="currency" value="{{ old('amount') }}">
+                    </div>
+                </div>
             </div>
             <div class="row m-3 d-flex">
-                <div class="col-6 pl-0">
+                <div class="col-lg-6 col-md-12 pl-0">
                     <h4 class="font-weight-bold">Debit</h4>
                     <div class="col-12 pl-0">
                         <p class="mb-0">Nama Akun</p>
@@ -70,22 +72,21 @@
                                     <i class="material-icons">account_balance_wallet</i>
                                 </span>
                             </div>
-                            <select class="form-control border-select" name="id_debit_account[]" required>
+                            <select class="form-control border-select debit" name="id_debit_account" required>
                                 <option selected="true" value="">Pilih Akun</option>
                                 @foreach ($account as $a)
                                     <option value="{{ $a->id }}">{{ $a->account_code }} - {{ $a->account_name}}</option>
                                 @endforeach
                             </select>
-                        </div>
-                    </div>
-                    <div class="col-12 pl-0">
-                        <p class="mb-0">Jumlah</p>
-                        <div class="input-group">
-                            <input type="text" class="form-control border-select" name="debit[]" required="true" aria-required="true" pattern="^\Rp\d{1,3}(,\d{3})*(\.\d+)?Rp" value="" data-type="currency">
+                            @error('id_debit_account')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
                     </div>
                 </div>
-                <div class="col-6 pl-0">
+                <div class="col-lg-6 col-md-12 pl-0">
                     <h4 class="font-weight-bold">Kredit</h4>
                     <div class="col-12 pl-0">
                         <p class="mb-0">Nama Akun</p>
@@ -95,152 +96,37 @@
                                     <i class="material-icons">account_balance_wallet</i>
                                 </span>
                             </div>
-                            <select class="form-control border-select" name="id_credit_account[]" required>
+                            <select class="form-control border-select credit" name="id_credit_account" required>
                                 <option selected="true" value="">Pilih Akun</option>
                                 @foreach ($account as $a)
                                     <option value="{{ $a->id }}">{{ $a->account_code }} - {{ $a->account_name}}</option>
                                 @endforeach
                             </select>
-                        </div>
-                    </div>
-                    <div class="col-12 pl-0">
-                        <p class="mb-0">Nama Akun</p>
-                        <div class="input-group">
-                            <input type="text" class="form-control border-select" name="credit[]" required="true" aria-required="true" pattern="^\Rp\d{1,3}(,\d{3})*(\.\d+)?Rp" data-type="currency">
+                            @error('id_credit_account')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row m-3 justify-content-between">
-        <div class="col-2">
-            <button type="button" class="btn btn-primary m-1 pl-2 pr-2" style="float:right;" id="addRow">Tambah Jurnal</button>
-        </div>
-        <div class="col-2 justify-content-end">
-            <button type="submit" class="btn btn-primary m-1 pl-2 pr-2" style="float:right;">SIMPAN</button>
-        </div>
+    <div class="row m-3 justify-content-center">
+        <button type="submit" class="btn btn-primary col-2 m-1 pl-2 pr-2" style="float:right;">SIMPAN</button>
     </div>
 </div>
 
 @endsection
-
-
 @push('js')
-
-<script type="text/javascript">
-    var test = `<div class="card card-journal ml-4 mt-0 mb-4 puss">
-            <div class="row d-flex justify-content-end">
-                <div class="card-header">
-                    <button type="button" class="close remove" data-dismiss="modal" aria-hidden="true">
-                        <i class="material-icons">clear</i></button>
-                </div>
-            </div>
-            <div class="row m-3 justify-content-between">
-                <div class="col-4 pl-0">
-                    <p class="font-weight-bold mb-0">No kwitansi</p>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="material-icons">receipt</i>
-                            </span>
-                        </div>
-                        <input type="text" class="form-control border-select" name="receipt[]" required="true" aria-required="true">
-                    </div>
-                </div>
-                <div class="col-4 pl-0">
-                    <p class="font-weight-bold mb-0">Date</p>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="material-icons">date_range</i>
-                            </span>
-                        </div>
-                        <input type="date" class="form-control border-select" name="date[]" required="true" aria-required="true">
-                    </div>
-                </div>
-                <div class="col-4 pl-0">
-                    <p class="font-weight-bold mb-0">Keterangan</p>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="material-icons">description</i>
-                            </span>
-                        </div>
-                        <textarea rows="1" style="width:80%" name="description[]" required="true" aria-required="true"></textarea>
-                    </div>
-                </div>
-            </div>
-            <div class="row m-3 d-flex">
-                <div class="col-6 pl-0">
-                    <h4 class="font-weight-bold">Debit</h4>
-                    <div class="col-12 pl-0">
-                        <p class="mb-0">Nama Akun</p>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <i class="material-icons">account_balance_wallet</i>
-                                </span>
-                            </div>
-                            <select class="form-control border-select" name="id_debit_account[]" required>
-                                <option selected="true" value="">Pilih Akun</option>
-                                @foreach ($account as $a)
-                                    <option value="{{ $a->id }}">{{ $a->account_code }} - {{ $a->account_name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-12 pl-0">
-                        <p class="mb-0">Jumlah</p>
-                        <div class="input-group">
-                            <input id="currency" type="text" class="form-control border-select" name="debit[]" required="true" aria-required="true" value="" data-type="currency">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 pl-0">
-                    <h4 class="font-weight-bold">Kredit</h4>
-                    <div class="col-12 pl-0">
-                        <p class="mb-0">Nama Akun</p>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <i class="material-icons">account_balance_wallet</i>
-                                </span>
-                            </div>
-                            <select class="form-control border-select" name="id_credit_account[]" required>
-                                <option selected="true" value="">Pilih Akun</option>
-                                @foreach ($account as $a)
-                                    <option value="{{ $a->id }}">{{ $a->account_code }} - {{ $a->account_name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-12 pl-0">
-                        <p class="mb-0">Nama Akun</p>
-                        <div class="input-group">
-                            <input id="currency" type="text" class="form-control border-select" name="credit[]" required="true" aria-required="true" value="" data-type="currency">
-                            {{--  <input type="text" placeholder="$1,000,000.00">  --}}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>`;
-    $(function () {
-        $('#addRow').click(function () {
-            $('div#test').append(test);
-        });
-        $(document).on('click', '.remove', function () {
-            $(this).parents('div.puss').remove();
-        });
-        $(document).on('keyup', '#currency', function () {
-            // console.log('this', $(this))
-            formatCurrency($(this));
-        });
-
-    });
-    
-</script>
 <script>
+    @if ($errors->has('id_debit_account'))
+        var debit = "{{old('id_debit_account')}}";
+        var credit = "{{old('id_credit_account')}}";
+        $('.debit').val(debit);
+        $('.credit').val(credit);
+    @endif
     // Jquery Dependency
     $("input[data-type='currency']").on({
         keyup: function() {
@@ -311,8 +197,6 @@
     caret_pos = updated_len - original_len + caret_pos;
     input[0].setSelectionRange(caret_pos, caret_pos);
     }
-
-
 
 </script>
 @endpush

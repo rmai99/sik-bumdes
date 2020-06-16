@@ -8,9 +8,14 @@
 @php
     if (isset($_GET['year'])) {
         $dt = $_GET['year'];
+        $month = $_GET['month'];
     } else {
         $dt = date('Y');
+        $month = date('m');
     }
+
+    setlocale(LC_ALL, 'id_ID');
+
     $jumlah_debit = 0;
     $jumlah_kredit = 0;
 
@@ -22,17 +27,21 @@
                 <div class="card">
                     <div class="header text-center mt-2">
                         <h3 class="title" style="font-weight: 400;">Neraca Saldo</h3>
-                        <p class=""><strong>Periode</strong> {{ $dt }} </p>
+                        @php
+                            $dateObj   = DateTime::createFromFormat('!m', $month);
+                            $monthName = $dateObj->format('F'); // March
+                        @endphp
+                        <p class=""><strong>Periode</strong> {{ strftime("%B", strtotime($monthName)) }} {{ $dt }} </p>
                     </div>
                     <div class="card-body">
                         <div class="toolbar">
-                            <div class="d-flex justify-content-between">
-                                <div class="col-md-2 pl-0">
+                            <div class="d-flex">
+                                <div class="col-md-2 pl-md-0 pr-2">
                                     <div class="form-group">
                                         <strong class="mr-3">Tahun :</strong>
-                                        <select class="pl-1 padding-select groupbyYear" id="search"
+                                        <select class="w-100 pl-1 padding-select groupbyYear"
                                             style="border-radius: 3px;">
-                                            <option value="0" disabled="true" selected="true">Year</option>
+                                            <option value="0" disabled="true" selected="true">Tahun</option>
                                             @foreach ($years as $y)
                                             <option value="{{$y->year}}" {{ $year == $y->year ? 'selected' : '' }}>
                                                 {{$y->year}}</option>
@@ -41,6 +50,33 @@
                                         <b class="caret"></b>
                                     </div>
                                 </div>
+                                <div class="col-md-2 pl-md-0 pr-2">
+                                    <div class="form-group">
+                                        <strong class="mr-3">Bulan</strong>
+                                        <select class="w-100 pl-1 padding-select groupbyMonth" style="border-radius: 3px;">
+                                            <option value="0" disabled="true" selected="true">Bulan</option>
+                                            <option>All</option>
+                                            <option value="01" {{ $month == '01' ? 'selected' : '' }}>Januari</option>
+                                            <option value="02" {{ $month == '02' ? 'selected' : '' }}>Februari</option>
+                                            <option value="03" {{ $month == '03' ? 'selected' : '' }}>Maret</option>
+                                            <option value="04" {{ $month == '04' ? 'selected' : '' }}>April</option>
+                                            <option value="05" {{ $month == '05' ? 'selected' : '' }}>Mei</option>
+                                            <option value="06" {{ $month == '06' ? 'selected' : '' }}>Juni</option>
+                                            <option value="07" {{ $month == '07' ? 'selected' : '' }}>Juli</option>
+                                            <option value="08" {{ $month == '08' ? 'selected' : '' }}>Agustus</option>
+                                            <option value="09" {{ $month == '09' ? 'selected' : '' }}>September</option>
+                                            <option value="10" {{ $month == '10' ? 'selected' : '' }}>Oktober</option>
+                                            <option value="11" {{ $month == '11' ? 'selected' : '' }}>November</option>
+                                            <option value="12" {{ $month == '12' ? 'selected' : '' }}>Desember</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 mt-4">
+                                    <button type="button" class="btn btn-primary" id="search">Cari</button>
+                                </div>
+                                <div class="col-md-6 mt-4 text-right">
+                                    <a href="{{route('export.neraca_saldo', ['year' => $dt, 'month' => $month])}}" class="btn btn-primary" target="_blank" id="export">Export</a>
+                                </div>
                             </div>
                         </div>
                         <div class="material-datatables mt-4">
@@ -48,8 +84,8 @@
                                 width="100%" style="width:100%">
                                 <thead>
                                     <tr>
-                                        <th rowspan="2" style="width:40%">Nama Akun</th>
-                                        <th rowspan="2" style="width:10%">Posisi Normal</th>
+                                        <th style="width:40%">Nama Akun</th>
+                                        <th style="width:10%">Posisi Normal</th>
                                         <th style="width:20%">Debit</th>
                                         <th style="width:20%">Kredit</th>
                                     </tr>
@@ -139,11 +175,17 @@
 
 @push('js')
 <script>
-    $(document).on('change', '#search', function(e){
+    $(document).on('click', '#search', function(e){
         e.preventDefault();
         var year = $("select.groupbyYear").val();
+        var month = $("select.groupbyMonth").val();
+        console.log(year);
 
         var url = "{{route('neraca_saldo.index')}}?year=" + year;
+        if (month != null) {
+            url = url + "&month=" + month;
+            console.log('month');
+        }
         window.location.href = url;
 
     });

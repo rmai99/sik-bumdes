@@ -57,6 +57,9 @@ class ClassificationController extends Controller
         
         $this->validate($request,[
             'input_code' => Rule::notIn($array),
+        ],
+        [
+            'input_code.not_in' => 'Kode klasifikasi tidak boleh sama',
         ]);
 
         $data = new AccountClassification;
@@ -94,6 +97,9 @@ class ClassificationController extends Controller
         
         $this->validate($request,[
             'edit_code' => Rule::notIn($array),
+        ],
+        [
+            'edit_code.not_in' => 'Kode klasifikasi tidak boleh sama',
         ]);
         
         $data->id_parent = $request->edit_parent;

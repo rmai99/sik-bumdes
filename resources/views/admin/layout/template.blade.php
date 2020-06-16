@@ -246,9 +246,7 @@
         });
     });
 </script>
-
+@yield('sweet')
 @stack('js')
 </body>
-
-
 </html>

@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-4">
+        <div class="col-sm-6 col-lg-4">
             <div class="card">
                 <div class="text-center mt-3 mb-1">
                     <h3> SIK <strong> BUMDES </strong> </h3>
@@ -28,7 +28,7 @@
 
                             @error('email')
                             <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
+                                <strong>Email atau password salah</strong>
                             </span>
                             @enderror
                         </div>
@@ -76,7 +76,7 @@
                         <div class="row">
                             <div class="col-12 text-center">
                                 <a href="{{ route('register') }}"
-                                    class="text-center btn btn-make-user">Belum Punya AKun? <strong>Daftar!</strong></a>
+                                    class="text-center btn btn-make-user">Belum Punya Akun? <strong>Daftar!</strong></a>
                             </div>
                         </div>
                     </form>

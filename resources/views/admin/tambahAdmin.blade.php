@@ -21,27 +21,26 @@
                             <div class="col-sm-7">
                                 <div class="form-group">
                                     <input class="form-control" name="email" id="input-email" type="email"
-                                        placeholder="Email" value="" required />
+                                        value="{{old('email')}}" required />
+                                        @error('email')
+                                            <span class="invalid-feedback">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
                                 </div>
-                                @if ($errors->has('email'))
-                                    <span class="invalid">
-                                        {{ $errors->first('email') }}
-                                    </span>
-                                @endif 
                             </div>
                         </div>
                         <div class="row">
                             <label class="col-sm-2 col-form-label" for="input-password">Password</label>
                             <div class="col-sm-7">
                                 <div class="form-group">
-                                    <input class="form-control" input type="password" name="password"
-                                        id="input-password" placeholder="Password" value="" required />
+                                    <input class="form-control" input type="password" name="password" required />
+                                        @error('password')
+                                            <span class="invalid-feedback">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
                                 </div>
-                                @if ($errors->has('password'))
-                                    <span class="invalid">
-                                        {{ $errors->first('password') }}
-                                    </span>
-                                @endif 
                             </div>
                         </div>
                     </div>

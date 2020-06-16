@@ -104,16 +104,14 @@
                                                                 <h1
                                                                     style="display: block;margin: 0;padding: 0;color: #202020;font-family: Helvetica;font-size: 26px;font-style: normal;font-weight: bold;line-height: 125%;letter-spacing: normal;text-align: left;">
                                                                     <span style="font-size:20px">Hai {{$user['name']}}!!</span></h1>
-                                                                Now you can access SIK BUMDES this is your account to access that
-                                                                website.<br>
+                                                                Sekarang anda dapat mengakses SIK BUMDES. Berikut email dan password untuk dapat masuk ke dalam sistem<br>
                                                                 Email : {{$user['email']}}<br>
                                                                 Password : {{$user['password']}}<br>
                                                                 <br>
-                                                                You can change your password when or reset them when you
-                                                                forget.
+                                                                Setelah berhasil login, segera anda melakukan penggantian password.
                                                                 <p
                                                                     style="margin: 10px 0;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #202020;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;">
-                                                                    Click This Button to enter the website</p>
+                                                                    Klik tombol di bawah ini untuk masuk ke dalam sistem</p>
 
                                                             </td>
                                                         </tr>
@@ -190,12 +188,10 @@
                                                             <td valign="top" class="mcnTextContent"
                                                                 style="padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #656565;font-family: Helvetica;font-size: 12px;line-height: 150%;text-align: center;">
 
-                                                                <div style="text-align: left;">If you’re having trouble
-                                                                    clicking the "Log In" button, copy and paste the URL
-                                                                    below into your web browser:&nbsp;<a
-                                                                        href="http://localhost:8000/login"
+                                                                <div style="text-align: left;">Jika ada kendala dalam mengklik tombol "Log In", salin URL di bawah ini ke dalam web browser:&nbsp;<a
+                                                                        href="https://bumdes.sikbumdes.com/dashboard/login"
                                                                         target="_blank"
-                                                                        style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #656565;font-weight: normal;text-decoration: underline;">http://localhost:8000/login</a>
+                                                                        style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #656565;font-weight: normal;text-decoration: underline;">https://bumdes.sikbumdes.com/dashboard/login</a>
                                                                 </div>
 
                                                             </td>
