@@ -31,10 +31,10 @@
                     </div>
                     <div class="card-body">
                         <div class="toolbar">
-                            <div class="d-flex">
-                                <div class="col-md-2 pl-0">
+                            <div class="row d-flex">
+                                <div class="col-md-2 pl-md-0">
                                     <div class="form-group">
-                                        <strong class="mr-3">Tahun : </strong>
+                                        <strong class="mr-3">Tahun</strong>
                                         <select class="w-100 pl-1 padding-select groupbyYear" style="border-radius: 3px;">
                                             <option value="0" disabled="true" selected="true">Tahun</option>
                                             @foreach ($years as $y)
@@ -50,7 +50,6 @@
                                         <strong class="mr-3">Bulan</strong>
                                         <select class="w-100 pl-1 padding-select groupbyMonth" style="border-radius: 3px;">
                                             <option value="0" disabled="true" selected="true">Bulan</option>
-                                            <option value="0">All</option>
                                             <option value="01" {{ $month == '01' ? 'selected' : '' }}>Januari</option>
                                             <option value="02" {{ $month == '02' ? 'selected' : '' }}>Februari</option>
                                             <option value="03" {{ $month == '03' ? 'selected' : '' }}>Maret</option>

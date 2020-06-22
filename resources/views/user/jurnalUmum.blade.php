@@ -238,7 +238,7 @@
                                 <div class="col-6">
                                     <div class="form-group date">
                                         <h6 class="text-dark font-weight-bold m-0">Tanggal</h6>
-                                        <input type="date" class="form-control" name="date" value="{{ old('date') }}" required>
+                                        <input type="date" class="form-control date" name="date" value="{{ old('date') }}" required>
                                     </div>
                                 </div>
                             </div>
@@ -248,7 +248,7 @@
                                     <div class="form-group debit">
                                         <h6 class="text-dark font-weight-bold m-0">Debit Akun</h6>
                                         <input type="hidden" name="id_debit">
-                                        <select class="form-control" name="id_debit_account" required>
+                                        <select class="form-control debit" name="id_debit_account" required>
                                             <option value="" selected="true">Select Akun</option>
                                             @foreach ($account as $a)
                                                 <option value="{{$a->id}}">
@@ -256,18 +256,20 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                        @error('id_credit_account')
+                                        @error('id_debit_account')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
                                         @enderror
+                                        <input type="hidden" id="awalDebit" name="awalDebit">
+                                        <input type="hidden" id="posisiDebit" name="posisiDebit">
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group credit">
                                         <h6 class="text-dark font-weight-bold m-0">Kredit Akun</h6>
                                         <input type="hidden" name="id_credit">
-                                        <select class="form-control" name="id_credit_account" required>
+                                        <select class="form-control credit" name="id_credit_account" required>
                                             <option value="" selected="true">Select Akun</option>
                                             @foreach ($account as $a)
                                                 <option value="{{$a->id}}">
@@ -280,6 +282,8 @@
                                                 <strong>{{ $message }}</strong>
                                             </span>
                                         @enderror
+                                        <input type="hidden" id="awalCredit" name="awalCredit">
+                                        <input type="hidden" id="posisiCredit" name="posisiCredit">
                                     </div>
                                 </div>
                             </div>
@@ -287,7 +291,8 @@
                                 <div class="col-12">
                                     <div class="form-group amount">
                                         <h6 class="text-dark font-weight-bold m-0">Jumlah</h6>
-                                        <input type="text" class="form-control" name="amount" value="{{ old('amount') }}" data-type="currency" required>
+                                        <input type="text" class="form-control" name="amount" value="{{ old('amount') }}" data-type="currency" 
+                                        id="inputNominal" onfocusout="namaFungsi()" required>
                                     </div>
                                 </div>
                             </div>
@@ -387,7 +392,6 @@
         })
     });
 
-
     $(document).on('click', '#search', function(e){
         e.preventDefault();
         var year = $("select.groupbyYear").val();
@@ -415,6 +419,7 @@
             $('select.groupbyDate').prop('disabled', false);
         }
     });
+    
     $(document).on('change', 'select.groupbyMonth', function(e){
         $('select.groupbyDate').prop('disabled', false);
     });
@@ -451,7 +456,6 @@
                     $('div.debit select').val(id_account_debit);
                     $('div.debit input').val(id_debit);
                     $('div.amount input').val(amount);
-                    console.log(id_account_credit);
                     $('div.credit select').val(id_account_credit);
                     $('div.credit input').val(id_credit);
                 })
@@ -461,7 +465,30 @@
         });
         var action = "{{route('jurnal.update')}}";
             $('#formEditJournal').attr('action',action);
-    })
+    });
+
+    @if (Session::has('error'))
+        $('#editJournal').modal('show');
+        var id = "{{old('id_detail')}}";
+        var debit = "{{old('id_debit_account')}}";
+        var credit = "{{old('id_credit_account')}}";
+        var id_credit = "{{old('id_credit')}}";
+        var id_debit = "{{old('id_debit')}}";
+        $('#id_detail').val(id);
+        $('div.debit select').val(debit);
+        $('div.credit select').val(credit);
+        $('div.credit input').val(id_credit);
+        $('div.debit input').val(id_debit);
+
+        var action = "{{route('jurnal.update')}}";
+        $('#formEditJournal').attr('action', action);
+        swal.fire(
+            'Gagal!',
+            'Saldo akun anda tidak cukup untuk melakukan transaksi ini',
+            'warning',
+        )
+    @endif
+
 </script>
 <script>
     // Jquery Dependency

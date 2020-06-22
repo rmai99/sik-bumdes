@@ -97,6 +97,7 @@ class DashboardController extends Controller
         } else {
             $sum = 0;
         }
+        
         if($sum >=1000000 || $sum <=1000000){
             $sum = round(($sum/1000000),1).' jt';
         }

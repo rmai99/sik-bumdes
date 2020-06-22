@@ -9,7 +9,9 @@ use App\Employee;
 use App\GeneralJournal;
 use App\Account;
 use App\DetailJournal;
+use App\InitialBalance;
 use Auth;
+use Redirect;
 
 class GeneralJournalController extends Controller
 {
@@ -17,9 +19,7 @@ class GeneralJournalController extends Controller
     public function __construct()
     {
         $this->middleware(['role:company|employee']);
-
         $this->middleware('auth');
-        
     }
     
     public function index()
@@ -112,8 +112,80 @@ class GeneralJournalController extends Controller
         return view('user.tambahJurnal', compact('account', 'session', 'business', 'getBusiness'));
     }
 
+    public function test(Request $request){
+        $user = Auth::user();
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first()->id;
+            }
+            $getBusiness = Business::with('company')
+            ->where('id_company', $company)
+            ->where('id', $session)->first();
+        } else {
+            $getBusiness = Employee::with('business')->where('id_user', $user->id)->first();
+            $session = $getBusiness->id_business;
+        }
+
+        $id = $request->account;
+        
+        $initial_balance = InitialBalance::with('account.classification.parent')
+        ->whereHas('account.classification.parent', function($q) use ($session){
+            $q->where('id_business', $session);
+        })->whereHas('account', function($q) use ($id){
+            $q->where('id_account', $id);
+        })->whereYear('date', $request->date)->get();
+        
+        return response()->json($initial_balance);
+    }
+
     public function store(Request $request)
     {
+        $debit = InitialBalance::with('account')->where('id_account', $request->id_debit_account)
+        ->whereYear('date', $request->date)->first();
+        
+        $kredit = InitialBalance::with('account')->where('id_account', $request->id_credit_account)
+        ->whereYear('date', $request->date)->first();
+        
+        $amount = $request->amount;
+        $convert_amount = preg_replace("/[^0-9]/", "", $amount);
+        
+        if(!$debit){
+            $saldo_debit = 0;
+            $debit = Account::where('id', $request->id_debit_account)->first();
+            if($debit->position == "Kredit"){
+                if($convert_amount > $saldo_debit){
+                    return Redirect::back()->withInput()->withError('insufficient');
+                }
+            }
+        } else {
+            $saldo_debit = $debit->amount;
+            if($debit->account->position == "Kredit"){
+                if($convert_amount > $saldo_debit){
+                    return Redirect::back()->withInput()->withError('insufficient');
+                }
+            }
+        }
+        if(!$kredit){
+            $saldo_kredit = 0;
+            $kredit = Account::where('id', $request->id_debit_account)->first();
+            if($kredit->position == "Debit"){
+                if($convert_amount > $saldo_kredit){
+                    return Redirect::back()->withInput()->withError('insufficient');
+                }
+            }
+        } else {
+            $saldo_kredit = $kredit->amount;
+            if($kredit->account->position == "Debit"){
+                if($convert_amount > $saldo_kredit){
+                    return Redirect::back()->withInput()->withError('insufficient');
+                }
+            }
+        }
+
         $this->validate($request,[
             'id_debit_account' => 'different:id_credit_account',
             'id_credit_account' => 'different:id_debit_account',
@@ -122,8 +194,6 @@ class GeneralJournalController extends Controller
             'id_debit_account.different' => 'Akun debit dan kredit tidak boleh sama',
             'id_credit_account.different' => 'Akun debit dan kredit tidak boleh sama'
         ]);
-        $amount = $request->amount;
-        $convert_amount = preg_replace("/[^0-9]/", "", $amount);
 
         $detail = new DetailJournal();
         $detail->receipt = $request->receipt;
@@ -166,6 +236,48 @@ class GeneralJournalController extends Controller
 
     public function update(Request $request)
     {
+        $debit = InitialBalance::with('account')->where('id_account', $request->id_debit_account)
+        ->whereYear('date', $request->date)->first();
+        
+        $kredit = InitialBalance::with('account')->where('id_account', $request->id_credit_account)
+        ->whereYear('date', $request->date)->first();
+        
+        $amount = $request->amount;
+        $convert_amount = preg_replace("/[^0-9]/", "", $amount);
+        
+        if(!$debit){
+            $saldo_debit = 0;
+            $debit = Account::where('id', $request->id_debit_account)->first();
+            if($debit->position == "Kredit"){
+                if($convert_amount > $saldo_debit){
+                    return Redirect::back()->withInput()->withError('insufficient');
+                }
+            }
+        } else {
+            $saldo_debit = $debit->amount;
+            if($debit->account->position == "Kredit"){
+                if($convert_amount > $saldo_debit){
+                    return Redirect::back()->withInput()->withError('insufficient');
+                }
+            }
+        }
+        if(!$kredit){
+            $saldo_kredit = 0;
+            $kredit = Account::where('id', $request->id_debit_account)->first();
+            if($kredit->position == "Debit"){
+                if($convert_amount > $saldo_kredit){
+                    return Redirect::back()->withInput()->withError('insufficient');
+                }
+            }
+        } else {
+            $saldo_kredit = $kredit->amount;
+            if($kredit->account->position == "Debit"){
+                if($convert_amount > $saldo_kredit){
+                    return Redirect::back()->withInput()->withError('insufficient');
+                }
+            }
+        }
+
         $this->validate($request,[
             'id_debit_account' => 'different:id_credit_account',
             'id_credit_account' => 'different:id_debit_account',
@@ -174,11 +286,6 @@ class GeneralJournalController extends Controller
             'id_debit_account.different' => 'Akun debit dan kredit tidak boleh sama',
             'id_credit_account.different' => 'Akun debit dan kredit tidak boleh sama'
         ]);
-
-        $amount = $request->amount;
-        $convert_amount = preg_replace("/[^0-9]/", "", $amount);
-
-        // dd($request->id_detail);
 
         $detail = DetailJournal::findOrFail($request->id_detail);
         $detail->receipt = $request->receipt;

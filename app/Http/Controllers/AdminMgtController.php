@@ -104,7 +104,7 @@ class AdminMgtController extends Controller
      */
     public function destroy($id)
     {
-        InitialBalance::find($id)->delete($id);
+        User::find($id)->delete($id);
         
         return response()->json([
             'success' => 'Record deleted successfully!'

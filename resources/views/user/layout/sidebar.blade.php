@@ -8,7 +8,7 @@
     <li class="nav-item {{ Request::segment(1) === 'profile' ? 'active' : null }}">
         <a class="nav-link" data-toggle="collapse" href="#profile" aria-expanded="true">
             <i class="material-icons">person</i>
-            <p> Kelola Perusahaan
+            <p> Kelola Unit Usaha
                 <b class="caret"></b>
             </p>
         </a>

@@ -68,9 +68,14 @@ class ChangePasswordController extends Controller
         // dd($request->new_confirm_password);
         $request->validate([
             'current_password' => ['required', new MatchOldPassword],
-            'new_password' => ['required'],
+            'new_password' => ['required', 'min:8'],
             'new_confirm_password' => ['same:new_password'],
+        ],
+        [
+            'new_password.required' => 'Password baru tidak boleh kosong',
+            'new_password.min' => 'Password baru minimal 8 karakter',
         ]);
+
         User::find(auth()->user()->id)->update(['password'=> Hash::make($request->new_password)]);
 
         return redirect()->route('ganti_password.index')->with('toast_success','Berhasil Mengubah kata Sandi!');

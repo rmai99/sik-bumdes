@@ -31,8 +31,8 @@
                     </div>
                     <div class="card-body">
                         <div class="toolbar">
-                            <div class="d-flex">
-                                <div class="col-md-2 pl-0">
+                            <div class="row d-flex">
+                                <div class="col-md-2 pl-md-0 pl-0">
                                     <div class="form-group">
                                         <strong class="mr-3">Tahun : </strong>
                                         <select class="w-100 pl-1 padding-select groupbyYear" style="border-radius: 3px;">
@@ -51,7 +51,6 @@
                                         <strong class="mr-3">Bulan</strong>
                                         <select class="w-100 pl-1 padding-select groupbyMonth" style="border-radius: 3px;">
                                             <option value="0" disabled="true" selected="true">Bulan</option>
-                                            <option value="0">Semua</option>
                                             <option value="01" {{ $month == '01' ? 'selected' : '' }}>Januari</option>
                                             <option value="02" {{ $month == '02' ? 'selected' : '' }}>Februari</option>
                                             <option value="03" {{ $month == '03' ? 'selected' : '' }}>Maret</option>
@@ -84,7 +83,7 @@
                                 <tbody>
                                     <tr>
                                         <td style="width:60%">
-                                            <strong>LABA DITAHAN PERIODE SEBELUMNYA</strong>
+                                            <strong>Modal Awal</strong>
                                         </td>
                                         <td style="width:10%"></td>
                                     </tr>
@@ -116,7 +115,11 @@
                                                     {{ $equityArray[$i]['code'] }} - {{ $equityArray[$i]['name'] }}
                                                 </td>
                                                 <td class="text-right" style="width:10%">
-                                                    Rp{{strrev(implode('.',str_split(strrev(strval($saldo_berjalan)),3)))}}
+                                                    @if ($saldo_berjalan < 0)
+                                                        -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$saldo_berjalan)),3)))}}
+                                                    @else
+                                                        Rp{{strrev(implode('.',str_split(strrev(strval($saldo_berjalan)),3)))}}
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endif
@@ -126,7 +129,11 @@
                                             <strong  class="text-danger">TOTAL EKUITAS AKHIR PERIODE</strong>
                                         </td>
                                         <td class="text-right" style="width:10%">
-                                            Rp{{strrev(implode('.',str_split(strrev(strval($modal_awal + $saldo_berjalan)),3)))}}
+                                            @if ($modal_awal + $saldo_berjalan < 0)
+                                                -Rp{{strrev(implode('.',str_split(strrev(strval(-1*($modal_awal + $saldo_berjalan))),3)))}}
+                                            @else
+                                                Rp{{strrev(implode('.',str_split(strrev(strval($modal_awal + $saldo_berjalan)),3)))}}
+                                            @endif
                                         </td>
                                     </tr>
                                 </tbody>

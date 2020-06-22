@@ -35,7 +35,7 @@
                     </div>
                     <div class="card-body">
                         <div class="toolbar">
-                            <div class="d-flex">
+                            <div class="row d-flex">
                                 <div class="col-md-2 pl-md-0 pr-2">
                                     <div class="form-group">
                                         <strong class="mr-3">Tahun :</strong>
@@ -55,7 +55,6 @@
                                         <strong class="mr-3">Bulan</strong>
                                         <select class="w-100 pl-1 padding-select groupbyMonth" style="border-radius: 3px;">
                                             <option value="0" disabled="true" selected="true">Bulan</option>
-                                            <option>All</option>
                                             <option value="01" {{ $month == '01' ? 'selected' : '' }}>Januari</option>
                                             <option value="02" {{ $month == '02' ? 'selected' : '' }}>Februari</option>
                                             <option value="03" {{ $month == '03' ? 'selected' : '' }}>Maret</option>
@@ -155,8 +154,24 @@
                                 <tr>
                                     <td><strong>Total</strong></td>
                                     <td><strong></strong></td>
-                                    <td><strong>Rp{{strrev(implode('.',str_split(strrev(strval($jumlah_debit)),3)))}} </strong></td>
-                                    <td><strong>Rp{{strrev(implode('.',str_split(strrev(strval($jumlah_kredit)),3)))}} </strong></td>
+                                    <td>
+                                        <strong>
+                                            @if ($jumlah_debit < 0)
+                                                -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$jumlah_debit)),3)))}}
+                                            @else
+                                                Rp{{strrev(implode('.',str_split(strrev(strval($jumlah_debit)),3)))}}
+                                            @endif
+                                        </strong>
+                                    </td>
+                                    <td>
+                                        <strong>
+                                            @if ($jumlah_kredit < 0)
+                                                -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$jumlah_kredit)),3)))}}
+                                            @else
+                                                Rp{{strrev(implode('.',str_split(strrev(strval($jumlah_kredit)),3)))}}
+                                            @endif
+                                        </strong>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>

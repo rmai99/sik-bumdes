@@ -30,7 +30,7 @@
                     </div>
                     <div class="ml-3">
                         <h4 class="font-weight-bold">Sistem Informasi Keuangan</h4>
-                        <h4 class="font-weight-bold">Badan Keuangan Milik Desa</h4>
+                        <h4 class="font-weight-bold">Badan Usaha Milik Desa</h4>
                     </div>
                 </a>
             </div>

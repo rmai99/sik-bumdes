@@ -50,7 +50,7 @@
                                 </span>
                                 @enderror
                             </div>
-                            <p class="mb-0 font-14">Nomor Telepon</p>
+                            <p class="mb-0 font-14">Nomor HP</p>
                             <div class="input-group mb-2">
                                 <div class="input-group-append">
                                     <div class="input-group-text">

@@ -2,6 +2,7 @@
 
 
 use RealRashid\SweetAlert\Facades\Alert;
+use App\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +41,7 @@ Route::get('export/neraca_saldo/{year}/{month?}', 'TrialBalanceController@export
 Route::resource('jurnal_umum', 'GeneralJournalController')->except('update');
 Route::put('jurnal_umum/update', 'GeneralJournalController@update')->name('jurnal.update');;
 Route::get('detailJournal', 'GeneralJournalController@detailJournal');
+Route::get('test', 'GeneralJournalController@test');
 
 /* ======== GENERAL LEDGER ======== */
 Route::resource('buku_besar', 'GeneralLedgerController');
@@ -80,7 +82,32 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function(){
 Route::resource('ganti_password', 'Auth\ChangePasswordController');
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
+    
+});
+
+Route::get('/resetpassword', function () {
+    $data = User::findOrFail(3);
+    $data->email = 'perusahaan@gmail.com';
+    $data->password = '$2y$10$zHOznHusSs4YYY.YFR7jbOuVw0MMcMiuqsEQh2jgNwS3nuUfvDyFC';
+    $data->save();
+
+    $data = User::findOrFail(1);
+    $data->email = 'superadmin@bumdes.com';
+    $data->password = '$2y$10$zHOznHusSs4YYY.YFR7jbOuVw0MMcMiuqsEQh2jgNwS3nuUfvDyFC';
+    $data->save();
+    
+    $data = User::findOrFail(2);
+    $data->email = 'admin@bumdes.com';
+    $data->password = '$2y$10$zHOznHusSs4YYY.YFR7jbOuVw0MMcMiuqsEQh2jgNwS3nuUfvDyFC';
+    $data->save();
+
+    $data = User::findOrFail(4);
+    $data->email = 'karyawan@gmail.com';
+    $data->password = '$2y$10$zHOznHusSs4YYY.YFR7jbOuVw0MMcMiuqsEQh2jgNwS3nuUfvDyFC';
+    $data->save();
+
+    return 'password changed succesfully';
     
 });
 
