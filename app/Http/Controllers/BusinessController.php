@@ -216,9 +216,9 @@ class BusinessController extends Controller
     public function destroy($id)
     {
         $user = Auth::user()->id;
-        $company = Companies::where('id_user', $user)->first()->id;
-        $business = Business::where('id_company', $company)->count();
-        if($business != 1){
+        $company = Companies::where('id_user', $user)->first();
+        // $business = Business::where('id_company', $company)->count();
+        if($company->is_actived == 1){
             Business::findOrFail($id)->delete($id);
             return response()->json([
                 'success' => 'Record deleted successfully!'

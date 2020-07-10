@@ -16,7 +16,7 @@ class CreateAccountsTable extends Migration
         Schema::create('accounts', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('id_classification')->nullable();;
-            $table->foreign('id_classification')->references('id')->on('account_classifications')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('id_classification')->references('id')->on('account_classifications');
             $table->string('account_code');
             $table->string('account_name');
             $table->enum('position', ['Debit','Kredit']);

@@ -15433,7 +15433,7 @@ fieldset[disabled] .form-group.is-focused .togglebutton label {
 }
 
 .sidebar .logo .simple-text {
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   padding: 5px 0px;
   display: inline-block;
   font-size: 18px;

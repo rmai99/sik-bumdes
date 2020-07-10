@@ -15,8 +15,8 @@ class CreateParentAccountsTable extends Migration
     {
         Schema::create('account_parent', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('id_business');
-            $table->foreign('id_business')->references('id')->on('businesses')->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedInteger('id_business')->nullable();
+            $table->foreign('id_business')->references('id')->on('businesses')->onUpdate('cascade')->onDelete('set null');
             $table->integer('parent_code');
             $table->string('parent_name');
             $table->timestamps();

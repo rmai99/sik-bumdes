@@ -8,7 +8,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="text-center mt-3 mb-1">
-                            <h3> SIK <strong> BUMDES </strong> </h3>
+                            <h3> SIK <strong> BUMDes </strong> </h3>
                         </div>
                         <form method="POST" action="{{ route('register') }}">
                             @csrf

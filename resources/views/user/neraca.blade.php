@@ -261,29 +261,7 @@
                                       </tr>
                                       @if (isset($assetArray[$i]['name']))
                                         @for ($j = 0; $j < sizeof($equityArray[$i]['ending balance']); $j++)
-                                        @if ($equityArray[$i]['name'][$j] != "Saldo Laba Ditahan")
-                                          <tr>
-                                            <td style="width:60%;padding-left: 3rem!important;">
-                                              {{$equityArray[$i]['code'][$j]}} - {{$equityArray[$i]['name'][$j]}}
-                                            </td>
-                                            <td style="width:15%">
-                                                
-                                            </td>
-                                            <td style="width:15%">
-                                            </td>
-                                            <td class="text-right" style="width:10%">
-                                              @if ($equityArray[$i]['ending balance'][$j] < 0)
-                                                - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$equityArray[$i]['ending balance'][$j])),3)))}}
-                                              @else
-                                                Rp{{strrev(implode('.',str_split(strrev(strval($equityArray[$i]['ending balance'][$j])),3)))}}
-                                              @endif
-                                              @php
-                                                  $sum_ekuitas += $equityArray[$i]['ending balance'][$j];
-                                              @endphp
-                                            </td>
-                                          </tr>
-                                        @endif
-                                        @if ($equityArray[$i]['name'][$j] == "Saldo Laba Ditahan")
+                                        @if ($equityArray[$i]['name'][$j] == "Modal Disetor")
                                           <tr>
                                             <td style="width:60%;padding-left: 3rem!important;">
                                               {{$equityArray[$i]['code'][$j]}} - {{$equityArray[$i]['name'][$j]}}
@@ -301,6 +279,28 @@
                                               @endif
                                               @php
                                                   $sum_ekuitas += $equitas;
+                                              @endphp
+                                            </td>
+                                          </tr>
+                                        @endif
+                                        @if ($equityArray[$i]['name'][$j] != "Modal Disetor" && $equityArray[$i]['name'][$j] != "Saldo Laba Tahun Berjalan" && $equityArray[$i]['name'][$j] != "Prive" )
+                                          <tr>
+                                            <td style="width:60%;padding-left: 3rem!important;">
+                                              {{$equityArray[$i]['code'][$j]}} - {{$equityArray[$i]['name'][$j]}}
+                                            </td>
+                                            <td style="width:15%">
+                                                
+                                            </td>
+                                            <td style="width:15%">
+                                            </td>
+                                            <td class="text-right" style="width:10%">
+                                              @if ($equityArray[$i]['ending balance'][$j] < 0)
+                                                - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$equityArray[$i]['ending balance'][$j])),3)))}}
+                                              @else
+                                                Rp{{strrev(implode('.',str_split(strrev(strval($equityArray[$i]['ending balance'][$j])),3)))}}
+                                              @endif
+                                              @php
+                                                  $sum_ekuitas += $equityArray[$i]['ending balance'][$j];
                                               @endphp
                                             </td>
                                           </tr>

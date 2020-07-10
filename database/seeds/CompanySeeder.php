@@ -14,15 +14,15 @@ class CompanySeeder extends Seeder
      */
     public function run()
     {
-        for($k = 0; $k <= 50; $k++){
+        for($k = 0; $k <= 1; $k++){
             $faker = Faker::create('id_ID');
 
             $user = User::create([
                 'email' => $faker->email,
-                'password' => $faker->password,
+                'password' => Hash::make('password'),
             ]);
 
-            $user->assignRole('owner');
+            $user->assignRole('company');
 
             $uid = $user->id;
 

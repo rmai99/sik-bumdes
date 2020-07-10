@@ -16,7 +16,7 @@ class CreateAccountClassificationsTable extends Migration
         Schema::create('account_classifications', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('id_parent');
-            $table->foreign('id_parent')->references('id')->on('account_parent')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('id_parent')->references('id')->on('account_parent');
             $table->string('classification_code');
             $table->string('classification_name');
             $table->timestamps();

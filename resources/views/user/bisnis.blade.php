@@ -154,7 +154,6 @@
         @if ($errors->has('name'))
             $('#editBusiness').modal('show');
             var name = "{{old('name')}}";
-            console.log("maidaa");
             $('#name').val(name);
             
             var id = "{{old('id')}}";

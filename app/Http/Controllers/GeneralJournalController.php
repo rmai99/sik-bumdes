@@ -171,7 +171,7 @@ class GeneralJournalController extends Controller
         }
         if(!$kredit){
             $saldo_kredit = 0;
-            $kredit = Account::where('id', $request->id_debit_account)->first();
+            $kredit = Account::where('id', $request->id_credit_account)->first();
             if($kredit->position == "Debit"){
                 if($convert_amount > $saldo_kredit){
                     return Redirect::back()->withInput()->withError('insufficient');

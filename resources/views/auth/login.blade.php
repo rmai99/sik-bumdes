@@ -6,7 +6,7 @@
         <div class="col-sm-6 col-lg-4">
             <div class="card">
                 <div class="text-center mt-3 mb-1">
-                    <h3> SIK <strong> BUMDES </strong> </h3>
+                    <h3> SIK <strong> BUMDes </strong> </h3>
                 </div>
 
                 <div class="card-body">

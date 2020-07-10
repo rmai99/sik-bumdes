@@ -172,6 +172,7 @@
                                                     @endif
                                                     @if ($cek->position == "Kredit")
                                                         <td></td>
+                                                        <td></td>
                                                         <td>{{ $cek->account->account_name }}</td>
                                                         <td>
                                                             Rp{{strrev(implode('.',str_split(strrev(strval($item->amount)),3)))}}
@@ -460,7 +461,11 @@
                     $('div.credit input').val(id_credit);
                 })
             }, error    : function(){
-                
+                swal.fire(
+                    'Gagal!',
+                    'Saldo akun anda tidak cukup untuk melakukan transaksi ini',
+                    'warning',
+                )
             },
         });
         var action = "{{route('jurnal.update')}}";

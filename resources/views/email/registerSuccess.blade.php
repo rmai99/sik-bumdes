@@ -104,7 +104,7 @@
                                                                 <h1
                                                                     style="display: block;margin: 0;padding: 0;color: #202020;font-family: Helvetica;font-size: 26px;font-style: normal;font-weight: bold;line-height: 125%;letter-spacing: normal;text-align: left;">
                                                                     <span style="font-size:20px">Hai {{$user['name']}}!!</span></h1>
-                                                                Sekarang anda dapat mengakses SIK BUMDES. Berikut email dan password untuk dapat masuk ke dalam sistem<br>
+                                                                Sekarang anda dapat mengakses SIK BUMDes. Berikut email dan password untuk dapat masuk ke dalam sistem<br>
                                                                 Email : {{$user['email']}}<br>
                                                                 Password : {{$user['password']}}<br>
                                                                 <br>
@@ -140,7 +140,7 @@
                                                             <td align="center" valign="middle" class="mcnButtonContent"
                                                                 style="font-family: Arial;font-size: 12px;padding: 15px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
                                                                 <a class="mcnButton " title="Log In"
-                                                                    href="http://localhost:8000/login" target="_blank"
+                                                                    href="https://bumdes.sikbumdes.com/dashboard/login" target="_blank"
                                                                     style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;">Log
                                                                     In</a>
                                                             </td>

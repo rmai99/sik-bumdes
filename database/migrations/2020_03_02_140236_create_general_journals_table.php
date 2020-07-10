@@ -20,6 +20,7 @@ class CreateGeneralJournalsTable extends Migration
             $table->unsignedInteger('id_account');
             $table->foreign('id_account')->references('id')->on('accounts')->onUpdate('cascade')->onDelete('cascade');
             $table->enum('position',['Debit','Kredit']);
+            $table->integer('amount');
             $table->timestamps();
         });
     }

@@ -54,6 +54,7 @@
         $dt = Request::segment(3);
         setlocale(LC_ALL, 'id_ID');
         $modal_awal = 0;
+        $prive = 0;
     @endphp
     <div>
         <div>
@@ -70,49 +71,79 @@
                 <tbody>
                     <tr>
                         <td style="width:60%">
-                            <strong>LABA DITAHAN PERIODE SEBELUMNYA</strong>
+                            <strong>Modal Awal</strong>
                         </td>
-                        <td style="width:10%"></td>
-                    </tr>
-                    @for ($i = 1; $i <= sizeof($equityArray); $i++)
-                        @if ($equityArray[$i]['name'] != "Modal Disetor" && $equityArray[$i]['name'] != "Modal Usaha")
-                            <tr>
-                                <td style="width:60%;">
-                                    {{ $equityArray[$i]['code'] }} - {{ $equityArray[$i]['name'] }}
-                                </td>
-                                <td class="text-right" style="width:10%">
+                        <td></td>
+                        <td style="width:10%" class="text-right">
+                            @for ($i = 1; $i <= sizeof($equityArray); $i++)
+                                @if ($equityArray[$i]['name'] == "Modal Disetor")
+                                <strong>
                                     Rp{{strrev(implode('.',str_split(strrev(strval($equityArray[$i]['ending balance'])),3)))}}
+                                </strong>
                                     @php
                                         $modal_awal += $equityArray[$i]['ending balance'];
                                     @endphp
-                                </td>
-                            </tr>
-                        @endif
-                    @endfor
-                    <tr>
-                        <td style="width:60%">
-                            <strong>PENAMBAHAN/PENGURANGAN LABA DITAHAN</strong>
+                                @endif
+                            @endfor
                         </td>
-                        <td style="width:10%"></td>
+                    </tr>
+                    <tr>
+                        <td style="width:60%;padding-left: 1.5rem!important;">
+                            Laba bersih
+                        </td>
+                        <td style="width:10%" class="text-right">
+                            @if ($saldo_berjalan < 0)
+                                -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$saldo_berjalan)),3)))}}
+                            @else
+                                Rp{{strrev(implode('.',str_split(strrev(strval($saldo_berjalan)),3)))}}
+                            @endif
+                        </td>
+                        <td></td>
                     </tr>
                     @for ($i = 1; $i <= sizeof($equityArray); $i++)
-                        @if ($equityArray[$i]['name'] == "Saldo Laba Tahun Berjalan" || $equityArray[$i]['name'] == "Laba Ditahan")
+                        @if ($equityArray[$i]['name'] == "Prive")
                             <tr>
-                                <td style="width:60%;">
-                                    {{ $equityArray[$i]['code'] }} - {{ $equityArray[$i]['name'] }}
+                                <td style="width:60%;padding-left: 1.5rem!important;">
+                                    {{ $equityArray[$i]['name'] }}
                                 </td>
                                 <td class="text-right" style="width:10%">
-                                    Rp{{strrev(implode('.',str_split(strrev(strval($saldo_berjalan)),3)))}}
+                                    @if ($equityArray[$i]['ending balance'] < 0)
+                                        -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$equityArray[$i]['ending balance'])),3)))}}
+                                    @else
+                                        Rp{{strrev(implode('.',str_split(strrev(strval($equityArray[$i]['ending balance'])),3)))}}
+                                    @endif
+                                    @php
+                                        $prive += $equityArray[$i]['ending balance'];
+                                    @endphp
                                 </td>
+                                <td></td>
                             </tr>
                         @endif
                     @endfor
                     <tr>
                         <td style="width:60%">
-                            <strong  class="text-danger">TOTAL EKUITAS AKHIR PERIODE</strong>
+                            <strong>Total Penambahan Modal</strong>
                         </td>
+                        <td></td>
+                        <td style="width:10%" class="text-right">
+                            @if ($saldo_berjalan >= 0)
+                                Rp{{strrev(implode('.',str_split(strrev(strval($saldo_berjalan - $prive)),3)))}}
+                            @else
+                                Rp{{strrev(implode('.',str_split(strrev(strval($saldo_berjalan + $prive)),3)))}}
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width:60%">
+                            <strong  class="text-danger">Modal Akhir</strong>
+                        </td>
+                        <td></td>
                         <td class="text-right" style="width:10%">
-                            Rp{{strrev(implode('.',str_split(strrev(strval($modal_awal + $saldo_berjalan)),3)))}}
+                            @if ($saldo_berjalan >= 0)
+                                Rp{{strrev(implode('.',str_split(strrev(strval($modal_awal + $saldo_berjalan - $prive)),3)))}}
+                            @else
+                                Rp{{strrev(implode('.',str_split(strrev(strval($modal_awal - $saldo_berjalan + $prive)),3)))}}
+                            @endif
                         </td>
                     </tr>
                 </tbody>

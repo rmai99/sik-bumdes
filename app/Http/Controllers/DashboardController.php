@@ -50,6 +50,7 @@ class DashboardController extends Controller
         })->count();
 
         $year = date('Y');
+        $month = date('m');
 
         $transaction = DetailJournal::whereHas('journal.account.classification.parent', function ($q) use ($session){
             $q->where('id_business', $session);
@@ -58,7 +59,7 @@ class DashboardController extends Controller
         $data = DetailJournal::with('journal.account')
         ->whereHas('journal.account.classification.parent', function($q) use($session){
             $q->where('id_business', $session);
-        })->whereYear('date', $year)->orderBy('date', 'DESC')->paginate(3);
+        })->whereYear('date', $year)->orderBy('created_at', 'DESC')->paginate(3);
 
         $years = DetailJournal::selectRaw('YEAR(date) as year')
         ->orderBy('date', 'desc')->distinct()->get();
@@ -76,8 +77,10 @@ class DashboardController extends Controller
             }
 
             if($cash->journal()->exists()){
-                $jurnals = $cash->journal()->whereHas('detail', function($q) use($year){
+                $jurnals = $cash->journal()->whereHas('detail', function($q) use($year, $month){
                     $q->whereYear('date', $year);
+                    $q->whereMonth('date', '>=', '01');
+                    $q->whereMonth('date', '<=', $month);
                 })->get();
                 
                 foreach($jurnals as $jurnal){
@@ -97,7 +100,6 @@ class DashboardController extends Controller
         } else {
             $sum = 0;
         }
-        
         if($sum >=1000000 || $sum <=1000000){
             $sum = round(($sum/1000000),1).' jt';
         }
@@ -115,8 +117,10 @@ class DashboardController extends Controller
                     }
                     if($a->journal()->exists()){
                         $endingBalance = $beginningBalance;
-                        $jurnals = $a->journal()->whereHas('detail', function($q) use($year){
+                        $jurnals = $a->journal()->whereHas('detail', function($q) use($year, $month){
                             $q->whereYear('date', $year);
+                            $q->whereMonth('date', '>=', '01');
+                            $q->whereMonth('date', '<=', $month);
                         })->get();
                         foreach($jurnals as $jurnal){
                             if ($jurnal->position == $position) {

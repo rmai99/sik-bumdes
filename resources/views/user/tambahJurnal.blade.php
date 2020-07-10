@@ -223,41 +223,41 @@
 
     });
 
-    function namaFungsi() {
-        var awal = $("#awalCredit").val();
-        var awal2 = $("#awalDebit").val();
-        var nominal = $('#inputNominal').val();
-        var fixed1 = nominal.replace(/,/g, "");
-        fixed = fixed1.replace("Rp", "");
-        console.log(fixed);
-        var posisiCredit = $("#posisiCredit").val();
-        var posisiDebit = $("#posisiDebit").val();
-        console.log(awal+" "+awal2+" "+fixed);
+    // function namaFungsi() {
+    //     var awal = $("#awalCredit").val();
+    //     var awal2 = $("#awalDebit").val();
+    //     var nominal = $('#inputNominal').val();
+    //     var fixed1 = nominal.replace(/,/g, "");
+    //     fixed = fixed1.replace("Rp", "");
+    //     console.log(fixed);
+    //     var posisiCredit = $("#posisiCredit").val();
+    //     var posisiDebit = $("#posisiDebit").val();
+    //     console.log(awal+" "+awal2+" "+fixed);
         
-        if(posisiDebit == "Kredit"){
-            if(parseInt(fixed) > parseInt(awal2)){
-                alert(awal+" "+awal2+" "+fixed);
-                console.log("true");
-                swal.fire(
-                    'Gagal!',
-                    'Saldo akun anda tidak cukup untuk melakukan transaksi ini',
-                    'warning',
-                )
-                $('#inputNominal').val("");
-            }
-        }
-        if(posisiCredit == "Debit"){
-            if(parseInt(fixed) > parseInt(awal)){
-                console.log("true2");
-                swal.fire(
-                    'Gagal!',
-                    'Saldo akun anda tidak cukup untuk melakukan transaksi ini',
-                    'warning',
-                )
-                $('#inputNominal').val("");
-            }
-        }
-    }
+    //     if(posisiDebit == "Kredit"){
+    //         if(parseInt(fixed) > parseInt(awal2)){
+    //             alert(awal+" "+awal2+" "+fixed);
+    //             console.log("true");
+    //             swal.fire(
+    //                 'Gagal!',
+    //                 'Saldo akun anda tidak cukup untuk melakukan transaksi ini',
+    //                 'warning',
+    //             )
+    //             $('#inputNominal').val("");
+    //         }
+    //     }
+    //     if(posisiCredit == "Debit"){
+    //         if(parseInt(fixed) > parseInt(awal)){
+    //             console.log("true2");
+    //             swal.fire(
+    //                 'Gagal!',
+    //                 'Saldo akun anda tidak cukup untuk melakukan transaksi ini',
+    //                 'warning',
+    //             )
+    //             $('#inputNominal').val("");
+    //         }
+    //     }
+    // }
 
     @if ($errors->has('id_debit_account'))
         var debit = "{{old('id_debit_account')}}";

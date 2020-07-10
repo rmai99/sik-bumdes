@@ -3,6 +3,6 @@
     </nav>
     <div class="copyright float-right">
         &copy;
-        <strong>SIK BUMDES</strong>, All rights reserved
+        <strong>SIK BUMDes</strong>, All rights reserved
     </div>
 </div>

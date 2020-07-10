@@ -536,6 +536,12 @@
                             'success'
                             )
                             $(this).closest('tr').remove();
+                        }, error    : function(){
+                            Swal.fire(
+                                'Gagal!',
+                                'Tidak dapat dihapus karena digunakan pada data lain.',
+                                'warning'
+                            )
                         }
                     });
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
@@ -573,10 +579,16 @@
                         success: (response) => {
                             Swal.fire(
                             'Dihapus!',
-                            'Klasifikasi telah dihapus.',
+                            'Tidak dapat dihapus karena digunakan pada data lain.',
                             'success'
                             )
                             $(this).closest('tr').remove();
+                        }, error    : function(){
+                            Swal.fire(
+                                'Gagal!',
+                                'Akun tidak dapat dihapus karena digunakan untuk di data lain.',
+                                'warning'
+                            )
                         }
                     });
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
