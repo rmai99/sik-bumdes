@@ -131,64 +131,60 @@
                                         <th rowspan="2">Tanggal</th>
                                         <th rowspan="2" style="width:10%">No Kwitansi</th>
                                         <th rowspan="2">Keterangan</th>
-                                        <th colspan="2">Debit</th>
-                                        <th colspan="2">Kredit</th>
+                                        <th colspan="2">Nama Akun</th>
+                                        <th colspan="2">Jumlah</th>
                                         <th rowspan="2">Aksi</th>
                                     </tr>
                                     <tr>
-                                        <th>Akun</th>
-                                        <th>Jumlah</th>
-                                        <th>Akun</th>
-                                        <th>Jumlah</th>
+                                        <th>Debit</th>
+                                        <th>Kredit</th>
+                                        <th>Debit</th>
+                                        <th>Kredit</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($data as $item)
-                                        <tr>
-                                            <td style="width:15%">{{ strftime("%d %B %G", strtotime($item->date)) }}</td>
-                                            <td>{{ $item->receipt }}</td>
-                                            <td style="width:35%">{{ $item->description }}</td>
-                                            @foreach ($item->journal()->orderBy('id', 'ASC')->get() as $cek)
-                                                @if ($item->journal()->count() == 2)
-                                                    @if ($cek->position == "Debit")
-                                                        <td>{{ $cek->account->account_name }}</td>
-                                                        <td>
-                                                            Rp{{strrev(implode('.',str_split(strrev(strval($item->amount)),3)))}}
-                                                        </td>
-                                                    @endif
-                                                    @if ($cek->position == "Kredit")
-                                                        <td>{{ $cek->account->account_name }}</td>
-                                                        <td>
-                                                            Rp{{strrev(implode('.',str_split(strrev(strval($item->amount)),3)))}}
-                                                        </td>
-                                                    @endif
+                                        @php
+                                            $count = 0;
+                                        @endphp
+                                        @foreach ($item->journal()->orderBy('id', 'ASC')->get() as $jurnal)
+                                            <tr>
+                                                <td>{{ strftime("%d %B %G", strtotime($item->date)) }}</td>
+                                                <td>{{ $item->receipt }}</td>
+                                                <td>{{ $item->description }}</td>
+                                                @if ($jurnal->position == "Debit")
+                                                    <td>{{ $jurnal->account->account_code }} - {{ $jurnal->account->account_name }}</td>
+                                                    <td></td>
+                                                    <td>
+                                                        Rp{{strrev(implode('.',str_split(strrev(strval($jurnal->amount)),3)))}}
+                                                    </td>
+                                                    <td></td>
                                                 @else
-                                                    @if ($cek->position == "Debit")
-                                                        <td>{{ $cek->account->account_name }}</td>
-                                                        <td>
-                                                            Rp{{strrev(implode('.',str_split(strrev(strval($item->amount)),3)))}}
-                                                        </td>
-                                                        <td><td>
-                                                    @endif
-                                                    @if ($cek->position == "Kredit")
-                                                        <td></td>
-                                                        <td></td>
-                                                        <td>{{ $cek->account->account_name }}</td>
-                                                        <td>
-                                                            Rp{{strrev(implode('.',str_split(strrev(strval($item->amount)),3)))}}
-                                                        </td>
-                                                    @endif
+                                                    <td></td>
+                                                    <td>{{ $jurnal->account->account_code }} - {{ $jurnal->account->account_name }}</td>
+                                                    <td>
+                                                    </td>
+                                                    <td>
+                                                        Rp{{strrev(implode('.',str_split(strrev(strval($jurnal->amount)),3)))}}
+                                                    </td>
                                                 @endif
+                                                @if ($count == 0)
+                                                    <td style="width:10%" class="text-center">
+                                                        <button class="btnEditJournal btn-icon" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editJournal" id="{{ $item->id }}">
+                                                            <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
+                                                        </button>
+                                                        <button type="button" class="btn-icon remove" id="{{ $item->id }}">
+                                                                <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
+                                                        </button>
+                                                    </td>
+                                                @else
+                                                <td></td>
+                                                @endif
+                                                @php
+                                                    $count++;
+                                                @endphp
+                                            </tr>
                                             @endforeach
-                                            <td style="width:10%" class="text-center">
-                                                <button class="btnEditJournal btn-icon" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editJournal" id="{{ $item->id }}">
-                                                    <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
-                                                </button>
-                                                <button type="button" class="btn-icon remove" id="{{ $item->id }}">
-                                                        <i class="material-icons" style="color:#f44336;font-size:1.1rem;cursor: pointer;">close</i>
-                                                </button>
-                                            </td>
-                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>

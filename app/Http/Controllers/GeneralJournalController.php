@@ -144,75 +144,138 @@ class GeneralJournalController extends Controller
 
     public function store(Request $request)
     {
-        $debit = InitialBalance::with('account')->where('id_account', $request->id_debit_account)
-        ->whereYear('date', $request->date)->first();
-        
-        $kredit = InitialBalance::with('account')->where('id_account', $request->id_credit_account)
-        ->whereYear('date', $request->date)->first();
-        
-        $amount = $request->amount;
-        $convert_amount = preg_replace("/[^0-9]/", "", $amount);
-        
-        if(!$debit){
-            $saldo_debit = 0;
-            $debit = Account::where('id', $request->id_debit_account)->first();
-            if($debit->position == "Kredit"){
-                if($convert_amount > $saldo_debit){
-                    return Redirect::back()->withInput()->withError('insufficient');
-                }
-            }
-        } else {
-            $saldo_debit = $debit->amount;
-            if($debit->account->position == "Kredit"){
-                if($convert_amount > $saldo_debit){
-                    return Redirect::back()->withInput()->withError('insufficient');
+        $debit = 0;
+        $credit = 0;
+        foreach($request->account as $key => $value){
+            $amount_debit = $request->amount_debit[$key];
+            $convert_debit = preg_replace("/[^0-9]/", "", $amount_debit);
+            $debit += (int)$convert_debit;
+
+            $amount_credit = $request->amount_credits[$key];
+            $convert_credit = preg_replace("/[^0-9]/", "", $amount_credit);
+            $credit += (int)$convert_credit;
+        }
+        if($debit != $credit){
+            return Redirect::back()->withInput()->withError('insufficient');
+        }
+        foreach($request->account as $key => $value){
+            $account = InitialBalance::with('account')->where('id_account', $request->account[$key])
+            ->whereYear('date', $request->date)->first(); 
+            if($account == null){
+                $account = Account::where('id', $request->account[$key])->first();
+                if($account->position == "Debit"){
+                    if($request->amount_credits[$key] != null){
+                        return Redirect::back()->withInput()->withError('insufficient');
+                    }
+                }else if($account->position == "Kredit"){
+                    if($request->amount_debit[$key] != null){
+                        return Redirect::back()->withInput()->withError('insufficient');
+                    }
                 }
             }
         }
-        if(!$kredit){
-            $saldo_kredit = 0;
-            $kredit = Account::where('id', $request->id_credit_account)->first();
-            if($kredit->position == "Debit"){
-                if($convert_amount > $saldo_kredit){
-                    return Redirect::back()->withInput()->withError('insufficient');
-                }
-            }
-        } else {
-            $saldo_kredit = $kredit->amount;
-            if($kredit->account->position == "Debit"){
-                if($convert_amount > $saldo_kredit){
-                    return Redirect::back()->withInput()->withError('insufficient');
-                }
-            }
-        }
-
-        $this->validate($request,[
-            'id_debit_account' => 'different:id_credit_account',
-            'id_credit_account' => 'different:id_debit_account',
-        ],
-        [
-            'id_debit_account.different' => 'Akun debit dan kredit tidak boleh sama',
-            'id_credit_account.different' => 'Akun debit dan kredit tidak boleh sama'
-        ]);
-
         $detail = new DetailJournal();
         $detail->receipt = $request->receipt;
         $detail->description = $request->description;
-        $detail->amount = $convert_amount;
         $detail->date = $request->date;
         $detail->save();
 
-        $kredit = new GeneralJournal();
-        $kredit->id_detail = $detail->id;
-        $kredit->id_account = $request->id_debit_account;
-        $kredit->position = "Debit";
-        $kredit->save();
+        foreach($request->account as $key => $value){
+            if($request->amount_debit[$key] != null){
+                $amount_debit = $request->amount_debit[$key];
+                $convert_debit = preg_replace("/[^0-9]/", "", $amount_debit);
+
+                $debit = new GeneralJournal();
+                $debit->id_detail = $detail->id;
+                $debit->id_account = $request->account[$key];
+                $debit->amount = $convert_debit;
+                $debit->position = "Debit";
+                $debit->save();
+            } else if($request->amount_credits[$key] != null){
+                $amount_credit = $request->amount_credits[$key];
+                $convert_credit = preg_replace("/[^0-9]/", "", $amount_credit);
+
+                $debit = new GeneralJournal();
+                $debit->id_detail = $detail->id;
+                $debit->id_account = $request->account[$key];
+                $debit->amount = $convert_credit;
+                $debit->position = "Kredit";
+                $debit->save();
+            }
+        }
+
+
+        // dd($debit, $credit);
+
+        // $debit = InitialBalance::with('account')->where('id_account', $request->id_debit_account)
+        // ->whereYear('date', $request->date)->first();
         
-        $debit = new GeneralJournal();
-        $debit->id_detail = $detail->id;
-        $debit->id_account = $request->id_credit_account;
-        $debit->position = "Kredit";
-        $debit->save();
+        // $kredit = InitialBalance::with('account')->where('id_account', $request->id_credit_account)
+        // ->whereYear('date', $request->date)->first();
+        
+        // $amount = $request->amount;
+        // $convert_amount = preg_replace("/[^0-9]/", "", $amount);
+        
+        // if(!$debit){
+        //     $saldo_debit = 0;
+        //     $debit = Account::where('id', $request->id_debit_account)->first();
+        //     if($debit->position == "Kredit"){
+        //         if($convert_amount > $saldo_debit){
+        //             return Redirect::back()->withInput()->withError('insufficient');
+        //         }
+        //     }
+        // } else {
+        //     $saldo_debit = $debit->amount;
+        //     if($debit->account->position == "Kredit"){
+        //         if($convert_amount > $saldo_debit){
+        //             return Redirect::back()->withInput()->withError('insufficient');
+        //         }
+        //     }
+        // }
+        // if(!$kredit){
+        //     $saldo_kredit = 0;
+        //     $kredit = Account::where('id', $request->id_credit_account)->first();
+        //     if($kredit->position == "Debit"){
+        //         if($convert_amount > $saldo_kredit){
+        //             return Redirect::back()->withInput()->withError('insufficient');
+        //         }
+        //     }
+        // } else {
+        //     $saldo_kredit = $kredit->amount;
+        //     if($kredit->account->position == "Debit"){
+        //         if($convert_amount > $saldo_kredit){
+        //             return Redirect::back()->withInput()->withError('insufficient');
+        //         }
+        //     }
+        // }
+
+        // $this->validate($request,[
+        //     'id_debit_account' => 'different:id_credit_account',
+        //     'id_credit_account' => 'different:id_debit_account',
+        // ],
+        // [
+        //     'id_debit_account.different' => 'Akun debit dan kredit tidak boleh sama',
+        //     'id_credit_account.different' => 'Akun debit dan kredit tidak boleh sama'
+        // ]);
+
+        // $detail = new DetailJournal();
+        // $detail->receipt = $request->receipt;
+        // $detail->description = $request->description;
+        // $detail->amount = $convert_amount;
+        // $detail->date = $request->date;
+        // $detail->save();
+
+        // $kredit = new GeneralJournal();
+        // $kredit->id_detail = $detail->id;
+        // $kredit->id_account = $request->id_debit_account;
+        // $kredit->position = "Debit";
+        // $kredit->save();
+        
+        // $debit = new GeneralJournal();
+        // $debit->id_detail = $detail->id;
+        // $debit->id_account = $request->id_credit_account;
+        // $debit->position = "Kredit";
+        // $debit->save();
 
         return redirect()->route('jurnal_umum.index')->with('success','Jurnal Ditambahkan!');
     }
