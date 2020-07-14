@@ -12,6 +12,7 @@
         "barryvdh/laravel-dompdf": "^0.8.6",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.2",
+        "laravel/passport": "^9.3",
         "laravel/tinker": "^2.0",
         "realrashid/sweet-alert": "^3.1",
         "spatie/laravel-permission": "^3.9",

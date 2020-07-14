@@ -13,6 +13,14 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('login', 'API\UserController@login');
+Route::post('register', 'API\UserController@register');
+
+Route::middleware('auth:api')->group(function(){
+  // Modul User
+  Route::post('user/update', 'API\UserController@update');
+  Route::get('user', 'API\UserController@index');
+  
+  
 });
+Route::get('neraca-awal/{id}', 'API\InitialBalanceController@index');
