@@ -23,8 +23,8 @@ Route::middleware('auth:api')->group(function(){
   
   Route::get('neraca-awal/{id}', 'API\InitialBalanceController@index');
 
-  Route::get('parent/{id}', 'API\ParentController@index');
-  Route::get('parent/{id}/child', 'API\ParentController@indexChild');
+  Route::get('parent/', 'API\ParentController@index');
+  Route::get('parent/child', 'API\ParentController@indexChild');
 
   Route::get('classification', 'API\ParentController@index');
   Route::get('classification/{id}', 'API\ParentController@parent');

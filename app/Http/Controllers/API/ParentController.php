@@ -19,18 +19,20 @@ class ParentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($id)
+    public function index()
     {
         $user = Auth::guard('api')->user();
 
         $account_parent = AccountParent::select('id', 'id_business', 'parent_code', 'parent_name')
-          ->where('id_business', $id)->get();
+        ->whereHas('business.company', function ($query) use ($user) {
+          $query->where('id_user', $user->id);
+        })->get();
 
         return new Collection($account_parent);
 
     }
 
-    public function indexChild($id)
+    public function indexChild()
     {
         $user = Auth::guard('api')->user();
 
@@ -42,7 +44,10 @@ class ParentController extends Controller
             $query->select('id', 'id_classification', 'account_code', 'account_name', 'position');
           }
         ])
-        ->where('id_business', $id)->get();
+        ->whereHas('business.company', function ($query) use ($user) {
+          $query->where('id_user', $user->id);
+        })
+        ->get();
 
         return new Collection($account_parent);
 
