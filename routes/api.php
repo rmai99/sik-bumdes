@@ -21,6 +21,15 @@ Route::middleware('auth:api')->group(function(){
   Route::post('user/update', 'API\UserController@update');
   Route::get('user', 'API\UserController@index');
   
-  
+  Route::get('neraca-awal/{id}', 'API\InitialBalanceController@index');
+
+  Route::get('parent/', 'API\ParentController@index');
+  Route::get('parent/child', 'API\ParentController@indexChild');
+
+  Route::get('classification', 'API\ParentController@index');
+  Route::get('classification/{id}', 'API\ParentController@parent');
+
+  Route::get('account', 'API\AccountController@index');
+  Route::get('account/{id}', 'API\AccountController@classification');
+
 });
-Route::get('neraca-awal/{id}', 'API\InitialBalanceController@index');
