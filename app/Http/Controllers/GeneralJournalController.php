@@ -144,6 +144,111 @@ class GeneralJournalController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request);
+        $debit = 0;
+        $credit = 0;
+        foreach($request->account as $key => $value){
+            $amount_debit = $request->amount_debit[$key];
+            $convert_debit = preg_replace("/[^0-9]/", "", $amount_debit);
+            $debit += (int)$convert_debit;
+
+            $amount_credit = $request->amount_credits[$key];
+            $convert_credit = preg_replace("/[^0-9]/", "", $amount_credit);
+            $credit += (int)$convert_credit;
+        }
+        if($debit != $credit){
+            return Redirect::back()->withInput()->withErrors(['balance'=>'balance']);
+        }
+        foreach($request->account as $key => $value){
+            $account = InitialBalance::with('account')->where('id_account', $request->account[$key])
+            ->whereYear('date', $request->date)->first(); 
+            if($account == null){
+                $account = Account::where('id', $request->account[$key])->first();
+                if($account->position == "Debit"){
+                    if($request->amount_credits[$key] != null){
+                        return Redirect::back()->withInput()->withError('insufficient');
+                    }
+                }else if($account->position == "Kredit"){
+                    if($request->amount_debit[$key] != null){
+                        return Redirect::back()->withInput()->withError('insufficient');
+                    }
+                }
+            }
+        }
+        $detail = new DetailJournal();
+        $detail->receipt = $request->receipt;
+        $detail->description = $request->description;
+        $detail->date = $request->date;
+        $detail->save();
+
+        foreach($request->account as $key => $value){
+            if($request->amount_debit[$key] != null){
+                $amount = $request->amount_debit[$key];
+                $convert = preg_replace("/[^0-9]/", "", $amount);
+
+                $jurnal = new GeneralJournal();
+                $jurnal->position = "Debit";
+            } else if($request->amount_credits[$key] != null){
+                $amount = $request->amount_credits[$key];
+                $convert = preg_replace("/[^0-9]/", "", $amount);
+
+                $jurnal = new GeneralJournal();
+                $jurnal->position = "Kredit";
+            }
+            $jurnal->id_detail = $detail->id;
+            $jurnal->id_account = $request->account[$key];
+            $jurnal->amount = $convert;
+            $jurnal->save();
+        }
+
+        return redirect()->route('jurnal_umum.index')->with('success','Jurnal Ditambahkan!');
+    }
+
+    public function detailJournal(Request $request){
+        $data = DetailJournal::with('journal.account')->where('id', $request->id)
+        ->get();
+
+        return response()->json($data);
+    }
+
+    public function show($id)
+    {
+        
+    }
+
+    public function edit($id)
+    {
+        $user = Auth::user();
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first()->id;
+            }
+            $getBusiness = Business::with('company')
+            ->where('id_company', $company)
+            ->where('id', $session)->first();
+        } else{
+            $getBusiness = Employee::with('business')->where('id_user', $user->id)->first();
+            $session = $getBusiness->id_business;
+        }
+
+        $journal = DetailJournal::with('journal.account')->where('id', $id)
+        ->first();
+        // dd($journal);
+
+        $account = Account::whereHas('classification.parent', function($q) use ($session){
+            $q->where('id_business', $session);
+        })->get();
+        // return response()->json($journal);
+
+        return view('user.editJurnal', compact('journal', 'account', 'getBusiness', 'business', 'session'));
+    }
+
+    public function update(Request $request)
+    {
         $debit = 0;
         $credit = 0;
         foreach($request->account as $key => $value){
@@ -174,206 +279,65 @@ class GeneralJournalController extends Controller
                 }
             }
         }
-        $detail = new DetailJournal();
+        $detail = DetailJournal::findOrFail($request->id_detail);
         $detail->receipt = $request->receipt;
         $detail->description = $request->description;
         $detail->date = $request->date;
         $detail->save();
 
         foreach($request->account as $key => $value){
-            if($request->amount_debit[$key] != null){
-                $amount_debit = $request->amount_debit[$key];
-                $convert_debit = preg_replace("/[^0-9]/", "", $amount_debit);
-
-                $debit = new GeneralJournal();
-                $debit->id_detail = $detail->id;
-                $debit->id_account = $request->account[$key];
-                $debit->amount = $convert_debit;
-                $debit->position = "Debit";
-                $debit->save();
-            } else if($request->amount_credits[$key] != null){
-                $amount_credit = $request->amount_credits[$key];
-                $convert_credit = preg_replace("/[^0-9]/", "", $amount_credit);
-
-                $debit = new GeneralJournal();
-                $debit->id_detail = $detail->id;
-                $debit->id_account = $request->account[$key];
-                $debit->amount = $convert_credit;
-                $debit->position = "Kredit";
-                $debit->save();
-            }
-        }
-
-
-        // dd($debit, $credit);
-
-        // $debit = InitialBalance::with('account')->where('id_account', $request->id_debit_account)
-        // ->whereYear('date', $request->date)->first();
-        
-        // $kredit = InitialBalance::with('account')->where('id_account', $request->id_credit_account)
-        // ->whereYear('date', $request->date)->first();
-        
-        // $amount = $request->amount;
-        // $convert_amount = preg_replace("/[^0-9]/", "", $amount);
-        
-        // if(!$debit){
-        //     $saldo_debit = 0;
-        //     $debit = Account::where('id', $request->id_debit_account)->first();
-        //     if($debit->position == "Kredit"){
-        //         if($convert_amount > $saldo_debit){
-        //             return Redirect::back()->withInput()->withError('insufficient');
-        //         }
-        //     }
-        // } else {
-        //     $saldo_debit = $debit->amount;
-        //     if($debit->account->position == "Kredit"){
-        //         if($convert_amount > $saldo_debit){
-        //             return Redirect::back()->withInput()->withError('insufficient');
-        //         }
-        //     }
-        // }
-        // if(!$kredit){
-        //     $saldo_kredit = 0;
-        //     $kredit = Account::where('id', $request->id_credit_account)->first();
-        //     if($kredit->position == "Debit"){
-        //         if($convert_amount > $saldo_kredit){
-        //             return Redirect::back()->withInput()->withError('insufficient');
-        //         }
-        //     }
-        // } else {
-        //     $saldo_kredit = $kredit->amount;
-        //     if($kredit->account->position == "Debit"){
-        //         if($convert_amount > $saldo_kredit){
-        //             return Redirect::back()->withInput()->withError('insufficient');
-        //         }
-        //     }
-        // }
-
-        // $this->validate($request,[
-        //     'id_debit_account' => 'different:id_credit_account',
-        //     'id_credit_account' => 'different:id_debit_account',
-        // ],
-        // [
-        //     'id_debit_account.different' => 'Akun debit dan kredit tidak boleh sama',
-        //     'id_credit_account.different' => 'Akun debit dan kredit tidak boleh sama'
-        // ]);
-
-        // $detail = new DetailJournal();
-        // $detail->receipt = $request->receipt;
-        // $detail->description = $request->description;
-        // $detail->amount = $convert_amount;
-        // $detail->date = $request->date;
-        // $detail->save();
-
-        // $kredit = new GeneralJournal();
-        // $kredit->id_detail = $detail->id;
-        // $kredit->id_account = $request->id_debit_account;
-        // $kredit->position = "Debit";
-        // $kredit->save();
-        
-        // $debit = new GeneralJournal();
-        // $debit->id_detail = $detail->id;
-        // $debit->id_account = $request->id_credit_account;
-        // $debit->position = "Kredit";
-        // $debit->save();
-
-        return redirect()->route('jurnal_umum.index')->with('success','Jurnal Ditambahkan!');
-    }
-
-    public function detailJournal(Request $request){
-        $data = DetailJournal::with('journal.account')->where('id', $request->id)
-        ->get();
-
-        return response()->json($data);
-    }
-
-    public function show($id)
-    {
-        //
-    }
-
-    public function edit($id)
-    {
-        //
-    }
-
-    public function update(Request $request)
-    {
-        $debit = InitialBalance::with('account')->where('id_account', $request->id_debit_account)
-        ->whereYear('date', $request->date)->first();
-        
-        $kredit = InitialBalance::with('account')->where('id_account', $request->id_credit_account)
-        ->whereYear('date', $request->date)->first();
-        
-        $amount = $request->amount;
-        $convert_amount = preg_replace("/[^0-9]/", "", $amount);
-        
-        if(!$debit){
-            $saldo_debit = 0;
-            $debit = Account::where('id', $request->id_debit_account)->first();
-            if($debit->position == "Kredit"){
-                if($convert_amount > $saldo_debit){
-                    return Redirect::back()->withInput()->withError('insufficient');
+            if($request->id_debit[$key] != null){
+                if($request->amount_debit[$key] != null){
+                    $amount = $request->amount_debit[$key];
+                    $convert = preg_replace("/[^0-9]/", "", $amount);
+    
+                    $jurnal = GeneralJournal::findOrFail($request->id_debit[$key]);
+                    $jurnal->position = "Debit";
+                } else if($request->amount_credits[$key] != null){
+                    $amount = $request->amount_credits[$key];
+                    $convert = preg_replace("/[^0-9]/", "", $amount);
+    
+                    $jurnal = GeneralJournal::findOrFail($request->id_credit[$key]);
+                    $jurnal->position = "Kredit";
+                }
+            } else {
+                if($request->amount_debit[$key] != null){
+                    $amount = $request->amount_debit[$key];
+                    $convert = preg_replace("/[^0-9]/", "", $amount);
+    
+                    $jurnal = new GeneralJournal();
+                    $jurnal->id_detail = $detail->id;
+                    $jurnal->position = "Debit";
+                } else if($request->amount_credits[$key] != null){
+                    $amount = $request->amount_credits[$key];
+                    $convert = preg_replace("/[^0-9]/", "", $amount);
+    
+                    $jurnal = new GeneralJournal();
+                    $jurnal->id_detail = $detail->id;
+                    $jurnal->position = "Kredit";
                 }
             }
-        } else {
-            $saldo_debit = $debit->amount;
-            if($debit->account->position == "Kredit"){
-                if($convert_amount > $saldo_debit){
-                    return Redirect::back()->withInput()->withError('insufficient');
-                }
-            }
-        }
-        if(!$kredit){
-            $saldo_kredit = 0;
-            $kredit = Account::where('id', $request->id_debit_account)->first();
-            if($kredit->position == "Debit"){
-                if($convert_amount > $saldo_kredit){
-                    return Redirect::back()->withInput()->withError('insufficient');
-                }
-            }
-        } else {
-            $saldo_kredit = $kredit->amount;
-            if($kredit->account->position == "Debit"){
-                if($convert_amount > $saldo_kredit){
-                    return Redirect::back()->withInput()->withError('insufficient');
-                }
-            }
-        }
-
-        $this->validate($request,[
-            'id_debit_account' => 'different:id_credit_account',
-            'id_credit_account' => 'different:id_debit_account',
-        ],
-        [
-            'id_debit_account.different' => 'Akun debit dan kredit tidak boleh sama',
-            'id_credit_account.different' => 'Akun debit dan kredit tidak boleh sama'
-        ]);
-
-        $detail = DetailJournal::findOrFail($request->id_detail);
-        $detail->receipt = $request->receipt;
-        $detail->description = $request->description;
-        $detail->amount = $convert_amount;
-        $detail->date = $request->date;
-        $detail->save();
-
-        $kredit = GeneralJournal::findOrFail($request->id_credit);
-        $kredit->id_account = $request->id_credit_account;
-        $kredit->position = "Kredit";
-        $kredit->save();
-
-        $kredit = GeneralJournal::findOrFail($request->id_debit);
-        $kredit->id_account = $request->id_debit_account;
-        $kredit->position = "Debit";
-        $kredit->save();
-
-        return redirect()->route('jurnal_umum.index')->with('success','Berhasil Mengubah Jurnal!');
             
+            $jurnal->id_account = $request->account[$key];
+            $jurnal->amount = $convert;
+            $jurnal->save();
+        }
+
+        return redirect()->route('jurnal_umum.index')->with('success','Jurnal Berhasil Diedit!');
     }
 
     public function destroy($id)
     {
         DetailJournal::find($id)->delete($id);
+
+        return response()->json([
+            'success' => 'Record deleted successfully!'
+        ]);
+    }
+
+    public function destroyJournal($id)
+    {
+        GeneralJournal::find($id)->delete($id);
 
         return response()->json([
             'success' => 'Record deleted successfully!'

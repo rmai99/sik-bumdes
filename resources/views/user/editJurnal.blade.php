@@ -7,10 +7,11 @@
 @section('content')
 <div class="card mt-0">
     <div class="header text-left m-3">
-        <h3 class="title" style="font-weight: 400;">Tambah Jurnal</h3>
+        <h3 class="title" style="font-weight: 400;">Edit Jurnal</h3>
     </div>
-    <form action="{{route('jurnal_umum.store')}}" method="POST">
-    {{ csrf_field() }}
+    <form action="{{route('jurnal.update')}}" method="POST">
+    {{ method_field('PUT') }}
+    @csrf
     <div class="card card-journal ml-4 mt-0 mb-4">
         <div class="row m-3 justify-content-between">
             <div class="col-lg-6 col-md-6 p-0">
@@ -22,8 +23,9 @@
                                 <i class="material-icons">receipt</i>
                             </span>
                         </div>
+                        <input type="hidden" value="{{$journal->id}}" name="id_detail">
                         <input type="text" class="form-control border-select" name="receipt" required="true" aria-required="true" 
-                            value="{{ old('receipt') }}">
+                            value="{{$journal->id}}">
                     </div>
                 </div>
                 <div class="col-lg-12 col-md-12 pl-0">
@@ -35,7 +37,7 @@
                             </span>
                         </div>
                         <input type="date" class="form-control border-select date" name="date" 
-                            required="true" aria-required="true" value="{{ old('date') }}">
+                            required="true" aria-required="true" value="{{$journal->date}}">
                     </div>
                 </div>
             </div>
@@ -48,9 +50,9 @@
                                 <i class="material-icons">description</i>
                             </span>
                         </div>
-                        <textarea class="description" rows="3" style="width:80%" name="description" required="true" aria-required="true">{{ old('description') }}</textarea>
+                        <textarea class="description" rows="3" style="width:80%" name="description" required="true" aria-required="true">{{$journal->description}}</textarea>
                     </div>
-                    @error('description[$key]')
+                    @error('description')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
@@ -75,52 +77,35 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td style="width:40%">
-                            <select class="form-control border-select credit" name="account[]" required>
-                                <option selected="true" value="">Pilih Akun</option>
-                                @foreach ($account as $a)
-                                    <option value="{{ $a->id }}" {{ $a->id == old('account.0') ? 'selected' : null }}>{{ $a->account_code }} - {{ $a->account_name}}</option>
-                                @endforeach
-                            </select>
-                        </td>
-                        <td style="width: 28%">
-                            <input type="text" id="currency" class="form-control border-select amount" name="amount_debit[]"
-                            data-type="currency" value="{{old('amount_debit.0')}}" id="inputNominal">
-                        </td>
-                        <td style="width: 28%">
-                            <input type="text" id="currency" class="form-control border-select amount" name="amount_credits[]"
-                            data-type="currency" value="{{ old('amount_credits.0') }}" id="inputNominal">
-                        </td>
-                        <td>
-                            <button type="button" class="close remove" data-dismiss="modal" aria-hidden="true">
-                                <i class="material-icons" style="color:#f44336;font-size:1.5rem;cursor: pointer;">close</i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="width:40%">
-                            <select class="form-control border-select credit" name="account[]" required>
-                                <option selected="true" value="">Pilih Akun</option>
-                                @foreach ($account as $a)
-                                    <option value="{{ $a->id }}" {{ $a->id == old('account.1') ? 'selected' : null }}>{{ $a->account_code }} - {{ $a->account_name}}</option>
-                                @endforeach
-                            </select>
-                        </td>
-                        <td style="width: 28%">
-                            <input type="text" id="currency" class="form-control border-select amount" name="amount_debit[]"
-                            data-type="currency" value="{{ old('amount_debit.1') }}" id="inputNominal">
-                        </td>
-                        <td style="width: 28%">
-                            <input type="text" id="currency" class="form-control border-select amount" name="amount_credits[]"
-                            data-type="currency" value="{{ old('amount_credits.1') }}" id="inputNominal">
-                        </td>
-                        <td>
-                            <button type="button" class="close remove" data-dismiss="modal" aria-hidden="true">
-                                <i class="material-icons" style="color:#f44336;font-size:1.5rem;cursor: pointer;">close</i></button>
-                        </td>
-                    </tr>
+                    @foreach ($journal->journal as $item)
+                        <tr>
+                            <td style="width:40%">
+                                <select class="form-control border-select credit" name="account[]" required>
+                                    <option selected="true" value="">Pilih Akun</option>
+                                    @foreach ($account as $a)
+                                        <option value="{{ $a->id }}" {{ $item->id_account === $a->id ? 'selected' : null }}>{{ $a->account_code }} - {{ $a->account_name}}</option>
+                                    @endforeach
+                                </select>
+                            </td>
+                            <td style="width: 28%">
+                                <input type="hidden" name="id_debit[]" value="{{$item->id}}">
+                                <input type="text" id="currency" class="form-control border-select amount" name="amount_debit[]"
+                                data-type="currency" value="{{ $item->position === "Debit" ? 'Rp'.strrev(implode(',',str_split(strrev(strval($item->amount)),3))) : null }}" id="inputNominal">
+                            </td>
+                            <td style="width: 28%">
+                                <input type="hidden" name="id_credit[]" value="{{$item->id}}">
+                                <input type="text" id="currency" class="form-control border-select amount" name="amount_credits[]"
+                                data-type="currency" value="{{ $item->position === "Kredit" ? 'Rp'.strrev(implode(',',str_split(strrev(strval($item->amount)),3))) : null }}" id="inputNominal">
+                            </td>
+                            <td>
+                                <button type="button" class="close remove" data-dismiss="modal" aria-hidden="true" value="{{$item->id}}">
+                                    <i class="material-icons" style="color:#f44336;font-size:1.5rem;cursor: pointer;">close</i>
+                                </button>
+                            </td>
+                        </tr>
+                    @endforeach
                     @foreach(old('account', []) as $parakey => $paravalue)
-                        @if($parakey > 1)
+                        @if($parakey > $journal->journal->count()-1)
                             <tr>
                                 <td style="width:40%">
                                     <select class="form-control border-select credit" name="account[]" required>
@@ -160,161 +145,68 @@
 @endsection
 @push('js')
 <script>
-    
-    $(document).on('click', 'select', function(e) {
-            $('select').chosen();
-        });
     var test = `<tr>
                     <td style="width:40%">
                         <select class="form-control border-select credit" name="account[]" required>
                             <option selected="true" value="">Pilih Akun</option>
                             @foreach ($account as $a)
-                                <option value="{{ $a->id }}" {{ $a->id == old('account.1') ? 'selected' : null }}>{{ $a->account_code }} - {{ $a->account_name}}</option>
+                                <option value="{{ $a->id }}">{{ $a->account_code }} - {{ $a->account_name}}</option>
                             @endforeach
                         </select>
                     </td>
                     <td style="width: 28%">
+                        <input type="hidden" name="id_debit[]">
                         <input type="text" id="currency" class="form-control border-select amount" name="amount_debit[]"
-                        data-type="currency" value="{{old('amount_debit.1')}}" id="inputNominal">
+                        data-type="currency" value="{{ old('amount') }}" id="inputNominal">
                     </td>
                     <td style="width: 28%">
+                        <input type="hidden" name="id_credit[]">
                         <input type="text" id="currency" class="form-control border-select amount" name="amount_credits[]"
-                        data-type="currency" value="{{ old('amount_credits.1') }}" id="inputNominal">
+                        data-type="currency" value="{{ old('amount') }}" id="inputNominal">
                     </td>
                     <td>
                         <button type="button" class="close remove" data-dismiss="modal" aria-hidden="true">
                             <i class="material-icons" style="color:#f44336;font-size:1.5rem;cursor: pointer;">close</i></button>
                     </td>
                 </tr>`;
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
     $(function () {
         $('#addRow').click(function () {
             $('tbody').append(test);
         });
+        
         $(document).on('click', '.remove', function () {
-            $(this).parents('tr').remove();
-        });
-    });
-
-    $(document).on('keyup', '#currency', function () {
-            // console.log('this', $(this))
-            formatCurrency($(this));
-        });
-
-    $(document).on('input', 'input.date', function(e){
-        var year = $("input.date").val();
-        if(year){
-            $('select.debit').prop('disabled', false);
-            $('select.credit').prop('disabled', false);
-        }
-    })
-    $(document).on('change', 'select.credit', function(e){
-        var year = $("input.date").val();
-        var debit = $("select.debit").val();
-        var credit = $("select.credit").val();
-        $.ajax({
-            type        : 'get',
-            url         : '{!!url('test')!!}',
-            dataType    : 'html',
-            data        : {'account':credit, 'date':year},
-            success     : function(data){
-                var servers = $.parseJSON(data);
-                if (servers === undefined || servers.length == 0) {
-                    $.ajax({
-                        type        : 'get',
-                        url         : '{!!url('detailAccount')!!}',
-                        dataType    : 'html',
-                        data        : {'id':debit},
-                        success     : function(data){
-                            var servers = $.parseJSON(data);
-                            $.each(servers, function(index, value){
-                                var position = value.position;
-                                $('#awalCredit').val("0");
-                                $('#posisiCredit').val(position);
-                            });
-                        }
-                    });
-                } else {
-                    $.each(servers, function(index, value){
-                        var posisiNormal = value.account.position;
-                        var saldoAwal = value.amount;
-                        console.log(posisiNormal, saldoAwal);
-
-                        $('#awalCredit').val(saldoAwal);
-                        $('#posisiCredit').val(posisiNormal);
-                    });
-                }
+            var id = $(this).attr('value');
+            if(id == null){
+                $(this).parents('tr').remove();
+            } else{
+                var url = "{{ route('jurnal_umum.index') }}/"+id+"/hapus";
+                $.ajax({
+                    type: "delete",
+                    url: url,
+                    dataType: "json",
+                    success: (response) => {
+                        $(this).parents('tr').remove();
+                    }, error    : function(){
+                        Swal.fire(
+                            'Gagal!',
+                            'Tidak Dapat Dihapus.',
+                            'warning'
+                        )
+                    }
+                });
             }
         });
-
-        if(year && credit && debit){
-            $('input.amount').prop('disabled', false);
-        }
-
     });
 
-    $(document).on('change', 'select.debit', function(e){
-        var year = $("input.date").val();
-        var debit = $("select.debit").val();
-        var credit = $("select.credit").val();
-        $.ajax({
-            type        : 'get',
-            url         : '{!!url('test')!!}',
-            dataType    : 'html',
-            data        : {'account':debit, 'date':year},
-            success     : function(data){
-                var servers = $.parseJSON(data);
-                if (servers === undefined || servers.length == 0) {
-                    $.ajax({
-                        type        : 'get',
-                        url         : '{!!url('detailAccount')!!}',
-                        dataType    : 'html',
-                        data        : {'id':debit},
-                        success     : function(data){
-                            var servers = $.parseJSON(data);
-                            $.each(servers, function(index, value){
-                                var position = value.position;
-                                $('#awalDebit').val("0");
-                                $('#posisiDebit').val(position);
-                            });
-                        }
-                    });
-                } else {
-                    $.each(servers, function(index, value){
-                        var posisiNormal = value.account.position;
-                        var saldoAwal = value.amount;
-                        console.log(posisiNormal, saldoAwal);
-
-                        $('#awalDebit').val(saldoAwal);
-                        $('#posisiDebit').val(posisiNormal);
-                    });
-                }
-            }
-        });
-
-        if(year && credit && debit){
-            $('input.amount').prop('disabled', false);
-        }
-
-    });
-
-    @if ($errors->has('id_debit_account'))
-        var debit = "{{old('id_debit_account')}}";
-        var credit = "{{old('id_credit_account')}}";
-        $('.debit').val(debit);
-        $('.credit').val(credit);
-    @endif
-
-    @if ($errors->has('balance'))
-        swal.fire(
-            'Gagal!',
-            'Jumlah Debit dan Kredit tidak seimbang',
-            'warning',
-        )
-    @endif
     @if (Session::has('error'))
         swal.fire(
             'Gagal!',
-            'Saldo Akun Anda Tidak Mencukupi',
+            'Saldo akun anda tidak cukup untuk melakukan transaksi ini',
             'warning',
         )
     @endif

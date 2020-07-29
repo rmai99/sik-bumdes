@@ -26,7 +26,6 @@ class FinancialReportController extends Controller
     }
     public function incomeStatement()
     {
-        $start = microtime(true);
         $role = Auth::user();
         $isCompany = $role->hasRole('company');
         $user = Auth::user()->id;
@@ -144,9 +143,6 @@ class FinancialReportController extends Controller
             $q->where('id_business', $session);
         })->selectRaw('YEAR(date) as year')->orderBy('date', 'desc')->distinct()->get();
 
-        // Execute the query
-        $time = microtime(true) - $start;
-        dd($time);
         // ddd($parent);
         return view('user.laporanLabaRugi', compact('incomeArray', 'business', 'expenseArray', 'years', 'year', 'session', 'othersIncomeArray', 'othersExpenseArray', 'income', 'expense','getBusiness', 'othersIncome', 'othersExpense'));
     }
@@ -275,8 +271,6 @@ class FinancialReportController extends Controller
 
     public function changeInEquity()
     {
-        $start = microtime(true);
-        
         $role = Auth::user();
         $isCompany = $role->hasRole('company');        
         $user = Auth::user()->id;
@@ -376,8 +370,6 @@ class FinancialReportController extends Controller
         $years = InitialBalance::whereHas('account.classification.parent', function($q) use ($session){
             $q->where('id_business', $session);
         })->selectRaw('YEAR(date) as year')->orderBy('date', 'desc')->distinct()->get();
-        // Execute the query
-        $time = microtime(true) - $start;
         return view('user.perubahanEkuitas', compact('session', 'business', 'equityArray', 'saldo_berjalan', 'years', 'year', 'getBusiness'));
     }
 
@@ -486,7 +478,6 @@ class FinancialReportController extends Controller
 
     public function balanceSheet()
     {
-        $start = microtime(true);
         $role = Auth::user();
         $isCompany = $role->hasRole('company');
         $user = Auth::user()->id;
@@ -627,9 +618,6 @@ class FinancialReportController extends Controller
         $years = InitialBalance::whereHas('account.classification.parent', function($q) use ($session){
             $q->where('id_business', $session);
         })->selectRaw('YEAR(date) as year')->orderBy('date', 'desc')->distinct()->get();
-        // Execute the query
-        $time = microtime(true) - $start;
-        dd($time);
         return view('user.neraca', compact('assetArray', 'equityArray', 'liabilityArray', 'years', 'year', 'session', 'business', 'getBusiness', 'equitas'));
     }
 

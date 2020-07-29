@@ -170,7 +170,7 @@
                                                 @endif
                                                 @if ($count == 0)
                                                     <td style="width:10%" class="text-center">
-                                                        <button class="btnEditJournal btn-icon" type="button" rel="tooltip" title="Edit Akun" data-toggle="modal" data-target="#editJournal" id="{{ $item->id }}">
+                                                        <a href="{{ route('jurnal_umum.edit', $item->id) }}" class="btnEditJournal btn-icon" >
                                                             <i class="material-icons" style="color: #9c27b0;font-size:1.1rem;cursor: pointer;">edit</i>
                                                         </button>
                                                         <button type="button" class="btn-icon remove" id="{{ $item->id }}">
@@ -310,23 +310,6 @@
 
 <script>
     $(document).ready(function () {
-        @if ($errors->has('id_debit_account'))
-            $('#editJournal').modal('show');
-            var id = "{{old('id_detail')}}";
-            var debit = "{{old('id_debit_account')}}";
-            var credit = "{{old('id_credit_account')}}";
-            var id_credit = "{{old('id_credit')}}";
-            var id_debit = "{{old('id_debit')}}";
-            $('#id_detail').val(id);
-            $('div.debit select').val(debit);
-            $('div.credit select').val(credit);
-            $('div.credit input').val(id_credit);
-            $('div.debit input').val(id_debit);
-
-            var action = "{{route('jurnal.update')}}";
-            $('#formEditJournal').attr('action', action);
-        @endif
-
         $('#datatables').DataTable({
             "pagingType"        : "full_numbers",
             "lengthMenu"        : [
@@ -421,80 +404,11 @@
         $('select.groupbyDate').prop('disabled', false);
     });
 
-    $(document).on('click', '.btnEditJournal', function(){
-        var id = $(this).attr('id');
-        $('#id_detail').val(id);
-        $.ajax({
-            type        : 'GET',
-            url         : '{!!url('detailJournal')!!}',
-            data        : {'id' : id},
-            dataType    : 'html',
-            success     : function(data){
-                var servers = $.parseJSON(data);
-                $.each(servers, function(index, value){
-                    var detail = value.id;
-                    var receipt = value.receipt;
-                    var date = value.date;
-                    var description = value.description;
-                    var id_debit = value.journal[0].id;
-                    var id_account_debit = value.journal[0].id_account;
-                    var rupiah = '';
-                    var id_credit = value.journal[1].id;
-                    var id_account_credit = value.journal[1].id_account;
-
-                    var convert = value.amount.toString().split('').reverse().join('');
-                    for(var i = 0; i < convert.length; i++) if(i%3 == 0) rupiah += convert.substr(i,3)+',';
-                    var amount = 'Rp'+ rupiah.split('',rupiah.length-1).reverse().join('');
-
-                    $('div.detail input').val(detail);
-                    $('div.receipt input').val(receipt);
-                    $('div.date input').val(date);
-                    $('div.description input').val(description);
-                    $('div.debit select').val(id_account_debit);
-                    $('div.debit input').val(id_debit);
-                    $('div.amount input').val(amount);
-                    $('div.credit select').val(id_account_credit);
-                    $('div.credit input').val(id_credit);
-                })
-            }, error    : function(){
-                swal.fire(
-                    'Gagal!',
-                    'Saldo akun anda tidak cukup untuk melakukan transaksi ini',
-                    'warning',
-                )
-            },
-        });
-        var action = "{{route('jurnal.update')}}";
-            $('#formEditJournal').attr('action',action);
-    });
-
-    @if (Session::has('error'))
-        $('#editJournal').modal('show');
-        var id = "{{old('id_detail')}}";
-        var debit = "{{old('id_debit_account')}}";
-        var credit = "{{old('id_credit_account')}}";
-        var id_credit = "{{old('id_credit')}}";
-        var id_debit = "{{old('id_debit')}}";
-        $('#id_detail').val(id);
-        $('div.debit select').val(debit);
-        $('div.credit select').val(credit);
-        $('div.credit input').val(id_credit);
-        $('div.debit input').val(id_debit);
-
-        var action = "{{route('jurnal.update')}}";
-        $('#formEditJournal').attr('action', action);
-        swal.fire(
-            'Gagal!',
-            'Saldo akun anda tidak cukup untuk melakukan transaksi ini',
-            'warning',
-        )
-    @endif
-
 </script>
 <script>
     // Jquery Dependency
     $("input[data-type='currency']").on({
-        keyup: function() {
+        keydown: function() {
             formatCurrency($(this));
         },
         click : function(){

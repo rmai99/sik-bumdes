@@ -58,7 +58,7 @@
                                         </td>
                                         <td style="width:15%"></td>
                                         <td style="width:15%"></td>
-                                        <td style="width:10%"><i class="material-icons float-right" style="opacity: 30%;">keyboard_arrow_down</i></td>
+                                        <td style="width:10%"></td>
                                     </tr>
                                     @foreach ($p->classification as $c)
                                     <tr class="accordian-body collapse accordion-toggle data{{ $p->id }}">
@@ -257,6 +257,9 @@
 @push('js')
 <script>
     $(document).ready(function () {
+        $(document).on('click', 'select', function(e) {
+            $('select').chosen();
+        });
         @if ($errors->has('date'))
             $('#neracaAwalModal').modal('show');
             var id_account = {{old('id_account')}};
@@ -352,7 +355,7 @@
             dataType    : 'html',
             success     : function(data){
                 var servers = $.parseJSON(data);
-
+                console.log(servers);
                 $.each(servers, function(index, value){
                     var date = value.date;
                     var id_account = value.id_account;
