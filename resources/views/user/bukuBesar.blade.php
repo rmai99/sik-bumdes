@@ -136,25 +136,25 @@
                                         <td>{{ $d->detail->description }}</td>
                                         <td>
                                             @if ($d->position=="Debit")
-                                                @if ($d->detail->amount < 0)
-                                                    -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$d->detail->amount)),3)))}}
+                                                @if ($d->amount < 0)
+                                                    -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$d->amount)),3)))}}
                                                 @else
-                                                    Rp{{strrev(implode('.',str_split(strrev(strval($d->detail->amount)),3)))}}
+                                                    Rp{{strrev(implode('.',str_split(strrev(strval($d->amount)),3)))}}
                                                 @endif
                                                 @php
-                                                    $debit += $d->detail->amount;
+                                                    $debit += $d->amount;
                                                 @endphp
                                             @endif
                                         </td>
                                         <td>
                                             @if ($d->position == "Kredit")
-                                                @if ($d->detail->amount < 0)
-                                                    -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$d->detail->amount)),3)))}}
+                                                @if ($d->amount < 0)
+                                                    -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$d->amount)),3)))}}
                                                 @else
-                                                    Rp{{strrev(implode('.',str_split(strrev(strval($d->detail->amount)),3)))}}
+                                                    Rp{{strrev(implode('.',str_split(strrev(strval($d->amount)),3)))}}
                                                 @endif
                                                 @php
-                                                    $kredit += $d->detail->amount;
+                                                    $kredit += $d->amount;
                                                 @endphp
                                             @endif
                                         </td>
@@ -162,21 +162,21 @@
                                             @if ($log['position'] == "Debit")
                                                 @if ($d->position == "Kredit")
                                                     @php
-                                                        $saldo_akhir -= $d->detail->amount;        
+                                                        $saldo_akhir -= $d->amount;        
                                                     @endphp
                                                 @elseif ($d->position == "Debit")
                                                     @php
-                                                        $saldo_akhir += $d->detail->amount;        
+                                                        $saldo_akhir += $d->amount;        
                                                     @endphp
                                                 @endif
                                             @elseif ($log['position'] == "Kredit")
                                                 @if ($d->position == "Kredit")
                                                     @php
-                                                        $saldo_akhir += $d->detail->amount;        
+                                                        $saldo_akhir += $d->amount;        
                                                     @endphp
                                                 @elseif ($d->position == "Debit")
                                                     @php
-                                                        $saldo_akhir -= $d->detail->amount;
+                                                        $saldo_akhir -= $d->amount;
                                                     @endphp
                                                 @endif
                                             @endif
@@ -220,6 +220,10 @@
         var test = table.row( ':last-child' ).data();
         $('#saldo_akhir').text(test[4]);
     });
+    
+    $(document).on('click', 'select', function(e) {
+            $('select').chosen();
+        });
 
     $(document).on('click', '#search', function(e){
         e.preventDefault();

@@ -39,7 +39,8 @@ Route::get('export/neraca_saldo/{year}/{month?}', 'TrialBalanceController@export
 
 /* ======== GENERAL JOURNAL ======== */
 Route::resource('jurnal_umum', 'GeneralJournalController')->except('update');
-Route::put('jurnal_umum/update', 'GeneralJournalController@update')->name('jurnal.update');;
+Route::put('jurnal_umum/update', 'GeneralJournalController@update')->name('jurnal.update');
+Route::delete('jurnal_umum/{id}/hapus', 'GeneralJournalController@destroyJournal');
 Route::get('detailJournal', 'GeneralJournalController@detailJournal');
 Route::get('test', 'GeneralJournalController@test');
 
@@ -70,6 +71,17 @@ Route::put('profile/karyawan/update', 'ProfileController@updateEmployee')->name(
 Route::get('isPro', 'ProfileController@isPro');
 Route::get('upgrade', 'ProfileController@upgrade')->name('upgrade');
 
+/* ======== AKUN ANGGARAN ======== */
+Route::resource('akun_anggaran', 'BudgetAccountController');
+Route::resource('rencana_anggaran', 'BudgetPlan_RealizationController');
+Route::get('detail_anggaran', 'BudgetPlan_RealizationController@detail');
+Route::get('detail_realisasi', 'BudgetPlan_RealizationController@detail_realization');
+Route::get('realisasi_anggaran', 'BudgetPlan_RealizationController@realization')->name('realisasi.show');
+Route::get('realisasi_anggaran/tambah/{year}/{month}', 'BudgetPlan_RealizationController@create_realization')->name('realisasi.create');
+Route::post('realisasi_anggaran', 'BudgetPlan_RealizationController@store_realization')->name('realisasi.store');
+Route::put('realisasi_anggaran/update', 'BudgetPlan_RealizationController@update_realization')->name('realisasi.update');
+Route::delete('realisasi_anggaran/{id}', 'BudgetPlan_RealizationController@destroy_realization')->name('realisasi.delete');
+
 Route::prefix('admin')->middleware('auth')->name('admin.')->group(function(){
     Route::resource('/', 'AdminDashboardController');
     Route::get('user/user_register', 'AdminDashboardController@user_register')->name('user_register');
@@ -85,6 +97,7 @@ Route::get('/', function () {
     return view('auth.login');
     
 });
+
 
 Route::get('/resetpassword', function () {
     $data = User::findOrFail(3);

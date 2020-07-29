@@ -40,7 +40,7 @@
                         aria-haspopup="true" aria-expanded="false">
                         <i class="material-icons">person</i>
                         <p class="d-lg-none d-md-block">
-                            Akun
+                            Pengaturan
                         </p>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownProfile">

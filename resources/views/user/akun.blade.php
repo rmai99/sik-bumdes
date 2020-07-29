@@ -86,7 +86,7 @@
                         <div class="card-body">
                             <div class="form-group">
                                 <h6 class="text-dark font-weight-bold m-0">Parent Account</h6>
-                                <select class="form-control parent" name="input_parent" required>
+                                <select class="form-control parent" name="input_parent" id="select" required>
                                     <option value="" selected="true">Pilih Parent</option>
                                     @foreach ($account_parent as $a)
                                         <option id="parentAkun" value="{{$a->id}}">
