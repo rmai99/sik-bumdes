@@ -92,6 +92,8 @@
 <script src="{{url('/')}}/assets/js/material-dashboard.js?v=2.1.2" type="text/javascript"></script>
 
 <script src="{{url('/')}}/vendor/sweetalert/sweetalert.all.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
+<link href="{{url('/')}}/assets/chosen/1.8.7/chosen.min.css" rel="stylesheet"/>
 
 <!-- ChartJS -->
 <script src="{{url('/')}}/assets/chart/Chart.min.js"></script>

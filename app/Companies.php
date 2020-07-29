@@ -28,4 +28,9 @@ class Companies extends Model
         return $this->hasMany('App\Business', 'id_company');
     }
 
+    public function budget_account()
+    {
+        return $this->hasMany('App\BudgetAccount', 'id_company');
+    }
+
 }

@@ -12,7 +12,7 @@
                 <b class="caret"></b>
             </p>
         </a>
-        <div class="collapse {{ Request::segment(1) === 'profile' || Request::segment(1) === 'karyawan' || Request::segment(1) === 'bisnis' ? 'show' : null }}" id="profile">
+        <div class="collapse {{ Request::segment(1) === 'profile' || Request::segment(1) === 'karyawan' || Request::segment(1) === 'bisnis' || Request::segment(1) === 'akun_anggaran' || Request::segment(1) === 'rencana_anggaran' || Request::segment(1) === 'realisasi_anggaran' ? 'show' : null }}" id="profile">
             <ul class="nav m-0">
                 <li class="nav-item {{ Request::segment(1) === 'profile' ? 'active' : null }}">
                     <a class="nav-link" href="{{ route('profile.index') }}">
@@ -34,6 +34,24 @@
                     </a>
                 </li>
                 @endrole
+                <li class="nav-item {{ Request::segment(1) === 'akun_anggaran' ? 'active' : null }}">
+                    <a class="nav-link" href="{{ route('akun_anggaran.index') }}">
+                        <span class="sidebar-mini"> A </span>
+                        <span class="sidebar-normal"> Anggaran </span>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::segment(1) === 'rencana_anggaran' ? 'active' : null }}">
+                    <a class="nav-link" href="{{ route('rencana_anggaran.index') }}">
+                        <span class="sidebar-mini"> RAB </span>
+                        <span class="sidebar-normal"> Rencana Anggaran Bisnis </span>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::segment(1) === 'realisasi_anggaran' ? 'active' : null }}">
+                    <a class="nav-link" href="{{ route('realisasi.show') }}">
+                        <span class="sidebar-mini"> LRA </span>
+                        <span class="sidebar-normal">Laporan Rencana Anggaran</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </li>
