@@ -30,12 +30,14 @@ class UserController extends Controller
         if ($user->hasRole('company') || $user->hasRole('employee'))
         {
           $role = $user->getRoleNames()->first();
+          $company = Companies::where('id_user', $user->id)->first();
+          $user->company = $company->name;
+          $user->token = $user->createToken('SIK_Bumdes')->accessToken;
           
           return response()->json([
             'success'=>true,
             'user' => $user,
-            'role' => $role,
-            'token' => $user->createToken('SIK_Bumdes')->accessToken
+            'role' => $role
           ]);
         }
         return response()->json([
