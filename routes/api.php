@@ -26,10 +26,16 @@ Route::middleware('auth:api')->group(function(){
   Route::get('parent/', 'API\ParentController@index');
   Route::get('parent/child', 'API\ParentController@indexChild');
 
-  Route::get('classification', 'API\ParentController@index');
-  Route::get('classification/{id}', 'API\ParentController@parent');
+  Route::get('classification', 'API\ClassificationController@index');
+  Route::get('classification/{id}', 'API\ClassificationController@parent');
+  Route::post('classification', 'API\ClassificationController@store');
+  Route::post('classification/{id}', 'API\ClassificationController@update');
+  Route::delete('classification/{id}', 'API\ClassificationController@destroy');
 
   Route::get('account', 'API\AccountController@index');
   Route::get('account/{id}', 'API\AccountController@classification');
+  Route::post('account', 'API\AccountController@store');
+  Route::post('account/{id}', 'API\AccountController@update');
+  Route::delete('account/{id}', 'API\AccountController@destroy');
 
 });
