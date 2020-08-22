@@ -23,6 +23,11 @@ Route::middleware('auth:api')->group(function(){
   
   Route::get('neraca-awal/{id}', 'API\InitialBalanceController@index');
 
+  Route::get('jurnal-umum/', 'API\GeneralJournalController@index');
+  Route::post('jurnal-umum/', 'API\GeneralJournalController@store');
+  Route::post('jurnal-umum/{id}', 'API\GeneralJournalController@update');
+  Route::delete('jurnal-umum/{id}', 'API\GeneralJournalController@destroy');
+
   Route::get('parent/', 'API\ParentController@index');
   Route::get('parent/child', 'API\ParentController@indexChild');
 
