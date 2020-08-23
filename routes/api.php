@@ -22,6 +22,9 @@ Route::middleware('auth:api')->group(function(){
   Route::get('user', 'API\UserController@index');
   
   Route::get('neraca-awal/{id}', 'API\InitialBalanceController@index');
+  Route::post('neraca-awal/', 'API\InitialBalanceController@store');
+  Route::post('neraca-awal/{id}', 'API\InitialBalanceController@update');
+  Route::delete('neraca-awal/{id}', 'API\InitialBalanceController@destroy');
 
   Route::get('jurnal-umum/', 'API\GeneralJournalController@index');
   Route::post('jurnal-umum/', 'API\GeneralJournalController@store');

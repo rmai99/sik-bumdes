@@ -80,8 +80,8 @@ class ClassificationController extends Controller
 
       $data = new AccountClassification;
       $data->id_parent = $request->id_parent;
-      $data->classification_code = $request->name;
-      $data->classification_name = $request->code;
+      $data->classification_code = $request->code;
+      $data->classification_name = $request->name;
       $data->save();
 
       return response()->json([
@@ -123,8 +123,8 @@ class ClassificationController extends Controller
 
       $data = AccountClassification::findOrFail($id);
       $data->id_parent = $request->id_parent;
-      $data->classification_code = $request->name;
-      $data->classification_name = $request->code;
+      $data->classification_code = $request->code;
+      $data->classification_name = $request->name;
       $data->save();
 
       return response()->json([

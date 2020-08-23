@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Http\Resources\Collection;
+use Illuminate\Support\Facades\Validator;
 use Auth;
 use App\Companies;
 use App\Business;
@@ -64,5 +65,99 @@ class InitialBalanceController extends Controller
 
         return new Collection($array);
 
+    }
+
+    
+    public function store(Request $request)
+    {
+      $dates = date('Y', strtotime($request->date) );
+      $data = InitialBalance::where('id_account', $request->id_account)->whereYear('date','=', $dates)->first();
+      if($data){
+          $dates = date('Y-m-d', strtotime($data->date . " +1 year") );
+      }else{
+          $dates = 0000-00-00;
+      }
+
+      $validator = Validator::make($request->all(), [
+        'id_account' => 'required',
+        'amount' => 'required',
+        'date' => 'required|after_or_equal:'.$dates,
+      ],
+      [
+        'id_account.required' => 'Akun tidak boleh kosong',
+        'amount.required' => 'Jumlah tidak boleh kosong',
+        'date.required' => 'Tanggal tidak boleh kosong',
+        'date.after_or_equal' => 'Penginputan neraca awal hanya sekali dalam setahun',
+      ]);
+
+      if ($validator->fails()) {
+        return response()->json(['success'=>false,'errors'=>$validator->errors()], 400);
+      }
+
+      $convert_amount = preg_replace("/[^0-9]/", "", $request->amount);
+
+      $data = new InitialBalance();
+      $data->date = $request->date;
+      $data->id_account = $request->id_account;
+      $data->amount = $convert_amount;
+      $data->save();
+
+      return response()->json([
+        'success'=>true,
+        'data'=>$data,
+      ]);
+    }
+    
+    public function update(Request $request, $id)
+    {
+      if(InitialBalance::where('id', $id)->where('id_account', $request->id_account)->whereYear('date','=', $request->date)->first()){
+          $dates = 0000-00-00;
+      } else if(!InitialBalance::where('id_account', $request->id_account)->whereYear('date','=', $request->date)->first()){
+          $dates = 0000-00-00;
+      } else if(InitialBalance::where('id_account', $request->id_account)->whereYear('date','=', $request->date)->first()){
+          $dates = date('Y-m-d', strtotime($request->date . " +1 year") );
+      }
+
+      $validator = Validator::make($request->all(), [
+        'id_account' => 'required',
+        'amount' => 'required',
+        'date' => 'required|after_or_equal:'.$dates,
+      ],
+      [
+        'id_account.required' => 'Akun tidak boleh kosong',
+        'amount.required' => 'Jumlah tidak boleh kosong',
+        'date.required' => 'Tanggal tidak boleh kosong',
+        'date.after_or_equal' => 'Penginputan neraca awal hanya sekali dalam setahun',
+      ]);
+
+      if ($validator->fails()) {
+        return response()->json(['success'=>false,'errors'=>$validator->errors()], 400);
+      }
+
+      $data = InitialBalance::where('id', $id)->first();
+      $convert_amount = preg_replace("/[^0-9]/", "", $request->amount);
+      
+      $data->id_account = $request->id_account;
+      $data->amount = $convert_amount;
+      $data->date = $request->date;
+      $data->save();
+
+      return response()->json([
+        'success'=>true,
+        'data'=>$data,
+      ]);
+    }
+
+    public function destroy($id)
+    {
+      try {
+        InitialBalance::destroy($id);
+      } catch (Throwable $e) {
+        return response()->json(['success'=>false,'errors'=>$validator->errors()], 500);
+      }
+      return response()->json([
+        'success'=>true,
+        'message'=>'Data berhasil dihapus',
+      ]); 
     }
 }
