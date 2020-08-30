@@ -13,6 +13,7 @@ use App\Business;
 use App\AccountParent;
 use App\InitialBalance;
 use App\Employee;
+use App\BusinessSession;
 
 class InitialBalanceController extends Controller
 {
@@ -24,10 +25,16 @@ class InitialBalanceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($id)
+    public function index()
     {
         $user = Auth::guard('api')->user();
 
+        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if(!$session->business){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        }
+        $session = $session->business;
+        
         if (isset($_GET['year'])) {
             $year = $_GET['year'];
         } else {
@@ -52,14 +59,15 @@ class InitialBalanceController extends Controller
             ->whereYear('date', $year);
           }
         ])
-        ->where('id_business', $id)->get();
+        ->where('id_business', $session->id)->get();
 
-        $years = InitialBalance::whereHas('account.classification.parent', function($q) use ($id){
-            $q->where('id_business', $id);
+        $years = InitialBalance::whereHas('account.classification.parent', function($q) use ($session){
+            $q->where('id_business', $session->id);
         })->selectRaw('YEAR(date) as year')
         ->orderBy('date', 'desc')->distinct()->get();
 
         $array = array();
+        $array['business'] = $session;
         $array['neraca_awal'] = $account_parent;
         $array['available_year'] = $years->pluck('year');
 

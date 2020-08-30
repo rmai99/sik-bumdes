@@ -10,6 +10,7 @@ use Spatie\Permission\Models\Role;
 use App\Http\Resources\Collection;
 use Auth;
 use App\Account;
+use App\BusinessSession;
 
 class AccountController extends Controller
 {
@@ -24,11 +25,17 @@ class AccountController extends Controller
     public function index()
     {
         $user = Auth::guard('api')->user();
+        
+        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if(!$session->business){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        }
+        $session = $session->business;
 
         $account = Account::select('id', 'id_classification', 'account_code', 'account_name', 'position')
-          ->whereHas('classification.parent.business.company', function ($query) use ($user) {
-            $query->where('id_user', $user->id);
-          })->get();
+        ->whereHas('classification.parent', function ($query) use ($session) {
+          $query->where('id_business', $session->id);
+        })->get();
 
         return new Collection($account);
 
@@ -82,8 +89,8 @@ class AccountController extends Controller
 
         $data = new Account;
         $data->id_classification = $request->id_classification;
-        $data->account_code = $request->name;
-        $data->account_name = $request->code;
+        $data->account_code = $request->code;
+        $data->account_name = $request->name;
         $data->position = $request->position;
         $data->save();
 
@@ -128,8 +135,8 @@ class AccountController extends Controller
 
       $data = Account::findOrFail($id);
       $data->id_classification = $request->id_classification;
-      $data->account_code = $request->name;
-      $data->account_name = $request->code;
+      $data->account_code = $request->code;
+      $data->account_name = $request->name;
       $data->position = $request->position;
       $data->save();
 

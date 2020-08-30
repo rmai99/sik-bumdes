@@ -20,8 +20,10 @@ Route::middleware('auth:api')->group(function(){
   // Modul User
   Route::post('user/update', 'API\UserController@update');
   Route::get('user', 'API\UserController@index');
+  Route::get('user/business', 'API\UserController@getBusiness');
+  Route::post('user/session', 'API\UserController@setSession');
   
-  Route::get('neraca-awal/{id}', 'API\InitialBalanceController@index');
+  Route::get('neraca-awal/', 'API\InitialBalanceController@index');
   Route::post('neraca-awal/', 'API\InitialBalanceController@store');
   Route::post('neraca-awal/{id}', 'API\InitialBalanceController@update');
   Route::delete('neraca-awal/{id}', 'API\InitialBalanceController@destroy');

@@ -12,6 +12,7 @@ use App\Companies;
 use App\Business;
 use App\DetailJournal;
 use App\Account;
+use App\BusinessSession;
 
 class GeneralJournalController extends Controller
 {
@@ -46,30 +47,27 @@ class GeneralJournalController extends Controller
           $day = null;
         }
         $user = Auth::user();
-        if($user->hasRole('company')){
-          $session = session('business');
-          $company = Companies::where('id_user', $user->id)->first()->id;
-          if($session == null){
-            $session = Business::where('id_company', $company)->first()->id;
-          }
-        } else{
-          $session = $getBusiness->id_business;
+        
+        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if(!$session->business){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
         }
+        $session = $session->business;
 
         if ($day && $month) {
           $data = DetailJournal::with('journal.account')
           ->whereHas('journal.account.classification.parent', function($q) use($session){
-            $q->where('id_business', $session);
+            $q->where('id_business', $session->id);
           })->whereYear('date', $year)->whereMonth('date', $month)->whereDay('date', $day)->orderBy('date', 'DESC')->get();
         }else if ($month){
           $data = DetailJournal::with('journal.account')
           ->whereHas('journal.account.classification.parent', function($q) use($session){
-            $q->where('id_business', $session);
+            $q->where('id_business', $session->id);
           })->whereYear('date', $year)->whereMonth('date', $month)->orderBy('date', 'DESC')->get();
         }else {
           $data = DetailJournal::with('journal.account')
           ->whereHas('journal.account.classification.parent', function($q) use($session){
-            $q->where('id_business', $session);
+            $q->where('id_business', $session->id);
           })->whereYear('date', $year)->orderBy('date', 'DESC')->get();
         }
         
