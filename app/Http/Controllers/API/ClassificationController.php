@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 use App\Http\Resources\Collection;
 use Auth;
@@ -44,5 +46,105 @@ class ClassificationController extends Controller
 
         return new Collection($classification);
 
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+      $validator = Validator::make($request->all(), [
+        'id_parent' => ['required', 'exists:account_parent,id'],
+        'name' => ['required', 'string'],
+        'code' => [
+          'required',
+          Rule::unique('account_classifications', 'classification_code')->where(function ($query) use($request) {
+            return $query->where('id_parent', $request->id_parent);
+          }),
+        ]
+      ],
+      [
+        'id_parent.required' => 'Parent tidak boleh kosong',
+        'id_parent.exists' => 'Parent tidak terdaftar dalam sistem',
+        'name.required' => 'Nama klasifikasi akun tidak boleh kosong',
+        'code.required' => 'Kode klasifikasi akun tidak boleh kosong',
+        'code.unique' => 'Kode klasifikasi akun tidak boleh sama',
+      ]);
+      
+      if ($validator->fails()) {
+        return response()->json(['success'=>false,'errors'=>$validator->errors()], 400);
+      }
+
+      $data = new AccountClassification;
+      $data->id_parent = $request->id_parent;
+      $data->classification_code = $request->name;
+      $data->classification_name = $request->code;
+      $data->save();
+
+      return response()->json([
+        'success'=>true,
+        'data'=>$data,
+      ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+      $validator = Validator::make($request->all(), [
+        'id_parent' => ['required', 'exists:account_parent,id'],
+        'name' => ['required', 'string'],
+        'code' => [
+          'required',
+          Rule::unique('account_classifications', 'classification_code')->ignore($id)->where(function ($query) use($request) {
+            return $query->where('id_parent', $request->id_parent);
+          }),
+        ]
+      ],
+      [
+        'id_parent.required' => 'Parent tidak boleh kosong',
+        'id_parent.exists' => 'Parent tidak terdaftar dalam sistem',
+        'name.required' => 'Nama klasifikasi akun tidak boleh kosong',
+        'code.required' => 'Kode klasifikasi akun tidak boleh kosong',
+        'code.unique' => 'Kode klasifikasi akun tidak boleh sama',
+      ]);
+      
+      if ($validator->fails()) {
+        return response()->json(['success'=>false,'errors'=>$validator->errors()], 400);
+      }
+
+      $data = AccountClassification::findOrFail($id);
+      $data->id_parent = $request->id_parent;
+      $data->classification_code = $request->name;
+      $data->classification_name = $request->code;
+      $data->save();
+
+      return response()->json([
+        'success'=>true,
+        'data'=>$data,
+      ]);
+    }
+    
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+      $data = AccountClassification::destroy($id);
+      return response()->json([
+        'success'=>true,
+        'message'=>'Data berhasil dihapus',
+      ]); 
     }
 }
