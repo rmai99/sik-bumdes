@@ -354,11 +354,13 @@
                         dataType    : 'JSON',
                         success     : (response) => {
                             Swal.fire(
-                                'Dihapus!',
-                                'Jurnal anda telah dihapus.',
-                                'success'
-                            )
+                                {title: 'Dihapus!',
+                                text: 'Jurnal telas dihapus',
+                                icon: 'success',
+                                timer: 300
+                            })
                             $(this).closest('tr').remove();
+                            location.reload();
                         }
                     })
                 } else if (result.dismiss === Swal.DismissReason.cancel) {

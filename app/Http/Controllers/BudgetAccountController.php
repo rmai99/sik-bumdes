@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use RealRashid\SweetAlert\Facades\Alert;
 use Auth;
+use DB;
 use App\Companies;
 use App\Business;
 use App\Employee;
@@ -51,6 +52,13 @@ class BudgetAccountController extends Controller
         return view('user.akun_anggaran', compact('business', 'session', 'getBusiness', 'type', 'account'));
     }
 
+    public function detail(Request $request)
+    {
+        $account = BudgetAccount::where('id', $request->id)->get();
+        
+        return response()->json($account);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -69,7 +77,23 @@ class BudgetAccountController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = Auth::user();
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+        } else {
+            $getBusiness = Employee::with('business')->where('id_user', $user->id)->first();
+            $company = $getBusiness->id_company;
+        }
+        $data = new BudgetAccount();
+        $data->type = $request->type;
+        $data->id_category = $request->kategori;
+        $data->name = $request->namaAkunAnggaran;
+        $data->id_company = $company;
+        $data->save();
+
+        return redirect()->route('akun_anggaran.index')->with('success','Berhasil Menambahkan Akun!');
     }
 
     /**
@@ -103,7 +127,13 @@ class BudgetAccountController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = BudgetAccount::where('id', $id)->first();
+        $data->type = $request->type;
+        $data->id_category = $request->kategori;
+        $data->name = $request->namaAkunAnggaran;
+        $data->save();
+
+        return redirect()->route('akun_anggaran.index')->with('success','Berhasil Mengubah Akun Anggaran!');
     }
 
     /**
@@ -114,6 +144,10 @@ class BudgetAccountController extends Controller
      */
     public function destroy($id)
     {
-        //
+        BudgetAccount::find($id)->delete($id);
+
+        return response()->json([
+            'success' => 'Record deleted successfully!'
+        ]);
     }
 }

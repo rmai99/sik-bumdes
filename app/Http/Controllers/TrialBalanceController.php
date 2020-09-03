@@ -90,9 +90,9 @@ class TrialBalanceController extends Controller
                         })->get();
                         foreach ($journals as $journal) {
                             if ($journal->position == $position) {
-                                $ending_balance += $journal->detail->amount;
+                                $ending_balance += $journal->amount;
                             }else {
-                                $ending_balance -= $journal->detail->amount;
+                                $ending_balance -= $journal->amount;
                             }
                         }
                     }else {
@@ -178,9 +178,9 @@ class TrialBalanceController extends Controller
                         })->get();
                         foreach ($journals as $journal) {
                             if ($journal->position == $position) {
-                                $ending_balance += $journal->detail->amount;
+                                $ending_balance += $journal->amount;
                             }else {
-                                $ending_balance -= $journal->detail->amount;
+                                $ending_balance -= $journal->amount;
                             }
                         }
                     }else {
