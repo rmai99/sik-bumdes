@@ -73,6 +73,7 @@ Route::get('upgrade', 'ProfileController@upgrade')->name('upgrade');
 
 /* ======== AKUN ANGGARAN ======== */
 Route::resource('akun_anggaran', 'BudgetAccountController');
+Route::get('detail_akun_anggaran', 'BudgetAccountController@detail')->name('akun.anggaran.detail');
 Route::resource('rencana_anggaran', 'BudgetPlan_RealizationController');
 Route::get('detail_anggaran', 'BudgetPlan_RealizationController@detail');
 Route::get('detail_realisasi', 'BudgetPlan_RealizationController@detail_realization');
