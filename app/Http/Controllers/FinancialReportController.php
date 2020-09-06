@@ -78,9 +78,9 @@ class FinancialReportController extends Controller
                         })->get();
                         foreach($jurnals as $jurnal){
                             if ($jurnal->position == $position) {
-                                $endingBalance += $jurnal->detail->amount;
+                                $endingBalance += $jurnal->amount;
                             }else {
-                                $endingBalance -= $jurnal->detail->amount;
+                                $endingBalance -= $jurnal->amount;
                             }
                         }
                     } else {
@@ -197,9 +197,9 @@ class FinancialReportController extends Controller
                         })->get();
                         foreach($jurnals as $jurnal){
                             if ($jurnal->position == $position) {
-                                $endingBalance += $jurnal->detail->amount;
+                                $endingBalance += $jurnal->amount;
                             }else {
-                                $endingBalance -= $jurnal->detail->amount;
+                                $endingBalance -= $jurnal->amount;
                             }
                         }
                     } else {
@@ -318,9 +318,9 @@ class FinancialReportController extends Controller
                         })->get();
                         foreach($jurnals as $jurnal){
                             if ($jurnal->position == $position) {
-                                $endingBalance += $jurnal->detail->amount;
+                                $endingBalance += $jurnal->amount;
                             }else {
-                                $endingBalance -= $jurnal->detail->amount;
+                                $endingBalance -= $jurnal->amount;
                             }
                         }
                     } else {
@@ -418,9 +418,9 @@ class FinancialReportController extends Controller
                         })->get();
                         foreach($jurnals as $jurnal){
                             if ($jurnal->position == $position) {
-                                $endingBalance += $jurnal->detail->amount;
+                                $endingBalance += $jurnal->amount;
                             }else {
-                                $endingBalance -= $jurnal->detail->amount;
+                                $endingBalance -= $jurnal->amount;
                             }
                         }
                     } else {
@@ -528,9 +528,9 @@ class FinancialReportController extends Controller
                         })->get();
                         foreach($jurnals as $jurnal){
                             if ($jurnal->position == $position) {
-                                $endingBalance += $jurnal->detail->amount;
+                                $endingBalance += $jurnal->amount;
                             }else {
-                                $endingBalance -= $jurnal->detail->amount;
+                                $endingBalance -= $jurnal->amount;
                             }
                         }
                     } else {
@@ -670,9 +670,9 @@ class FinancialReportController extends Controller
                         })->get();
                         foreach($jurnals as $jurnal){
                             if ($jurnal->position == $position) {
-                                $endingBalance += $jurnal->detail->amount;
+                                $endingBalance += $jurnal->amount;
                             }else {
-                                $endingBalance -= $jurnal->detail->amount;
+                                $endingBalance -= $jurnal->amount;
                             }
                         }
                     } else {
