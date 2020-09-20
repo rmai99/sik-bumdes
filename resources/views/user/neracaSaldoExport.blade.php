@@ -46,8 +46,12 @@
 
 <body>
 @php
-    $month = Request::segment(4);
-    $dt = Request::segment(3);
+    if (Request::segment(4) != null) {
+      $month = Request::segment(4);
+      $dt = Request::segment(3);
+    }else {
+      $dt = $year;
+    }
 
     setlocale(LC_ALL, 'id_ID');
 

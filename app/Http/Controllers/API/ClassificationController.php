@@ -10,6 +10,7 @@ use Spatie\Permission\Models\Role;
 use App\Http\Resources\Collection;
 use Auth;
 use App\AccountClassification;
+use App\BusinessSession;
 
 class ClassificationController extends Controller
 {
@@ -25,10 +26,16 @@ class ClassificationController extends Controller
     {
         $user = Auth::guard('api')->user();
 
+        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if(!$session->business){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        }
+        $session = $session->business;
+
         $classification = AccountClassification::select('id', 'id_parent', 'classification_code', 'classification_name')
-          ->whereHas('parent.business.company', function ($query) use ($user) {
-            $query->where('id_user', $user->id);
-          })->get();
+        ->whereHas('parent', function ($query) use ($session) {
+          $query->where('id_business', $session->id);
+        })->get();
 
         return new Collection($classification);
 
@@ -80,8 +87,8 @@ class ClassificationController extends Controller
 
       $data = new AccountClassification;
       $data->id_parent = $request->id_parent;
-      $data->classification_code = $request->name;
-      $data->classification_name = $request->code;
+      $data->classification_code = $request->code;
+      $data->classification_name = $request->name;
       $data->save();
 
       return response()->json([
@@ -123,8 +130,8 @@ class ClassificationController extends Controller
 
       $data = AccountClassification::findOrFail($id);
       $data->id_parent = $request->id_parent;
-      $data->classification_code = $request->name;
-      $data->classification_name = $request->code;
+      $data->classification_code = $request->code;
+      $data->classification_name = $request->name;
       $data->save();
 
       return response()->json([

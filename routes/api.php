@@ -20,8 +20,32 @@ Route::middleware('auth:api')->group(function(){
   // Modul User
   Route::post('user/update', 'API\UserController@update');
   Route::get('user', 'API\UserController@index');
+  Route::get('user/business', 'API\UserController@getBusiness');
+  Route::post('user/session', 'API\UserController@setSession');
   
-  Route::get('neraca-awal/{id}', 'API\InitialBalanceController@index');
+  Route::get('neraca-awal/', 'API\InitialBalanceController@index');
+  Route::post('neraca-awal/', 'API\InitialBalanceController@store');
+  Route::post('neraca-awal/{id}', 'API\InitialBalanceController@update');
+  Route::delete('neraca-awal/{id}', 'API\InitialBalanceController@destroy');
+
+  Route::get('jurnal-umum/', 'API\GeneralJournalController@index');
+  Route::post('jurnal-umum/', 'API\GeneralJournalController@store');
+  Route::post('jurnal-umum/{id}', 'API\GeneralJournalController@update');
+  Route::delete('jurnal-umum/{id}', 'API\GeneralJournalController@destroy');
+
+  Route::get('buku-besar/', 'API\GeneralLedgerController@index');
+
+  Route::get('neraca-saldo/', 'API\TrialBalanceController@index');
+  Route::get('neraca-saldo/export/', 'API\TrialBalanceController@export');
+
+  Route::get('laporan-laba-rugi/', 'API\FinancialReportController@incomeStatement');
+  Route::get('laporan-laba-rugi/export/', 'API\FinancialReportController@incomeStatementExport');
+  
+  Route::get('perubahan-ekuitas/', 'API\FinancialReportController@changeInEquity');
+  Route::get('perubahan-ekuitas/export/', 'API\FinancialReportController@changeInEquityExport');
+  
+  Route::get('laporan-neraca/', 'API\FinancialReportController@balanceSheet');
+  Route::get('laporan-neraca/export', 'API\FinancialReportController@balanceSheetExport');
 
   Route::get('parent/', 'API\ParentController@index');
   Route::get('parent/child', 'API\ParentController@indexChild');

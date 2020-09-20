@@ -57,8 +57,12 @@
 
 <body>
     @php
-    $month = Request::segment(4);
-	$dt = Request::segment(3);
+    if (Request::segment(4) != null) {
+      $month = Request::segment(4);
+      $dt = Request::segment(3);
+    }else {
+      $dt = $year;
+    }
 	$sum = 0;
 	$sum_biaya = 0;
 	$sum_ekuitas = 0;
