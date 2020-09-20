@@ -66,7 +66,26 @@ class InitialBalanceController extends Controller
         })->selectRaw('YEAR(date) as year')
         ->orderBy('date', 'desc')->distinct()->get();
 
+        $total_debit = 0;
+        $total_kredit = 0;
+
+        foreach ($account_parent as $parent) {
+          foreach ($parent->classification as $classification) {
+            foreach ($classification->account as $account) {
+              foreach ($account->initialBalance as $initialBalance) {
+                if ($account->position == "Debit") {
+                  $total_debit += $initialBalance->amount;
+                }else {
+                  $total_kredit += $initialBalance->amount;
+                }
+              }
+            }
+          }
+        }
+
         $array = array();
+        $array['total_debit'] = $total_debit;
+        $array['total_kredit'] = $total_kredit;
         $array['business'] = $session;
         $array['neraca_awal'] = $account_parent;
         $array['available_year'] = $years->pluck('year');

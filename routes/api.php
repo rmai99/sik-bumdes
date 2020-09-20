@@ -33,6 +33,20 @@ Route::middleware('auth:api')->group(function(){
   Route::post('jurnal-umum/{id}', 'API\GeneralJournalController@update');
   Route::delete('jurnal-umum/{id}', 'API\GeneralJournalController@destroy');
 
+  Route::get('buku-besar/', 'API\GeneralLedgerController@index');
+
+  Route::get('neraca-saldo/', 'API\TrialBalanceController@index');
+  Route::get('neraca-saldo/export/', 'API\TrialBalanceController@export');
+
+  Route::get('laporan-laba-rugi/', 'API\FinancialReportController@incomeStatement');
+  Route::get('laporan-laba-rugi/export/', 'API\FinancialReportController@incomeStatementExport');
+  
+  Route::get('perubahan-ekuitas/', 'API\FinancialReportController@changeInEquity');
+  Route::get('perubahan-ekuitas/export/', 'API\FinancialReportController@changeInEquityExport');
+  
+  Route::get('laporan-neraca/', 'API\FinancialReportController@balanceSheet');
+  Route::get('laporan-neraca/export', 'API\FinancialReportController@balanceSheetExport');
+
   Route::get('parent/', 'API\ParentController@index');
   Route::get('parent/child', 'API\ParentController@indexChild');
 
