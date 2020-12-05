@@ -18,4 +18,9 @@ class Business extends Model
         return $this->belongsTo('App\Companies', 'id_company');
     }
 
+    public function session()
+    {
+        return $this->hasMany('App\BusinessSession', 'id_business');
+    }
+
 }

@@ -14,6 +14,7 @@ use App\User;
 use App\Companies;
 use App\Business;
 use App\Employee;
+use App\BusinessSession;
 
 class UserController extends Controller
 {
@@ -33,11 +34,13 @@ class UserController extends Controller
           $company = Companies::where('id_user', $user->id)->first();
           $user->company = $company->name;
           $user->token = $user->createToken('SIK_Bumdes')->accessToken;
-          
+          $business = Business::where('id_company', $company->id)->get();
+
           return response()->json([
             'success'=>true,
             'user' => $user,
-            'role' => $role
+            'role' => $role,
+            'business' => $business
           ]);
         }
         return response()->json([
@@ -48,6 +51,28 @@ class UserController extends Controller
       else{
         return response()->json(['success'=>false,'error'=>'Email atau password salah. Mohon coba lagi'], 400);
       }
+    }
+
+    public function setSession(Request $request){
+      //Autentikasi user
+      $user = Auth::guard('api')->user();
+
+      $session = BusinessSession::where('id_user', $user->id)->first();
+      
+      if(!$session){
+        $session = BusinessSession::create([
+          'id_user' => $user->id,
+          'id_business' => $request->id_business,
+        ]);
+      }else if(!$session->business){
+        $session->id_business = $request->id_business;
+        $session->save();
+      }
+
+      return response()->json([
+        'success'=>true,
+        'session' => $session->business, 
+      ], $this->successStatus); 
     }
 
     public function register(Request $request)
@@ -124,6 +149,30 @@ class UserController extends Controller
         ], $this->successStatus); 
     }
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getBusiness()
+    {
+        $user = Auth::guard('api')->user();
+
+        $isCompany = $user->hasRole('company');
+        
+        if($isCompany){
+            $company = Companies::where('id_user', $user->id)->first();
+            $business = Business::where('id_company', $company->id)->get();
+        } else {
+            $company = Employee::where('id_user', $user->id)->first();
+            $business = Employee::with('business')->where('id_user', $user->id)->first()->business;
+        }
+
+        return response()->json([
+          'success'=>true,
+          'business' => $business,
+        ], $this->successStatus); 
+    }
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -132,16 +181,16 @@ class UserController extends Controller
      */
     public function update(Request $request)
     {
-      $id = Auth::id();
+      $user = Auth::guard('api')->user();
 
       $isCompany = $user->hasRole('company');
         
       if($isCompany){
-        $detail = Companies::where('id_user', $id)->first();
+        $detail = Companies::where('id_user', $user->id)->first();
 
         $validator = Validator::make($request->all(), [
           'name' => 'required|string|max:191',
-          'email' => 'required|string|email|max:191|unique:users,email,'.$id,
+          'email' => 'required|string|email|max:191|unique:users,email,'.$user->id,
           'phone_number' => 'required|numeric|digits_between:10,15|unique:companies,phone_number,'.$detail->id,
           'address' => 'required|string|max:255',
         ],[
@@ -159,7 +208,7 @@ class UserController extends Controller
           return response()->json(['success'=>false,'errors'=>$validator->errors()], 400);
         }
         
-        $data = User::findOrFail($id);
+        $data = User::findOrFail($user->id);
         $data->email = $request->email;
         $data->save();
         
@@ -176,7 +225,7 @@ class UserController extends Controller
       } else {
         $validator = Validator::make($request->all(), [
           'name' => 'required|string|max:191',
-          'email' => 'required|string|email|max:191|unique:users,email,'.$id,
+          'email' => 'required|string|email|max:191|unique:users,email,'.$user->id,
         ],[
           'email.required' => 'Email tidak boleh kosong',
           'email.max' => 'Email maksimal 255 karakter',
@@ -189,7 +238,7 @@ class UserController extends Controller
           return response()->json(['success'=>false,'errors'=>$validator->errors()], 400);
         }
         
-        $data = User::findOrFail($id);
+        $data = User::findOrFail($user->id);
         $data->email = $request->email;
         $data->save();
         
