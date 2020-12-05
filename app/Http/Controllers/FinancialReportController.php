@@ -2,17 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\IncomeStatementExport;
+use App\Exports\ChangeInEquityExport;
+use App\Exports\BalancesExport;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use RealRashid\SweetAlert\Facades\Alert;
+use Maatwebsite\Excel\Facades\Excel;
+use PDF;
 use Auth;
 use App\Companies;
 use App\Business;
 use App\AccountParent;
 use App\InitialBalance;
 use App\Employee;
+use DateTime;
 use DB;
-use PDF;
 
 class FinancialReportController extends Controller
 {
@@ -269,6 +274,14 @@ class FinancialReportController extends Controller
         return view('user.laporanLabaRugiExport', compact('incomeArray', 'business', 'expenseArray', 'years', 'year', 'session', 'othersIncomeArray', 'othersExpenseArray', 'income', 'expense','getBusiness', 'othersIncome', 'othersExpense'));
     }
 
+    public function incomeExportExcel($year, $month=null)
+    {
+        $dateObj   = DateTime::createFromFormat('!m', $month);
+        $monthName = $dateObj->format('F');
+        $file = "Laporan Laba Rugi ".$monthName." ".$year;
+        return Excel::download(new IncomeStatementExport($year, $month), $file.'.xlsx');
+    }
+
     public function changeInEquity()
     {
         $role = Auth::user();
@@ -476,6 +489,14 @@ class FinancialReportController extends Controller
         // return view('user.perubahanEkuitas', compact('session', 'business', 'equityArray', 'saldo_berjalan', 'years', 'year', 'getBusiness'));
     }
 
+    public function changeInEquityExportExcel($year, $month=null)
+    {
+        $dateObj   = DateTime::createFromFormat('!m', $month);
+        $monthName = $dateObj->format('F');
+        $file = "Laporan Perubahan Ekuitas ".$monthName." ".$year;
+        return Excel::download(new ChangeInEquityExport($year, $month), $file.'.xlsx');
+    }
+
     public function balanceSheet()
     {
         $role = Auth::user();
@@ -611,7 +632,7 @@ class FinancialReportController extends Controller
         if($saldo_berjalan >= 0){
             $equitas = $modal_awal + $saldo_berjalan - $prive;
         } else {
-            $equitas = $modal_awal - $saldo_berjalan + $prive;
+            $equitas = $modal_awal + $saldo_berjalan + $prive;
         }
         // dd($assetArray, $equityArray, $liabilityArray, $equitas);
 
@@ -750,7 +771,7 @@ class FinancialReportController extends Controller
         if($saldo_berjalan >= 0){
             $equitas = $modal_awal + $saldo_berjalan - $prive;
         } else {
-            $equitas = $modal_awal - $saldo_berjalan + $prive;
+            $equitas = $modal_awal + $saldo_berjalan + $prive;
         }
 
         $years = InitialBalance::whereHas('account.classification.parent', function($q) use ($session){
@@ -761,6 +782,13 @@ class FinancialReportController extends Controller
         return $pdf->stream();
     }
     
+    public function balanceExportExcel($year, $month=null)
+    {
+        $dateObj   = DateTime::createFromFormat('!m', $month);
+        $monthName = $dateObj->format('F');
+        $file = "Neraca ".$monthName." ".$year;
+        return Excel::download(new BalancesExport($year, $month), $file.'.xlsx');
+    }
 
     public function store(Request $request)
     {

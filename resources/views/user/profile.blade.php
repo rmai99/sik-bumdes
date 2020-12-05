@@ -24,7 +24,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="bmd-label-floating">Perusahaan</label>
+                                <label class="bmd-label-floating">BUMDes</label>
                                 <input type="text" class="form-control" value="{{ $data->name }}" name="name" required>
                             </div>
                         </div>

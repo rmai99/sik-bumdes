@@ -6,7 +6,7 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>
-        Neraca Saldo
+        Neraca
     </title>
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     <style>
@@ -57,9 +57,13 @@
 
 <body>
     @php
-    $month = Request::segment(4);
-	$dt = Request::segment(3);
-	$sum = 0;
+    if (Request::segment(4) != null) {
+      $month = Request::segment(4);
+      $dt = Request::segment(3);
+    }else {
+      $dt = $year;
+    }
+    $sum = 0;
 	$sum_biaya = 0;
 	$sum_ekuitas = 0;
     setlocale(LC_ALL, 'id_ID');

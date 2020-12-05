@@ -25,7 +25,7 @@
                         </div>
                         <input type="hidden" value="{{$journal->id}}" name="id_detail">
                         <input type="text" class="form-control border-select" name="receipt" required="true" aria-required="true" 
-                            value="{{$journal->id}}">
+                            value="{{$journal->receipt}}">
                     </div>
                 </div>
                 <div class="col-lg-12 col-md-12 pl-0">

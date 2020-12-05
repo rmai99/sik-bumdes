@@ -69,7 +69,15 @@
                                     <button type="button" class="btn btn-primary" id="search">Cari</button>
                                 </div>
                                 <div class="col-md-6 mt-4 text-right">
-                                    <a href="{{route('export.laba_rugi', ['year' => $dt, 'month' => $month])}}" class="btn btn-primary" target="_blank" id="export">Export</a>
+                                    <div class="dropdown show">
+                                        <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <span class="material-icons">import_export</span> Export
+                                        </a>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                          <a class="dropdown-item" href="{{route('export.laba_rugi', ['year' => $dt, 'month' => $month])}}" class="btn btn-primary" target="_blank">PDF</a>
+                                          <a class="dropdown-item" href="{{route('export.excel.laba_rugi', ['year' => $dt, 'month' => $month])}}" class="btn btn-primary" target="_blank">Excel</a>
+                                        </div>
+                                      </div>
                                 </div>
                             </div>
                         </div>

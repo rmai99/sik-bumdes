@@ -115,7 +115,7 @@
                                             </td>
                                             @if ($ba->budget_plan->realization !=null)
                                                 <td>
-                                                    {{$ba->budget_plan->realization->amount}}
+                                                    Rp{{strrev(implode('.',str_split(strrev(strval($ba->budget_plan->realization->amount)),3)))}}
                                                 </td>
                                                 <td class="text-center">{{$ba->budget_plan->amount/$ba->budget_plan->realization->amount}}</td>
                                                 <td>

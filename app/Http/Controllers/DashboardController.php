@@ -55,7 +55,7 @@ class DashboardController extends Controller
         $transaction = DetailJournal::whereHas('journal.account.classification.parent', function ($q) use ($session){
             $q->where('id_business', $session);
         })->whereYear('date', $year)->count();
-
+        
         $data = DetailJournal::with('journal.account')
         ->whereHas('journal.account.classification.parent', function($q) use($session){
             $q->where('id_business', $session);
@@ -66,7 +66,7 @@ class DashboardController extends Controller
 
         $cash = Account::whereHas('classification.parent', function ($q) use ($session){
             $q->where('id_business', $session);
-        })->where('account_name', 'Kas')->first();
+        })->where('account_name', 'like', 'Kas')->first();
         
         if($cash != null){
             $sum = 0;
@@ -75,7 +75,7 @@ class DashboardController extends Controller
             } else {
                 $sum = $cash->initialBalance()->whereYear('date', $year)->first()->amount;
             }
-
+            
             if($cash->journal()->exists()){
                 $jurnals = $cash->journal()->whereHas('detail', function($q) use($year, $month){
                     $q->whereYear('date', $year);
@@ -85,9 +85,9 @@ class DashboardController extends Controller
                 
                 foreach($jurnals as $jurnal){
                     if($jurnal->position == "Debit"){
-                        $sum += $jurnal->detail->amount;
+                        $sum += $jurnal->amount;
                     } else if($jurnal->position == "Kredit"){
-                        $sum -= $jurnal->detail->amount;
+                        $sum -= $jurnal->amount;
                     }
                 }
             } else {
@@ -124,9 +124,9 @@ class DashboardController extends Controller
                         })->get();
                         foreach($jurnals as $jurnal){
                             if ($jurnal->position == $position) {
-                                $endingBalance += $jurnal->detail->amount;
+                                $endingBalance += $jurnal->amount;
                             }else {
-                                $endingBalance -= $jurnal->detail->amount;
+                                $endingBalance -= $jurnal->amount;
                             }
                         }
                     } else {
@@ -172,7 +172,7 @@ class DashboardController extends Controller
             $saldo_berjalan = round(($saldo_berjalan/1000000),1).' jt';
         }
 
-        return view('user/dashboard', compact('business', 'session', 'account', 'transaction', 'data', 'year', 'years', 'sum', 'getBusiness', 'saldo_berjalan'));
+        return view('user/dashboard', compact('business', 'session', 'account', 'transaction', 'data', 'year', 'years', 'sum', 'getBusiness', 'saldo_berjalan', 'cash'));
     }
 
     public function get_monthly_cash_flow($year = null){
@@ -221,9 +221,9 @@ class DashboardController extends Controller
                 
                 foreach($jurnals as $jurnal){
                     if($jurnal->position == "Debit"){
-                        $cash_in += $jurnal->detail->amount;
+                        $cash_in += $jurnal->amount;
                     } else if($jurnal->position == "Kredit"){
-                        $cash_out += $jurnal->detail->amount;
+                        $cash_out += $jurnal->amount;
                     }
                 }
             } else {
@@ -310,9 +310,9 @@ class DashboardController extends Controller
                 
                 foreach($jurnals as $jurnal){
                     if($jurnal->position == "Debit"){
-                        $cash_in += $jurnal->detail->amount;
+                        $cash_in += $jurnal->amount;
                     } else if($jurnal->position == "Kredit"){
-                        $cash_out += $jurnal->detail->amount;
+                        $cash_out += $jurnal->amount;
                     }
                 }
             } else {

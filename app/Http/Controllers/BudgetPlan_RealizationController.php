@@ -74,7 +74,10 @@ class BudgetPlan_RealizationController extends Controller
     public function store(Request $request)
     {
         $year = date("Y", strtotime($request->date));
-        $account = BudgetPlan::where('id_budget_account', $request->id_budget_account)->whereYear('date', $year)->first();
+        $month = date("m", strtotime($request->date));
+        $account = BudgetPlan::where('id_budget_account', $request->id_budget_account)
+            ->whereYear('date', $year)
+            ->whereYear('date', $month)->first();
         $validator = Validator::make($request->all(),[
             'id_budget_account' => 'required',
             'amount' => 'required',

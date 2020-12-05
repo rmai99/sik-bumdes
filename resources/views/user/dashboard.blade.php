@@ -17,7 +17,7 @@
                     <div class="card-icon" style="background: linear-gradient(60deg, #ffa726, #fb8c00);">
                         <i class="material-icons">account_balance_wallet</i>
                     </div>
-                    <p class="card-category">Saldo Kas</p>
+                    <p class="card-category">{{$cash->account_name}}</p>
                     <h3 class="card-title">
                         {{$sum}}
                     </h3>
@@ -73,7 +73,7 @@
                             </div>
                             <div class="col-4">
                                 <p class="d-flex justify-content-end mb-0 font-20">
-                                    Rp{{strrev(implode('.',str_split(strrev(strval($item->amount)),3)))}}
+                                    Rp{{strrev(implode('.',str_split(strrev(strval($item->journal->first()->amount)),3)))}}
                                 </p>
                             </div>
                             <div class="col">

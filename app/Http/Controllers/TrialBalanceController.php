@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\TrialBalanceExport;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use RealRashid\SweetAlert\Facades\Alert;
+use Maatwebsite\Excel\Facades\Excel;
 use Auth;
+use DateTime;
 use App\Companies;
 use App\Business;
 use App\Account;
@@ -24,7 +27,6 @@ class TrialBalanceController extends Controller
         $this->middleware(['role:company|employee']);
 
         $this->middleware('auth');
-        
     }
     
     public function index()
@@ -120,7 +122,6 @@ class TrialBalanceController extends Controller
     
     public function export($year, $month = null)
     {
-        // dd($year);
         $user = Auth::user();
         $isCompany = $user->hasRole('company');
         if($isCompany){
@@ -201,20 +202,18 @@ class TrialBalanceController extends Controller
 
         $company = Companies::where('id_user', $user->id)->first();
         
-        $years = DetailJournal::whereHas('journal.account.classification.parent', function($q) use ($session){
-            $q->where('id_business', $session);
-        })->selectRaw('YEAR(date) as year')->orderBy('date', 'desc')->distinct()->get();
-
-        // $pdf = PDF::loadView('welcome');
         $pdf = PDF::loadView('user.neracaSaldoExport', compact('balance', 'company'));
-        // dd("test");
-        // return $pdf->download('invoice.pdf');
 
         return $pdf->stream();
-
-        // return view('user.neracaSaldoExport', compact('balance','years', 'year', 'business', 'session','getBusiness'));
     }
 
+    public function exportExcel($year, $month=null)
+    {
+        $dateObj   = DateTime::createFromFormat('!m', $month);
+        $monthName = $dateObj->format('F');
+        $file = "Neraca Saldo ".$monthName." ".$year;
+        return Excel::download(new TrialBalanceExport($year, $month), $file.'.xlsx');
+    }
     public function create()
     {
         //

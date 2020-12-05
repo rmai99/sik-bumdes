@@ -159,17 +159,43 @@ class GeneralJournalController extends Controller
         if($debit != $credit){
             return Redirect::back()->withInput()->withErrors(['balance'=>'balance']);
         }
+        
         foreach($request->account as $key => $value){
             $account = InitialBalance::with('account')->where('id_account', $request->account[$key])
-            ->whereYear('date', $request->date)->first(); 
+                        ->whereYear('date', $request->date)->first();
+
+            $account == null ? $saldo = 0 : $saldo = $account->amount;
+
+            $date = $request->date;
+
+            $transaction = GeneralJournal::query()->whereHas('detail', function($q) use ($date){
+                $q->whereYear('date', $date);
+                $q->whereMonth('date', '<=',$date);
+            })->where('id_account', $request->account[$key])
+            ->selectRaw('sum(amount) as amount, position')
+            ->groupBy('position')->get();
+            
+            $detail_akun = Account::where('id', $request->account[$key])->first();
+            foreach($transaction as $item){
+                if($detail_akun->position == $item->position){
+                    $saldo += $item->amount;
+                } else {
+                    $saldo -= $item->amount;
+                }
+            }
+            
             if($account == null){
                 $account = Account::where('id', $request->account[$key])->first();
                 if($account->position == "Debit"){
-                    if($request->amount_credits[$key] != null){
+                    $amount = $request->amount_credits[$key];
+                    $convert = preg_replace("/[^0-9]/", "", $amount);
+                    if($saldo < $convert){
                         return Redirect::back()->withInput()->withError('insufficient');
                     }
-                }else if($account->position == "Kredit"){
-                    if($request->amount_debit[$key] != null){
+                } else if($account->position == "Kredit"){
+                    $amount = $request->amount_debit[$key];
+                    $convert = preg_replace("/[^0-9]/", "", $amount);
+                    if($saldo < $convert){
                         return Redirect::back()->withInput()->withError('insufficient');
                     }
                 }
@@ -265,20 +291,46 @@ class GeneralJournalController extends Controller
         }
         foreach($request->account as $key => $value){
             $account = InitialBalance::with('account')->where('id_account', $request->account[$key])
-            ->whereYear('date', $request->date)->first(); 
+                        ->whereYear('date', $request->date)->first();
+
+            $account == null ? $saldo = 0 : $saldo = $account->amount;
+
+            $date = $request->date;
+
+            $transaction = GeneralJournal::query()->whereHas('detail', function($q) use ($date){
+                $q->whereYear('date', $date);
+                $q->whereMonth('date', '<=',$date);
+            })->where('id_account', $request->account[$key])
+            ->selectRaw('sum(amount) as amount, position')
+            ->groupBy('position')->get();
+            
+            $detail_akun = Account::where('id', $request->account[$key])->first();
+            foreach($transaction as $item){
+                if($detail_akun->position == $item->position){
+                    $saldo += $item->amount;
+                } else {
+                    $saldo -= $item->amount;
+                }
+            }
+            
             if($account == null){
                 $account = Account::where('id', $request->account[$key])->first();
                 if($account->position == "Debit"){
-                    if($request->amount_credits[$key] != null){
+                    $amount = $request->amount_credits[$key];
+                    $convert = preg_replace("/[^0-9]/", "", $amount);
+                    if($saldo < $convert){
                         return Redirect::back()->withInput()->withError('insufficient');
                     }
-                }else if($account->position == "Kredit"){
-                    if($request->amount_debit[$key] != null){
+                } else if($account->position == "Kredit"){
+                    $amount = $request->amount_debit[$key];
+                    $convert = preg_replace("/[^0-9]/", "", $amount);
+                    if($saldo < $convert){
                         return Redirect::back()->withInput()->withError('insufficient');
                     }
                 }
             }
         }
+        
         $detail = DetailJournal::findOrFail($request->id_detail);
         $detail->receipt = $request->receipt;
         $detail->description = $request->description;

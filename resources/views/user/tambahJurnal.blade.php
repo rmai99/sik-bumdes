@@ -26,8 +26,8 @@
                             value="{{ old('receipt') }}">
                     </div>
                 </div>
-                <div class="col-lg-12 col-md-12 pl-0">
-                    <p class="font-weight-bold mb-0">Deskripsi</p>
+                <div class="col-lg-12 col-md-12 pl-0 mt-2">
+                    <p class="font-weight-bold mb-0">Tanggal</p>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text">

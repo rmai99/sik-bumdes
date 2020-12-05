@@ -36,6 +36,7 @@ Route::get('detail_balance', 'InitialBalanceController@detailBalance');
 /* ======== TRIAL BALANCE ======== */
 Route::resource('neraca_saldo', 'TrialBalanceController');
 Route::get('export/neraca_saldo/{year}/{month?}', 'TrialBalanceController@export')->name('export.neraca_saldo');
+Route::get('export/neraca_saldo/excel/{year}/{month?}', 'TrialBalanceController@exportExcel')->name('export.excel.neraca_saldo');
 
 /* ======== GENERAL JOURNAL ======== */
 Route::resource('jurnal_umum', 'GeneralJournalController')->except('update');
@@ -50,10 +51,13 @@ Route::resource('buku_besar', 'GeneralLedgerController');
 /* ======== REPORT ======== */
 Route::get('laporan_laba_rugi', 'FinancialReportController@incomeStatement')->name('laporan_laba_rugi');
 Route::get('export/laporan_laba_rugi/{year}/{month?}', 'FinancialReportController@incomeStatementExport')->name('export.laba_rugi');
+Route::get('export/laporan_laba_rugi/excel/{year}/{month?}', 'FinancialReportController@incomeExportExcel')->name('export.excel.laba_rugi');
 Route::get('perubahan_ekuitas', 'FinancialReportController@changeInEquity')->name('perubahan_ekuitas');
 Route::get('export/perubahan_ekuitas/{year}/{month?}', 'FinancialReportController@changeInEquityExport')->name('export.perubahan_ekuitas');
+Route::get('export/perubahan_ekuitas/excel/{year}/{month?}', 'FinancialReportController@changeInEquityExportExcel')->name('export.excel.ekuitas');
 Route::get('neraca', 'FinancialReportController@balanceSheet')->name('neraca');
 Route::get('export/neraca/{year}/{month?}', 'FinancialReportController@balanceSheetExport')->name('export.neraca');
+Route::get('export/neraca/excel/{year}/{month?}', 'FinancialReportController@balanceExportExcel')->name('export.excel.neraca');
 
 /* ======== EMPLOYEE ======== */
 Route::resource('karyawan','EmployeeController');

@@ -114,7 +114,7 @@ class BusinessController extends Controller
             array("Aset Lainnya"=>array("1310"=>"Debit")),
             array("Utang Dagang"=>array("2110"=>"Kredit"), "Utang Gaji"=>array("2120"=>"Kredit"), "Utang Bank"=>array("2130"=>"Kredit")),
             array("Obligasi"=>array("2210"=>"Kredit")),
-            array("Modal Disetor"=>array("3100"=>"Kredit"), "Saldo Laba Ditahan"=> array("3110"=>"Kredit"), "Saldo Laba Tahun Berjalan"=>array("3120"=>"Kredit")),
+            array("Modal Disetor"=>array("3100"=>"Kredit"), "Saldo Laba Ditahan"=> array("3110"=>"Kredit")),
             array("Pendapatan Wisata"=> array("4110"=>"Kredit"), "Pendapatan Homestay"=>array("4120"=>"Kredit"), "Pendapatan Resto"=> array("4130"=>"Kredit"), "Pendapatan Event"=> array("4140"=>"Kredit")),
             array("Biaya Gaji"=>array("5110"=>"Debit"), "Biaya Listrik, Air dan Telepon"=>array("5120"=>"Debit"), "Biaya Administrasi dan Umum" =>array("5130"=>"Debit"), "Biaya Pemasaran"=>array("5140"=>"Debit"), "Biaya Perlengkapan Kantor"=>array("5150"=>"Debit"), "Biaya Sewa"=>array("5160"=>"Debit"), "Biaya Asuransi"=>array("5170"=>"Debit"), "Biaya Penyusutan Gedung"=>array("5180"=>"Debit"), "Biaya Penyusutan Kendaraan"=>array("5190"=>"Debit"), "Biaya Penyusutan Peralatan Kantor"=>array("5200"=>"Debit")),
             array("Pendapatan Lain-Lain"=>array("6110"=>"Kredit")),

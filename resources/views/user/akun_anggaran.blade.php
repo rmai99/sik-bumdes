@@ -185,7 +185,7 @@
                                 <select class="form-control" name="kategori">
                                     <option></option>
                                 </select>
-                                @error('input_code')
+                                @error('kategori')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

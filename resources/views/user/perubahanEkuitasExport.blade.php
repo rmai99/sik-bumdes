@@ -7,7 +7,7 @@
     
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>
-        Neraca Saldo
+        Perubahan Ekuitas
     </title>
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     <style>
@@ -50,8 +50,12 @@
 </head>
 <body>
     @php
-        $month = Request::segment(4);
-        $dt = Request::segment(3);
+        if (Request::segment(4) != null) {
+          $month = Request::segment(4);
+          $dt = Request::segment(3);
+        }else {
+          $dt = $year;
+        }
         setlocale(LC_ALL, 'id_ID');
         $modal_awal = 0;
         $prive = 0;
@@ -142,7 +146,7 @@
                             @if ($saldo_berjalan >= 0)
                                 Rp{{strrev(implode('.',str_split(strrev(strval($modal_awal + $saldo_berjalan - $prive)),3)))}}
                             @else
-                                Rp{{strrev(implode('.',str_split(strrev(strval($modal_awal - $saldo_berjalan + $prive)),3)))}}
+                                Rp{{strrev(implode('.',str_split(strrev(strval($modal_awal + $saldo_berjalan + $prive)),3)))}}
                             @endif
                         </td>
                     </tr>

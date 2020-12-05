@@ -51,7 +51,7 @@ class AdminDashboardController extends Controller
             $thisMonth[] = $month;
             $total[] = $companies;
         }
-
+        // dd($thisMonth, $total);
         return response()->json([
             'status'=>'success',
             'bulan'=>$thisMonth,

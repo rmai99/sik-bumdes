@@ -74,7 +74,15 @@
                                     <button type="button" class="btn btn-primary" id="search">Cari</button>
                                 </div>
                                 <div class="col-md-6 mt-4 text-right">
-                                    <a href="{{route('export.neraca_saldo', ['year' => $dt, 'month' => $month])}}" class="btn btn-primary" target="_blank" id="export">Export</a>
+                                    <div class="dropdown show">
+                                        <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <span class="material-icons">import_export</span> Export
+                                        </a>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                          <a class="dropdown-item" href="{{route('export.neraca_saldo', ['year' => $dt, 'month' => $month])}}" target="_blank">PDF</a>
+                                          <a class="dropdown-item" href="{{route('export.excel.neraca_saldo', ['year' => $dt, 'month' => $month])}}" class="btn btn-primary" target="_blank">Excel</a>
+                                        </div>
+                                      </div>
                                 </div>
                             </div>
                         </div>
@@ -135,9 +143,9 @@
                                                             <td>
                                                                 @if ($balance[$i]['classification'][$j]['account'][$k]['position'] == "Kredit")
                                                                     @if ($balance[$i]['classification'][$j]['account'][$k]['saldo_akhir'] < 0)
-                                                                        - Rp{{strrev(implode('.',str_split(strrev(strval(-1*$balance[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
+                                                                        -Rp{{number_format(-1*($balance[$i]['classification'][$j]['account'][$k]['saldo_akhir']), 0, ',', '.')}}
                                                                     @else 
-                                                                        Rp{{strrev(implode('.',str_split(strrev(strval($balance[$i]['classification'][$j]['account'][$k]['saldo_akhir'])),3)))}}
+                                                                        Rp{{number_format($balance[$i]['classification'][$j]['account'][$k]['saldo_akhir'], 0, ',', '.')}}
                                                                     @endif
                                                                     @php
                                                                         $jumlah_kredit += $balance[$i]['classification'][$j]['account'][$k]['saldo_akhir']
@@ -157,18 +165,18 @@
                                     <td>
                                         <strong>
                                             @if ($jumlah_debit < 0)
-                                                -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$jumlah_debit)),3)))}}
+                                                -Rp{{number_format(-1*($jumlah_debit), 0, ',', '.')}}
                                             @else
-                                                Rp{{strrev(implode('.',str_split(strrev(strval($jumlah_debit)),3)))}}
+                                                Rp{{number_format($jumlah_debit, 0, ',', '.')}}
                                             @endif
                                         </strong>
                                     </td>
                                     <td>
                                         <strong>
                                             @if ($jumlah_kredit < 0)
-                                                -Rp{{strrev(implode('.',str_split(strrev(strval(-1*$jumlah_kredit)),3)))}}
+                                                -Rp{{number_format(-1*($jumlah_kredit), 0, ',', '.')}}
                                             @else
-                                                Rp{{strrev(implode('.',str_split(strrev(strval($jumlah_kredit)),3)))}}
+                                                Rp{{number_format($jumlah_kredit, 0, ',', '.')}}
                                             @endif
                                         </strong>
                                     </td>

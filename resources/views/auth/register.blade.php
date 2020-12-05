@@ -13,7 +13,7 @@
                         <form method="POST" action="{{ route('register') }}">
                             @csrf
                             <h4 class="font-weight-bold">Daftar</h2>
-                            <p class="mb-0 font-14">Nama Perusahaan</p>
+                            <p class="mb-0 font-14">Nama BUMDes</p>
                             <div class="input-group mb-2 ">
                                 <div class="input-group-append">
                                     <div class="input-group-text">
@@ -24,14 +24,14 @@
                                 </div>
                                 <input id="name" type="text" class="form-control @error('name') is-invalid @enderror"
                                     name="name" value="{{ old('name') }}" required autocomplete="name"
-                                    placeholder="Nama Perusahaan" autofocus>
+                                    placeholder="Nama BUMDes" autofocus>
                                 @error('name')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
                                 @enderror
                             </div>
-                            <p class="mb-0 font-14">Alamat Perusahaan</p>
+                            <p class="mb-0 font-14">Alamat BUMDes</p>
                             <div class="input-group mb-2">
                                 <div class="input-group-append">
                                     <div class="input-group-text">
@@ -43,7 +43,7 @@
                                 <input id="address" type="text"
                                     class="form-control @error('address') is-invalid @enderror" name="address"
                                     value="{{ old('address') }}" required autocomplete="address"
-                                    placeholder="Alamat Perusahaan">
+                                    placeholder="Alamat BUMDes">
                                 @error('address')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
