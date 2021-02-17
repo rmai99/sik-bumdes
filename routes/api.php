@@ -62,4 +62,19 @@ Route::middleware('auth:api')->group(function(){
   Route::post('account/{id}', 'API\AccountController@update');
   Route::delete('account/{id}', 'API\AccountController@destroy');
 
+  Route::get('akun-anggaran', 'API\BudgetAccountController@index');
+  Route::post('akun-anggaran', 'API\BudgetAccountController@store');
+  Route::post('akun-anggaran/{id}', 'API\BudgetAccountController@update');
+  Route::delete('akun-anggaran/{id}', 'API\BudgetAccountController@destroy');
+
+  Route::get('rencana-anggaran', 'API\BudgetPlanController@index');
+  Route::post('rencana-anggaran', 'API\BudgetPlanController@store');
+  Route::post('rencana-anggaran/update', 'API\BudgetPlanController@update');
+  Route::delete('rencana-anggaran/{id}', 'API\BudgetPlanController@destroy');
+
+  Route::get('realisasi-anggaran', 'API\BudgetRealizationController@index');
+  Route::post('realisasi-anggaran', 'API\BudgetRealizationController@store');
+  Route::post('realisasi-anggaran/{id}', 'API\BudgetRealizationController@update');
+  Route::delete('realisasi-anggaran/{id}', 'API\BudgetRealizationController@destroy');
+
 });
