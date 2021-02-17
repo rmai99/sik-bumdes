@@ -8,6 +8,7 @@ use Spatie\Permission\Models\Role;
 use App\Http\Resources\Collection;
 use Auth;
 use App\BusinessSession;
+use App\InitialBalance;
 use App\Business;
 use App\Account;
 use App\GeneralJournal;
@@ -144,7 +145,9 @@ class GeneralLedgerController extends Controller
       $array = array();
       $array['logs'] = $log;
       $array['available_year'] = $years->pluck('year');
-      $array['available_account'] = $akuns;
+      if(!isset($_GET['akun'])){
+        $array['available_account'] = $akuns;
+      }
       $array['buku_besar'] = $buku_besar;
 
       return new Collection($array);
