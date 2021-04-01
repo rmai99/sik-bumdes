@@ -32,6 +32,11 @@ class UserController extends Controller
         {
           $role = $user->getRoleNames()->first();
           $company = Companies::where('id_user', $user->id)->first();
+          if (!$company) {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $company = Companies::where('id', $employee->id_company)->first();
+          }
+          
           $user->company = $company->name;
           $user->token = $user->createToken('SIK_Bumdes')->accessToken;
           $business = Business::where('id_company', $company->id)->get();
