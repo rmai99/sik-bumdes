@@ -10,6 +10,7 @@ use Auth;
 use App\BusinessSession;
 use App\Business;
 use App\Companies;
+use App\Employee;
 use App\Account;
 use App\AccountParent;
 use App\DetailJournal;
@@ -33,6 +34,11 @@ class TrialBalanceController extends Controller
     {
       $user = Auth::user();
       $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+      if (!$session) {
+        $employee = Employee::where('id_user', $user->id)->first();
+        $company = Companies::where('id', $employee->id_company)->first();
+        $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+      }
       if(!$session->business){
         return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
       }
@@ -135,6 +141,11 @@ class TrialBalanceController extends Controller
         // dd($year);
         $user = Auth::user();
         $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if (!$session) {
+          $employee = Employee::where('id_user', $user->id)->first();
+          $company = Companies::where('id', $employee->id_company)->first();
+          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        }
         if(!$session->business){
           return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
         }
@@ -206,6 +217,10 @@ class TrialBalanceController extends Controller
         }
 
         $company = Companies::where('id_user', $user->id)->first();
+        if (!$company) {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $company = Companies::where('id', $employee->id_company)->first();
+          }
         
         $dateObj   = \DateTime::createFromFormat('!m', $month);
         $monthName = $dateObj->format('F');
