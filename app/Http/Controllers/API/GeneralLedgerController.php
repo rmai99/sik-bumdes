@@ -13,6 +13,8 @@ use App\Business;
 use App\Account;
 use App\GeneralJournal;
 use App\DetailJournal;
+use App\Companies;
+use App\Employee;
 
 class GeneralLedgerController extends Controller
 {
@@ -30,6 +32,11 @@ class GeneralLedgerController extends Controller
       $user = Auth::user();
         
       $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+      if (!$session) {
+        $employee = Employee::where('id_user', $user->id)->first();
+        $company = Companies::where('id', $employee->id_company)->first();
+        $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+      }
       if(!$session->business){
         return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
       }
