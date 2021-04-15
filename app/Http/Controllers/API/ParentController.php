@@ -9,6 +9,8 @@ use App\Http\Resources\Collection;
 use Auth;
 use App\AccountParent;
 use App\BusinessSession;
+use App\Companies;
+use App\Employee;
 
 class ParentController extends Controller
 {
@@ -25,6 +27,11 @@ class ParentController extends Controller
         $user = Auth::guard('api')->user();
 
         $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if (!$session) {
+          $employee = Employee::where('id_user', $user->id)->first();
+          $company = Companies::where('id', $employee->id_company)->first();
+          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        }
         if(!$session->business){
           return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
         }
@@ -42,6 +49,11 @@ class ParentController extends Controller
         $user = Auth::guard('api')->user();
 
         $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if (!$session) {
+          $employee = Employee::where('id_user', $user->id)->first();
+          $company = Companies::where('id', $employee->id_company)->first();
+          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        }
         if(!$session->business){
           return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
         }
