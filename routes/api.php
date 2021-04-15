@@ -69,7 +69,7 @@ Route::middleware('auth:api')->group(function(){
 
   Route::get('rencana-anggaran', 'API\BudgetPlanController@index');
   Route::post('rencana-anggaran', 'API\BudgetPlanController@store');
-  Route::post('rencana-anggaran/update', 'API\BudgetPlanController@update');
+  Route::post('rencana-anggaran/{id}', 'API\BudgetPlanController@update');
   Route::delete('rencana-anggaran/{id}', 'API\BudgetPlanController@destroy');
 
   Route::get('realisasi-anggaran', 'API\BudgetRealizationController@index');
