@@ -31,6 +31,11 @@ class FinancialReportController extends Controller
     {
         $user = Auth::user();
         $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if (!$session) {
+          $employee = Employee::where('id_user', $user->id)->first();
+          $company = Companies::where('id', $employee->id_company)->first();
+          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        }
         if(!$session->business){
           return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
         }
@@ -165,6 +170,11 @@ class FinancialReportController extends Controller
     {
         $user = Auth::user();
         $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if (!$session) {
+          $employee = Employee::where('id_user', $user->id)->first();
+          $company = Companies::where('id', $employee->id_company)->first();
+          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        }
         if(!$session->business){
           return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
         }
@@ -271,6 +281,10 @@ class FinancialReportController extends Controller
         })->selectRaw('YEAR(date) as year')->orderBy('date', 'desc')->distinct()->get();
 
         $company = Companies::where('id_user', $user->id)->first();
+        if (!$company) {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $company = Companies::where('id', $employee->id_company)->first();
+        }
         
         $dateObj   = \DateTime::createFromFormat('!m', $month);
         $monthName = $dateObj->format('F');
@@ -286,6 +300,11 @@ class FinancialReportController extends Controller
     {
         $user = Auth::user();
         $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if (!$session) {
+          $employee = Employee::where('id_user', $user->id)->first();
+          $company = Companies::where('id', $employee->id_company)->first();
+          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        }
         if(!$session->business){
           return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
         }
@@ -400,6 +419,11 @@ class FinancialReportController extends Controller
     {
         $user = Auth::user();
         $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if (!$session) {
+          $employee = Employee::where('id_user', $user->id)->first();
+          $company = Companies::where('id', $employee->id_company)->first();
+          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        }
         if(!$session->business){
           return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
         }
@@ -485,6 +509,10 @@ class FinancialReportController extends Controller
         }
 
         $company = Companies::where('id_user', $user->id)->first();
+        if (!$company) {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $company = Companies::where('id', $employee->id_company)->first();
+        }
         
         $dateObj   = \DateTime::createFromFormat('!m', $month);
         $monthName = $dateObj->format('F');
@@ -500,6 +528,11 @@ class FinancialReportController extends Controller
     {
         $user = Auth::user();
         $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if (!$session) {
+          $employee = Employee::where('id_user', $user->id)->first();
+          $company = Companies::where('id', $employee->id_company)->first();
+          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        }
         if(!$session->business){
           return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
         }
@@ -684,6 +717,11 @@ class FinancialReportController extends Controller
     {
         $user = Auth::user();
         $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if (!$session) {
+          $employee = Employee::where('id_user', $user->id)->first();
+          $company = Companies::where('id', $employee->id_company)->first();
+          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        }
         if(!$session->business){
           return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
         }
@@ -809,6 +847,10 @@ class FinancialReportController extends Controller
         })->selectRaw('YEAR(date) as year')->orderBy('date', 'desc')->distinct()->get();
 
         $company = Companies::where('id_user', $user->id)->first();
+        if (!$company) {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $company = Companies::where('id', $employee->id_company)->first();
+        }
 
         $dateObj   = \DateTime::createFromFormat('!m', $month);
         $monthName = $dateObj->format('F');
