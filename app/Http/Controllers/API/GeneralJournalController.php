@@ -14,6 +14,7 @@ use App\DetailJournal;
 use App\Account;
 use App\BusinessSession;
 use App\Employee;
+use App\InitialBalance;
 
 class GeneralJournalController extends Controller
 {
