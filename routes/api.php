@@ -57,22 +57,26 @@ Route::middleware('auth:api')->group(function(){
   Route::delete('classification/{id}', 'API\ClassificationController@destroy');
 
   Route::get('account', 'API\AccountController@index');
+  Route::get('account/search', 'API\AccountController@search');
   Route::get('account/{id}', 'API\AccountController@classification');
   Route::post('account', 'API\AccountController@store');
   Route::post('account/{id}', 'API\AccountController@update');
   Route::delete('account/{id}', 'API\AccountController@destroy');
 
   Route::get('akun-anggaran', 'API\BudgetAccountController@index');
+  Route::get('akun-anggaran/search', 'API\BudgetAccountController@search');
   Route::post('akun-anggaran', 'API\BudgetAccountController@store');
   Route::post('akun-anggaran/{id}', 'API\BudgetAccountController@update');
   Route::delete('akun-anggaran/{id}', 'API\BudgetAccountController@destroy');
 
   Route::get('rencana-anggaran', 'API\BudgetPlanController@index');
+  Route::get('rencana-anggaran/search', 'API\BudgetPlanController@search');
   Route::post('rencana-anggaran', 'API\BudgetPlanController@store');
   Route::post('rencana-anggaran/{id}', 'API\BudgetPlanController@update');
   Route::delete('rencana-anggaran/{id}', 'API\BudgetPlanController@destroy');
 
   Route::get('realisasi-anggaran', 'API\BudgetRealizationController@index');
+  Route::get('realisasi-anggaran/search', 'API\BudgetRealizationController@search');
   Route::post('realisasi-anggaran', 'API\BudgetRealizationController@store');
   Route::post('realisasi-anggaran/{id}', 'API\BudgetRealizationController@update');
   Route::delete('realisasi-anggaran/{id}', 'API\BudgetRealizationController@destroy');
