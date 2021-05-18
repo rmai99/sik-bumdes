@@ -170,10 +170,6 @@ class AccountController extends Controller
 
     public function search(Request $request)
     {
-        $validationData = $request->validate([
-            'query' => 'required'
-        ]);
-
         $user = Auth::guard('api')->user();
         
         $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
@@ -187,7 +183,7 @@ class AccountController extends Controller
         }
         $session = $session->business;
         
-        $keyword = $validationData['query'];
+        $keyword = ($request['query'] != null) ? $request['query'] : "";
         $account = Account::select('id', 'id_classification', 'account_code', 'account_name', 'position')
         ->whereHas('classification.parent', function ($query) use ($session, $keyword) {
           $query->where('id_business', $session->id)
