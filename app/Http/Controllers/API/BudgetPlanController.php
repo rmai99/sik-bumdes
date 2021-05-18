@@ -174,10 +174,6 @@ class BudgetPlanController extends Controller
 
     public function search(Request $request)
     {
-        $validationData = $request->validate([
-            'query' => 'required'
-        ]);
-        
         $user = Auth::guard('api')->user();
         $isCompany = $user->hasRole('company');
         if($isCompany){
@@ -194,7 +190,7 @@ class BudgetPlanController extends Controller
             $month = date('m');
         }
 
-        $keyword = $validationData['query'];
+        $keyword = ($request['query'] != null) ? $request['query'] : "";
         $account_plan = AccountBudgetCategory::with(['budget_account' => function ($query) use ($company, $keyword) {
             $query->where('id_company', $company)
             ->where('budget_account.name','like','%'.$keyword.'%');
