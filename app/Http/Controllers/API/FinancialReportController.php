@@ -587,7 +587,7 @@ class FinancialReportController extends Controller
                 $i = 0;
                 $account = $c->account()
                 ->where('account_name','like','%'.$keyword.'%')->get();
-                dd($account);
+                
                 foreach($account as $a){
                     $position = $a->position;
                     if(!$a->initialBalance()->whereYear('date', $year)->first()){
