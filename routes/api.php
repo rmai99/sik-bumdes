@@ -24,27 +24,34 @@ Route::middleware('auth:api')->group(function(){
   Route::post('user/session', 'API\UserController@setSession');
   
   Route::get('neraca-awal/', 'API\InitialBalanceController@index');
+  Route::get('neraca-awal/search', 'API\InitialBalanceController@search');
   Route::post('neraca-awal/', 'API\InitialBalanceController@store');
   Route::post('neraca-awal/{id}', 'API\InitialBalanceController@update');
   Route::delete('neraca-awal/{id}', 'API\InitialBalanceController@destroy');
 
   Route::get('jurnal-umum/', 'API\GeneralJournalController@index');
+  Route::get('jurnal-umum/search', 'API\GeneralJournalController@search');
   Route::post('jurnal-umum/', 'API\GeneralJournalController@store');
   Route::post('jurnal-umum/{id}', 'API\GeneralJournalController@update');
   Route::delete('jurnal-umum/{id}', 'API\GeneralJournalController@destroy');
 
   Route::get('buku-besar/', 'API\GeneralLedgerController@index');
+  Route::get('buku-besar/search', 'API\GeneralLedgerController@search');
 
   Route::get('neraca-saldo/', 'API\TrialBalanceController@index');
+  Route::get('neraca-saldo/search', 'API\TrialBalanceController@search');
   Route::get('neraca-saldo/export/', 'API\TrialBalanceController@export');
 
   Route::get('laporan-laba-rugi/', 'API\FinancialReportController@incomeStatement');
+  Route::get('laporan-laba-rugi/search', 'API\FinancialReportController@incomeStatementSearch');
   Route::get('laporan-laba-rugi/export/', 'API\FinancialReportController@incomeStatementExport');
   
   Route::get('perubahan-ekuitas/', 'API\FinancialReportController@changeInEquity');
+  Route::get('perubahan-ekuitas/search', 'API\FinancialReportController@changeInEquitySearch');
   Route::get('perubahan-ekuitas/export/', 'API\FinancialReportController@changeInEquityExport');
   
   Route::get('laporan-neraca/', 'API\FinancialReportController@balanceSheet');
+  Route::get('laporan-neraca/search', 'API\FinancialReportController@balanceSheetSearch');
   Route::get('laporan-neraca/export', 'API\FinancialReportController@balanceSheetExport');
 
   Route::get('parent/', 'API\ParentController@index');
