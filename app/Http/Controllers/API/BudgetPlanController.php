@@ -184,24 +184,20 @@ class BudgetPlanController extends Controller
         }
         if (isset($_GET['year'])) {
             $year = $_GET['year'];
-            $month = $_GET['month'];
         } else {
             $year = date('Y');
-            $month = date('m');
         }
 
         $keyword = ($request['query'] != null) ? $request['query'] : "";
         $account_plan = AccountBudgetCategory::with(['budget_account' => function ($query) use ($company, $keyword) {
             $query->where('id_company', $company)
             ->where('budget_account.name','like','%'.$keyword.'%');
-        },'budget_account.budget_plan' => function ($query) use ($month, $year) {
+        },'budget_account.budget_plan' => function ($query) use ($year) {
             $query->whereYear('date', $year);
-            $query->whereMonth('date', $month);
         }])->get();
       
-        $type = BudgetAccount::with(['budget_plan' => function ($query) use ($month, $year) {
+        $type = BudgetAccount::with(['budget_plan' => function ($query) use ($year) {
             $query->whereYear('date', $year);
-            $query->whereMonth('date', $month);
         }])->where('id_company', $company)->where('type','Belanja')
         ->where('name','like','%'.$keyword.'%')->get();
 
