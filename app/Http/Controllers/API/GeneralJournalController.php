@@ -217,7 +217,7 @@ class GeneralJournalController extends Controller
         'message'=>'Data berhasil dihapus',
       ]); 
     }
-
+    
     public function search(Request $request)
     {
         if(isset($_GET['year']) || isset($_GET['month']) || isset($_GET['day'])){
@@ -283,5 +283,5 @@ class GeneralJournalController extends Controller
 
         return new Collection($array);
     }
-    
+
 }

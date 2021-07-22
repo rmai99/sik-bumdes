@@ -160,7 +160,6 @@ class GeneralLedgerController extends Controller
       return new Collection($array);
     }
     
-    
     public function search(Request $request)
     {
       $user = Auth::user();

@@ -43,6 +43,7 @@ Route::middleware('auth:api')->group(function(){
   Route::get('neraca-saldo/export/', 'API\TrialBalanceController@export');
 
   Route::get('laporan-laba-rugi/', 'API\FinancialReportController@incomeStatement');
+  Route::get('laporan-laba-rugi/dashboard', 'API\FinancialReportController@incomeStatementDashboard');
   Route::get('laporan-laba-rugi/search', 'API\FinancialReportController@incomeStatementSearch');
   Route::get('laporan-laba-rugi/export/', 'API\FinancialReportController@incomeStatementExport');
   

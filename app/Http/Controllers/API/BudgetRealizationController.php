@@ -198,4 +198,3 @@ class BudgetRealizationController extends Controller
         return new Collection($array);
     }
 }
-

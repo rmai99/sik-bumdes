@@ -192,6 +192,7 @@ class InitialBalanceController extends Controller
         'message'=>'Data berhasil dihapus',
       ]); 
     }
+
     
     public function search(Request $request)
     {

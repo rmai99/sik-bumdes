@@ -165,7 +165,155 @@ class FinancialReportController extends Controller
 
         return new Collection($array);
     }
+    
+    
+    public function incomeStatementDashboard()
+    {
+        $user = Auth::user();
+        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if (!$session) {
+          $employee = Employee::where('id_user', $user->id)->first();
+          $company = Companies::where('id', $employee->id_company)->first();
+          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        }
+        if(!$session->business){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        }
+        $session = $session->business;
+        
+        $weekIterator = 1;
+        if(isset($_GET["os_weekly"]) && $_GET["is_weekly"] == true){
+            $weekIterator = 5;
+        }
 
+        $parent = AccountParent::with('classification.account')->where('id_business', $session->id)->get();
+
+        $years = InitialBalance::whereHas('account.classification.parent', function($q) use ($session){
+            $q->where('id_business', $session->id);
+        })->selectRaw('YEAR(date) as year')->distinct()->get();
+        $years = $years->pluck('year');
+
+        $j = 0;
+        $allData = array();
+        foreach($years as $year){
+            for($month = 1; $month<13; $month++){
+                for($week = 1; $week<=$weekIterator; $week++){
+                    $laba_berjalan = 0;
+                    $othersExpense = 0;
+                    $othersIncome = 0;
+                    $income = 0;
+                    $expense = 0;
+                    
+                    foreach($parent as $p){
+                        $i = 0;
+                        $classification = $p->classification()->get();
+                        foreach($classification as $c){
+                            $account = $c->account()->get();
+                            foreach($account as $a){
+                                $position = $a->position;
+                                if(!$a->initialBalance()->whereYear('date', $year)->first()){
+                                    $beginningBalance = 0;
+                                } else {
+                                    $beginningBalance = $a->initialBalance()->whereYear('date', $year)->first()->amount;
+                                }
+                                if($a->journal()->exists()){
+                                    $endingBalance = $beginningBalance;
+                                    $jurnals = $a->journal()->whereHas('detail', function($q) use($year, $month, $week){
+                                        $q->whereYear('date', $year);
+                                        $q->whereMonth('date', '>=', '01');
+                                        $q->whereMonth('date', '<=', $month);
+                                        if(isset($_GET["weekly"])){
+                                            $q->whereDay('date', '>=', "01");
+                                            $q->whereDay('date', '<=', $week*7);
+                                        }
+                                    })->get();
+                                    foreach($jurnals as $jurnal){
+                                        if ($jurnal->position == $position) {
+                                            $endingBalance += $jurnal->amount;
+                                        }else {
+                                            $endingBalance -= $jurnal->amount;
+                                        }
+                                    }
+                                } else {
+                                    if($a->initialBalance()->whereYear('date', $year)->first()){
+                                        $endingBalance = $beginningBalance;
+                                    } else {
+                                        $endingBalance = 0;
+                                    }
+                                }
+            
+                                if ($endingBalance != 0) {
+                                
+                                if($p->parent_name == "Pendapatan"){
+                                    $incomeArray[$i]['classification'] = $c->classification_name;
+                                    $incomeArray[$i]['name'][] = $a->account_name;
+                                    $incomeArray[$i]['code'][] = $a->account_code;
+                                    $incomeArray[$i]['ending_balance'][] = $endingBalance;
+                                    if($position == "Kredit"){
+                                        $income += $endingBalance;
+                                    } else {
+                                        $income -= $endingBalance;
+                                    }
+                                    $incomeArray[$i]['total'] = $income;
+                                } 
+                                else if($p->parent_name == "Beban"){
+                                    $expenseArray[$i]['classification'] = $c->classification_name;
+                                    $expenseArray[$i]['name'][] = $a->account_name;
+                                    $expenseArray[$i]['code'][] = $a->account_code;
+                                    $expenseArray[$i]['ending_balance'][] = $endingBalance;
+                                    if($position == "Debit"){
+                                        $expense += $endingBalance;
+                                    } else {
+                                        $expense -= $endingBalance;
+                                    }
+                                    $expenseArray[$i]['total'] = $expense;
+                                }
+                                else if($p->parent_name == "Pendapatan Lainnya"){
+                                    $othersIncomeArray[$i]['classification'] = $c->classification_name;
+                                    $othersIncomeArray[$i]['name'][] = $a->account_name;
+                                    $othersIncomeArray[$i]['code'][] = $a->account_code;
+                                    $othersIncomeArray[$i]['ending_balance'][] = $endingBalance;
+                                    if($position == "Kredit"){
+                                        $othersIncome += $endingBalance;
+                                    } else {
+                                        $othersIncome -= $endingBalance;
+                                    }
+                                    $othersIncomeArray[$i]['total'] = $othersIncome;
+                                }
+                                else if($p->parent_name == "Biaya Lainnya"){
+                                    $othersExpenseArray[$i]['classification'] = $c->classification_name;
+                                    $othersExpenseArray[$i]['name'][] = $a->account_name;
+                                    $othersExpenseArray[$i]['code'][] = $a->account_code;
+                                    $othersExpenseArray[$i]['ending_balance'][] = $endingBalance;
+                                    if($position == "Debit"){
+                                        $othersExpense += $endingBalance;
+                                    } else {
+                                        $othersExpense -= $endingBalance;
+                                    }
+                                    $othersExpenseArray[$i]['total'] = $othersExpense;
+                                }
+                                }
+                            }
+                            $i++;
+                        }
+                    }
+                    $laba_berjalan = $income + $othersIncome - $expense - $othersExpense;
+                    
+                    $data = array();
+                    $data['week'] = $week;
+                    $data['month'] = $month;
+                    $data['year'] = $year;
+                    $data['laba_usaha'] = $income - $expense;
+                    $data['laba_berjalan'] = $income + $othersIncome - $expense - $othersExpense;
+                    $allData[$j] = $data;
+                    $j++;
+                }
+            }
+        }
+        return new Collection($allData);
+    }
+
+    
     public function incomeStatementSearch(Request $request)
     {
         $user = Auth::user();
