@@ -13,6 +13,8 @@ use App\Business;
 use App\DetailJournal;
 use App\Account;
 use App\BusinessSession;
+use App\Employee;
+use App\InitialBalance;
 
 class GeneralJournalController extends Controller
 {
@@ -49,6 +51,11 @@ class GeneralJournalController extends Controller
         $user = Auth::user();
         
         $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if (!$session) {
+          $employee = Employee::where('id_user', $user->id)->first();
+          $company = Companies::where('id', $employee->id_company)->first();
+          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        }
         if(!$session->business){
           return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
         }
@@ -211,4 +218,70 @@ class GeneralJournalController extends Controller
       ]); 
     }
 
+    
+    public function search(Request $request)
+    {
+        if(isset($_GET['year']) || isset($_GET['month']) || isset($_GET['day'])){
+          if (isset($_GET['year'], $_GET['month'], $_GET['day'])) {
+            $year = $_GET['year'];
+            $month = $_GET['month'];
+            $day = $_GET['day'];
+          } elseif(isset($_GET['year'], $_GET['month'])){
+            $year = $_GET['year'];
+            $month = $_GET['month'];
+            $day = null;
+          } elseif(isset($_GET['year'])){
+            $year = $_GET['year'];
+            $month = null;
+            $day = null;
+          }
+        } else {
+          $year = date('Y');
+          $month = null;
+          $day = null;
+        }
+        $user = Auth::user();
+        
+        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if (!$session) {
+          $employee = Employee::where('id_user', $user->id)->first();
+          $company = Companies::where('id', $employee->id_company)->first();
+          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        }
+        if(!$session->business){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        }
+        $session = $session->business;
+
+        
+        $keyword = ($request['query'] != null) ? $request['query'] : "";
+
+        if ($day && $month) {
+          $data = DetailJournal::with('journal.account')
+          ->whereHas('journal.account.classification.parent', function($q) use($session, $keyword){
+            $q->where('id_business', $session->id);
+          })->whereYear('date', $year)->whereMonth('date', $month)->whereDay('date', $day)
+          ->where('description','like','%'.$keyword.'%')->orderBy('date', 'DESC')->get();
+        }else if ($month){
+          $data = DetailJournal::with('journal.account')
+          ->whereHas('journal.account.classification.parent', function($q) use($session, $keyword){
+            $q->where('id_business', $session->id);
+          })->whereYear('date', $year)->whereMonth('date', $month)
+          ->where('description','like','%'.$keyword.'%')->orderBy('date', 'DESC')->get();
+        }else {
+          $data = DetailJournal::with('journal.account')
+          ->whereHas('journal.account.classification.parent', function($q) use($session, $keyword){
+            $q->where('id_business', $session->id);
+          })->whereYear('date', $year)
+          ->where('description','like','%'.$keyword.'%')->orderBy('date', 'DESC')->get();
+        }
+        
+        $years = DetailJournal::selectRaw('YEAR(date) as year')->orderBy('date', 'desc')->distinct()->get();
+        
+        $array = array();
+        $array['jurnal_umum'] = $data;
+        $array['available_year'] = $years->pluck('year');
+
+        return new Collection($array);
+    }
 }

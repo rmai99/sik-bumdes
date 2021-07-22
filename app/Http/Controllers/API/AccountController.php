@@ -11,6 +11,8 @@ use App\Http\Resources\Collection;
 use Auth;
 use App\Account;
 use App\BusinessSession;
+use App\Companies;
+use App\Employee;
 
 class AccountController extends Controller
 {
@@ -27,6 +29,11 @@ class AccountController extends Controller
         $user = Auth::guard('api')->user();
         
         $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if (!$session) {
+          $employee = Employee::where('id_user', $user->id)->first();
+          $company = Companies::where('id', $employee->id_company)->first();
+          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        }
         if(!$session->business){
           return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
         }
@@ -159,5 +166,31 @@ class AccountController extends Controller
         'success'=>true,
         'message'=>'Data berhasil dihapus',
       ]); 
+    }
+
+    public function search(Request $request)
+    {
+        $user = Auth::guard('api')->user();
+        
+        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if (!$session) {
+          $employee = Employee::where('id_user', $user->id)->first();
+          $company = Companies::where('id', $employee->id_company)->first();
+          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        }
+        if(!$session->business){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        }
+        $session = $session->business;
+        
+        $keyword = ($request['query'] != null) ? $request['query'] : "";
+        $account = Account::select('id', 'id_classification', 'account_code', 'account_name', 'position')
+        ->whereHas('classification.parent', function ($query) use ($session, $keyword) {
+          $query->where('id_business', $session->id)
+          ->where('account_name','like','%'.$keyword.'%');
+        })->get();
+
+        return new Collection($account);
+
     }
 }

@@ -30,6 +30,11 @@ class InitialBalanceController extends Controller
         $user = Auth::guard('api')->user();
 
         $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if (!$session) {
+          $employee = Employee::where('id_user', $user->id)->first();
+          $company = Companies::where('id', $employee->id_company)->first();
+          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        }
         if(!$session->business){
           return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
         }
@@ -186,5 +191,84 @@ class InitialBalanceController extends Controller
         'success'=>true,
         'message'=>'Data berhasil dihapus',
       ]); 
+    }
+
+    
+    public function search(Request $request)
+    {
+        $user = Auth::guard('api')->user();
+
+        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
+        if (!$session) {
+          $employee = Employee::where('id_user', $user->id)->first();
+          $company = Companies::where('id', $employee->id_company)->first();
+          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        }
+        if(!$session->business){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        }
+        $session = $session->business;
+        
+        if (isset($_GET['year'])) {
+            $year = $_GET['year'];
+        } else {
+            $year = date('Y');
+        }
+        // dd($year);
+        
+        $keyword = ($request['query'] != null) ? $request['query'] : "";
+        
+        $account_parent = AccountParent::select('id', 'id_business', 'parent_code', 'parent_name')->with([
+          'classification' => function ($query) use ($year) {
+            $query->select('id', 'id_parent', 'classification_code', 'classification_name')
+            ->whereHas('account.initialBalance', function ($query) use ($year) {
+              $query->whereYear('date', $year);
+            });
+          }, 
+          'classification.account' => function ($query) use ($year, $keyword) {
+            $query->select('id', 'id_classification', 'account_code', 'account_name', 'position')
+            ->whereHas('initialBalance' , function ($query) use ($year, $keyword) {
+              $query->whereYear('date', $year)
+              ->where('account_name','like','%'.$keyword.'%');
+            });
+          }, 
+          'classification.account.initialBalance' => function ($query) use ($year, $keyword) {
+            $query->select('id', 'id_account', 'amount', 'date')
+            ->whereYear('date', $year);
+          }
+        ])
+        ->where('id_business', $session->id)->get();
+
+        $years = InitialBalance::whereHas('account.classification.parent', function($q) use ($session){
+            $q->where('id_business', $session->id);
+        })->selectRaw('YEAR(date) as year')
+        ->orderBy('date', 'desc')->distinct()->get();
+
+        $total_debit = 0;
+        $total_kredit = 0;
+
+        foreach ($account_parent as $parent) {
+          foreach ($parent->classification as $classification) {
+            foreach ($classification->account as $account) {
+              foreach ($account->initialBalance as $initialBalance) {
+                if ($account->position == "Debit") {
+                  $total_debit += $initialBalance->amount;
+                }else {
+                  $total_kredit += $initialBalance->amount;
+                }
+              }
+            }
+          }
+        }
+
+        $array = array();
+        $array['total_debit'] = $total_debit;
+        $array['total_kredit'] = $total_kredit;
+        $array['business'] = $session;
+        $array['neraca_awal'] = $account_parent;
+        $array['available_year'] = $years->pluck('year');
+
+        return new Collection($array);
+
     }
 }

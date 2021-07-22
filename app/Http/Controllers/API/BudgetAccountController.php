@@ -139,4 +139,32 @@ class BudgetAccountController extends Controller
         'message'=>'Data berhasil dihapus',
       ]); 
     }
+
+    public function search(Request $request)
+    {
+        $user = Auth::guard('api')->user();
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $company = Companies::where('id_user', $user->id)->first()->id;
+        } else {
+            $getBusiness = Employee::with('business')->where('id_user', $user->id)->first();
+            $company = $getBusiness->id_company;
+        }
+        
+        $keyword = ($request['query'] != null) ? $request['query'] : "";
+        $account = AccountBudgetCategory::with(['budget_account' => function ($query) use ($company, $keyword) {
+            $query->where('id_company', $company)
+            ->where('budget_account.name','like','%'.$keyword.'%');
+        }])->get();
+
+        $type = BudgetAccount::where('id_company', $company)->where('type','Belanja')
+        ->where('name','like','%'.$keyword.'%')->get();
+
+        $array = array();
+        $array['penerimaan'] = $account;
+        $array['belanja'] = $type;
+
+        return new Collection($array);
+
+    }
 }

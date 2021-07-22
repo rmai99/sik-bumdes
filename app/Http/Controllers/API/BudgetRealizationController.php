@@ -153,4 +153,52 @@ class BudgetRealizationController extends Controller
         'message'=>'Data berhasil dihapus',
       ]); 
     }
+
+    public function search(Request $request)
+    {
+        $user = Auth::guard('api')->user();
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $company = Companies::where('id_user', $user->id)->first()->id;
+        } else {
+            $getBusiness = Employee::with('business')->where('id_user', $user->id)->first();
+            $company = $getBusiness->id_company;
+        }
+        if (isset($_GET['year'])) {
+            $year = $_GET['year'];
+            $month = $_GET['month'];
+        } else {
+            $year = date('Y');
+            $month = date('m');
+        }
+        
+        $keyword = ($request['query'] != null) ? $request['query'] : "";
+        $account_plan = AccountBudgetCategory::with(['budget_account' => function ($query) use ($company, $keyword) {
+            $query->where('id_company', $company)
+            ->where('budget_account.name','like','%'.$keyword.'%');
+        },'budget_account.budget_plan' => function ($query) use ($month, $year) {
+            $query->whereYear('date', $year);
+            $query->whereMonth('date', $month);
+        },'budget_account.budget_plan.realization'])->get();
+      
+        $type = BudgetAccount::with(['budget_plan' => function ($query) use ($month, $year) {
+            $query->whereYear('date', $year);
+            $query->whereMonth('date', $month);
+        },'budget_plan.realization'])->where('id_company', $company)->where('type','Belanja')
+        ->where('name','like','%'.$keyword.'%')->get();
+
+        $account = BudgetAccount::where('id_company', $company)->get();
+
+        $years = BudgetPlan::whereHas('budget_account', function($q) use ($company){
+            $q->where('id_company', $company);
+        })->selectRaw('YEAR(date) as year')->orderBy('date', 'desc')->distinct()->get();
+
+        $array = array();
+        $array['penerimaan'] = $account_plan;
+        $array['belanja'] = $type;
+        $array['akun_anggaran'] = $account;
+        $array['available_year'] = $years;
+
+        return new Collection($array);
+    }
 }

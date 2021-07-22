@@ -24,28 +24,39 @@ Route::middleware('auth:api')->group(function(){
   Route::post('user/session', 'API\UserController@setSession');
   
   Route::get('neraca-awal/', 'API\InitialBalanceController@index');
+  Route::get('neraca-awal/search', 'API\InitialBalanceController@search');
   Route::post('neraca-awal/', 'API\InitialBalanceController@store');
   Route::post('neraca-awal/{id}', 'API\InitialBalanceController@update');
   Route::delete('neraca-awal/{id}', 'API\InitialBalanceController@destroy');
 
   Route::get('jurnal-umum/', 'API\GeneralJournalController@index');
+  Route::get('jurnal-umum/search', 'API\GeneralJournalController@search');
   Route::post('jurnal-umum/', 'API\GeneralJournalController@store');
   Route::post('jurnal-umum/{id}', 'API\GeneralJournalController@update');
   Route::delete('jurnal-umum/{id}', 'API\GeneralJournalController@destroy');
 
   Route::get('buku-besar/', 'API\GeneralLedgerController@index');
+  Route::get('buku-besar/search', 'API\GeneralLedgerController@search');
 
   Route::get('neraca-saldo/', 'API\TrialBalanceController@index');
+  Route::get('neraca-saldo/search', 'API\TrialBalanceController@search');
   Route::get('neraca-saldo/export/', 'API\TrialBalanceController@export');
 
   Route::get('laporan-laba-rugi/', 'API\FinancialReportController@incomeStatement');
+  Route::get('laporan-laba-rugi/dashboard/', 'API\FinancialReportController@incomeStatementDashboard');
+  Route::get('laporan-laba-rugi/search', 'API\FinancialReportController@incomeStatementSearch');
   Route::get('laporan-laba-rugi/export/', 'API\FinancialReportController@incomeStatementExport');
   
   Route::get('perubahan-ekuitas/', 'API\FinancialReportController@changeInEquity');
+  Route::get('perubahan-ekuitas/search', 'API\FinancialReportController@changeInEquitySearch');
   Route::get('perubahan-ekuitas/export/', 'API\FinancialReportController@changeInEquityExport');
   
   Route::get('laporan-neraca/', 'API\FinancialReportController@balanceSheet');
+  Route::get('laporan-neraca/search', 'API\FinancialReportController@balanceSheetSearch');
   Route::get('laporan-neraca/export', 'API\FinancialReportController@balanceSheetExport');
+  
+  Route::get('laporan-arus-kas/', 'API\CashFlowController@cashFlow');
+  // Route::get('laporan-arus-kas/export', 'API\CashFlowController@balanceSheetExport');
 
   Route::get('parent/', 'API\ParentController@index');
   Route::get('parent/child', 'API\ParentController@indexChild');
@@ -57,22 +68,26 @@ Route::middleware('auth:api')->group(function(){
   Route::delete('classification/{id}', 'API\ClassificationController@destroy');
 
   Route::get('account', 'API\AccountController@index');
+  Route::get('account/search', 'API\AccountController@search');
   Route::get('account/{id}', 'API\AccountController@classification');
   Route::post('account', 'API\AccountController@store');
   Route::post('account/{id}', 'API\AccountController@update');
   Route::delete('account/{id}', 'API\AccountController@destroy');
 
   Route::get('akun-anggaran', 'API\BudgetAccountController@index');
+  Route::get('akun-anggaran/search', 'API\BudgetAccountController@search');
   Route::post('akun-anggaran', 'API\BudgetAccountController@store');
   Route::post('akun-anggaran/{id}', 'API\BudgetAccountController@update');
   Route::delete('akun-anggaran/{id}', 'API\BudgetAccountController@destroy');
 
   Route::get('rencana-anggaran', 'API\BudgetPlanController@index');
+  Route::get('rencana-anggaran/search', 'API\BudgetPlanController@search');
   Route::post('rencana-anggaran', 'API\BudgetPlanController@store');
-  Route::post('rencana-anggaran/update', 'API\BudgetPlanController@update');
+  Route::post('rencana-anggaran/{id}', 'API\BudgetPlanController@update');
   Route::delete('rencana-anggaran/{id}', 'API\BudgetPlanController@destroy');
 
   Route::get('realisasi-anggaran', 'API\BudgetRealizationController@index');
+  Route::get('realisasi-anggaran/search', 'API\BudgetRealizationController@search');
   Route::post('realisasi-anggaran', 'API\BudgetRealizationController@store');
   Route::post('realisasi-anggaran/{id}', 'API\BudgetRealizationController@update');
   Route::delete('realisasi-anggaran/{id}', 'API\BudgetRealizationController@destroy');
