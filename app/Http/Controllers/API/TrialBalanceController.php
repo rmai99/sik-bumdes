@@ -33,16 +33,23 @@ class TrialBalanceController extends Controller
     public function index()
     {
       $user = Auth::user();
-      $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-      if (!$session) {
-        $employee = Employee::where('id_user', $user->id)->first();
-        $company = Companies::where('id', $employee->id_company)->first();
-        $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
-      }
-      if(!$session->business){
-        return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
-      }
-      $session = $session->business;
+      
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+            $getBusiness = Business::with('company')
+            ->where('id_company', $company)->where('id', $session)->first();
+        } else {
+            $session = Employee::with('business')->where('id_user', $user->id)->first();
+        }
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
+        }
 
       if (isset($_GET['year'], $_GET['month'])) {
           $year = $_GET['year'];
@@ -140,16 +147,23 @@ class TrialBalanceController extends Controller
     {
         // dd($year);
         $user = Auth::user();
-        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-        if (!$session) {
-          $employee = Employee::where('id_user', $user->id)->first();
-          $company = Companies::where('id', $employee->id_company)->first();
-          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+            $getBusiness = Business::with('company')
+            ->where('id_company', $company)->where('id', $session)->first();
+        } else {
+            $session = Employee::with('business')->where('id_user', $user->id)->first();
         }
-        if(!$session->business){
-          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
         }
-        $session = $session->business;
 
         if (isset($_GET['year'], $_GET['month'])) {
             $year = $_GET['year'];
@@ -235,16 +249,23 @@ class TrialBalanceController extends Controller
     public function search(Request $request)
     {
       $user = Auth::user();
-      $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-      if (!$session) {
-        $employee = Employee::where('id_user', $user->id)->first();
-        $company = Companies::where('id', $employee->id_company)->first();
-        $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
-      }
-      if(!$session->business){
-        return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
-      }
-      $session = $session->business;
+      
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+            $getBusiness = Business::with('company')
+            ->where('id_company', $company)->where('id', $session)->first();
+        } else {
+            $session = Employee::with('business')->where('id_user', $user->id)->first();
+        }
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
+        }
 
       if (isset($_GET['year'], $_GET['month'])) {
           $year = $_GET['year'];
