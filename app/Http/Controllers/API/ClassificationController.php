@@ -11,6 +11,7 @@ use App\Http\Resources\Collection;
 use Auth;
 use App\AccountClassification;
 use App\BusinessSession;
+use App\Business;
 use App\Companies;
 use App\Employee;
 
@@ -28,16 +29,21 @@ class ClassificationController extends Controller
     {
         $user = Auth::guard('api')->user();
 
-        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-        if (!$session) {
-          $employee = Employee::where('id_user', $user->id)->first();
-          $company = Companies::where('id', $employee->id_company)->first();
-          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+        } else {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $session = Business::where('id_company', $employee->id_company)->first();
         }
-        if(!$session->business){
-          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
         }
-        $session = $session->business;
 
         $classification = AccountClassification::select('id', 'id_parent', 'classification_code', 'classification_name')
         ->whereHas('parent', function ($query) use ($session) {

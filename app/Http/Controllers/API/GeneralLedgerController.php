@@ -30,17 +30,23 @@ class GeneralLedgerController extends Controller
     public function index()
     {
       $user = Auth::user();
+      
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+        } else {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $session = Business::where('id_company', $employee->id_company)->first();
+        }
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
+        }
         
-      $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-      if (!$session) {
-        $employee = Employee::where('id_user', $user->id)->first();
-        $company = Companies::where('id', $employee->id_company)->first();
-        $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
-      }
-      if(!$session->business){
-        return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
-      }
-      $session = $session->business;
       $account = Account::with('classification.parent')
       ->whereHas('classification.parent', function ($query) use ($session) {
         $query->where('id_business', $session->id);
@@ -164,16 +170,22 @@ class GeneralLedgerController extends Controller
     {
       $user = Auth::user();
         
-      $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-      if (!$session) {
-        $employee = Employee::where('id_user', $user->id)->first();
-        $company = Companies::where('id', $employee->id_company)->first();
-        $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
-      }
-      if(!$session->business){
-        return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
-      }
-      $session = $session->business;
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+        } else {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $session = Business::where('id_company', $employee->id_company)->first();
+        }
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
+        }
+        
       $account = Account::with('classification.parent')
       ->whereHas('classification.parent', function ($query) use ($session) {
         $query->where('id_business', $session->id);

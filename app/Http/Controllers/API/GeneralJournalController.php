@@ -50,16 +50,21 @@ class GeneralJournalController extends Controller
         }
         $user = Auth::user();
         
-        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-        if (!$session) {
-          $employee = Employee::where('id_user', $user->id)->first();
-          $company = Companies::where('id', $employee->id_company)->first();
-          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+        } else {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $session = Business::where('id_company', $employee->id_company)->first();
         }
-        if(!$session->business){
-          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
         }
-        $session = $session->business;
 
         if ($day && $month) {
           $data = DetailJournal::with('journal.account')
@@ -241,16 +246,21 @@ class GeneralJournalController extends Controller
         }
         $user = Auth::user();
         
-        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-        if (!$session) {
-          $employee = Employee::where('id_user', $user->id)->first();
-          $company = Companies::where('id', $employee->id_company)->first();
-          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+        } else {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $session = Business::where('id_company', $employee->id_company)->first();
         }
-        if(!$session->business){
-          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
         }
-        $session = $session->business;
 
         
         $keyword = ($request['query'] != null) ? $request['query'] : "";

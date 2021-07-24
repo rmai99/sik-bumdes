@@ -30,16 +30,22 @@ class FinancialReportController extends Controller
     public function incomeStatement()
     {
         $user = Auth::user();
-        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-        if (!$session) {
-          $employee = Employee::where('id_user', $user->id)->first();
-          $company = Companies::where('id', $employee->id_company)->first();
-          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+        } else {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $session = Business::where('id_company', $employee->id_company)->first();
         }
-        if(!$session->business){
-          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
         }
-        $session = $session->business;
 
         if (isset($_GET['year'], $_GET['month'])) {
             $year = $_GET['year'];
@@ -170,16 +176,22 @@ class FinancialReportController extends Controller
     public function incomeStatementDashboard()
     {
         $user = Auth::user();
-        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-        if (!$session) {
-          $employee = Employee::where('id_user', $user->id)->first();
-          $company = Companies::where('id', $employee->id_company)->first();
-          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+        } else {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $session = Business::where('id_company', $employee->id_company)->first();
         }
-        if(!$session->business){
-          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
         }
-        $session = $session->business;
         
         $weekIterator = 1;
         if(isset($_GET["os_weekly"]) && $_GET["is_weekly"] == true){
@@ -317,16 +329,22 @@ class FinancialReportController extends Controller
     public function incomeStatementSearch(Request $request)
     {
         $user = Auth::user();
-        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-        if (!$session) {
-          $employee = Employee::where('id_user', $user->id)->first();
-          $company = Companies::where('id', $employee->id_company)->first();
-          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
-        }   
-        if(!$session->business){
-          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+        } else {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $session = Business::where('id_company', $employee->id_company)->first();
         }
-        $session = $session->business;
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
+        }
 
         if (isset($_GET['year'], $_GET['month'])) {
             $year = $_GET['year'];
@@ -459,16 +477,22 @@ class FinancialReportController extends Controller
     public function incomeStatementExport()
     {
         $user = Auth::user();
-        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-        if (!$session) {
-          $employee = Employee::where('id_user', $user->id)->first();
-          $company = Companies::where('id', $employee->id_company)->first();
-          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+        } else {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $session = Business::where('id_company', $employee->id_company)->first();
         }
-        if(!$session->business){
-          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
         }
-        $session = $session->business;
 
         if (isset($_GET['year'], $_GET['month'])) {
             $year = $_GET['year'];
@@ -589,16 +613,22 @@ class FinancialReportController extends Controller
     public function changeInEquity()
     {
         $user = Auth::user();
-        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-        if (!$session) {
-          $employee = Employee::where('id_user', $user->id)->first();
-          $company = Companies::where('id', $employee->id_company)->first();
-          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+        } else {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $session = Business::where('id_company', $employee->id_company)->first();
         }
-        if(!$session->business){
-          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
         }
-        $session = $session->business;
 
         if (isset($_GET['year'], $_GET['month'])) {
             $year = $_GET['year'];
@@ -704,19 +734,26 @@ class FinancialReportController extends Controller
 
         return new Collection($array);
     }
+    
     public function changeInEquitySearch(Request $request)
     {
         $user = Auth::user();
-        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-        if (!$session) {
-          $employee = Employee::where('id_user', $user->id)->first();
-          $company = Companies::where('id', $employee->id_company)->first();
-          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+        } else {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $session = Business::where('id_company', $employee->id_company)->first();
         }
-        if(!$session->business){
-          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
         }
-        $session = $session->business;
 
         if (isset($_GET['year'], $_GET['month'])) {
             $year = $_GET['year'];
@@ -836,16 +873,22 @@ class FinancialReportController extends Controller
     public function changeInEquityExport()
     {
         $user = Auth::user();
-        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-        if (!$session) {
-          $employee = Employee::where('id_user', $user->id)->first();
-          $company = Companies::where('id', $employee->id_company)->first();
-          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+        } else {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $session = Business::where('id_company', $employee->id_company)->first();
         }
-        if(!$session->business){
-          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
         }
-        $session = $session->business;
 
         if (isset($_GET['year'], $_GET['month'])) {
             $year = $_GET['year'];
@@ -945,16 +988,22 @@ class FinancialReportController extends Controller
     public function balanceSheet()
     {
         $user = Auth::user();
-        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-        if (!$session) {
-          $employee = Employee::where('id_user', $user->id)->first();
-          $company = Companies::where('id', $employee->id_company)->first();
-          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+        } else {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $session = Business::where('id_company', $employee->id_company)->first();
         }
-        if(!$session->business){
-          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
         }
-        $session = $session->business;
 
         if (isset($_GET['year'], $_GET['month'])) {
             $year = $_GET['year'];  
@@ -1134,16 +1183,22 @@ class FinancialReportController extends Controller
     public function balanceSheetSearch(Request $request)
     {
         $user = Auth::user();
-        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-        if (!$session) {
-          $employee = Employee::where('id_user', $user->id)->first();
-          $company = Companies::where('id', $employee->id_company)->first();
-          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+        } else {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $session = Business::where('id_company', $employee->id_company)->first();
         }
-        if(!$session->business){
-          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
         }
-        $session = $session->business;
 
         if (isset($_GET['year'], $_GET['month'])) {
             $year = $_GET['year'];  
@@ -1326,16 +1381,22 @@ class FinancialReportController extends Controller
     public function balanceSheetExport()
     {
         $user = Auth::user();
-        $session = BusinessSession::where('id_user', $user->id)->with('business')->first();
-        if (!$session) {
-          $employee = Employee::where('id_user', $user->id)->first();
-          $company = Companies::where('id', $employee->id_company)->first();
-          $session = BusinessSession::where('id_user', $company->id_user)->with('business')->first();
+        
+        $isCompany = $user->hasRole('company');
+        if($isCompany){
+            $session = session('business');
+            $company = Companies::where('id_user', $user->id)->first()->id;
+            $business = Business::where('id_company', $company)->get();
+            if($session == null){
+                $session = Business::where('id_company', $company)->first();
+            }
+        } else {
+            $employee = Employee::where('id_user', $user->id)->first();
+            $session = Business::where('id_company', $employee->id_company)->first();
         }
-        if(!$session->business){
-          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'], 400);
+        if(!$session){
+          return response()->json(['success'=>false,'error'=>'Sesi bisnis belum dipilih.'.$session], 400);
         }
-        $session = $session->business;
 
         if (isset($_GET['year'], $_GET['month'])) {
             $year = $_GET['year'];  
